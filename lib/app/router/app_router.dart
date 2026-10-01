@@ -14,9 +14,9 @@ final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
   routes: [
     GoRoute(
-      path: '/products/:id',
+      path: AppRoutes.productDetailPattern,
       parentNavigatorKey: rootNavigatorKey,
-      builder: (_, state) => ProductDetailScreen(remoteId: state.pathParameters['id']!),
+      builder: (_, state) => ProductDetailScreen(remoteId: state.pathParameters[AppRoutes.productIdParam]!),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, shell) => MainShell(navigationShell: shell),

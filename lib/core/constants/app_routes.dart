@@ -3,5 +3,8 @@ abstract final class AppRoutes {
   static const String products = '/products';
   static const String settings = '/settings';
 
-  static String productDetail(String id) => '/products/$id';
+  static const String productIdParam = 'id';
+  static const String productDetailPattern = '$products/:$productIdParam';
+
+  static String productDetail(String id) => '$products/$id';
 }
