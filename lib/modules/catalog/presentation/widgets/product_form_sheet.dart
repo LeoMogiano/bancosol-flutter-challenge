@@ -4,7 +4,7 @@ import 'package:warehouse/core/di/service_locator.dart';
 import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/services/haptic_service.dart';
-import 'package:warehouse/modules/catalog/application/product_form/product_form_cubit.dart';
+import 'package:warehouse/modules/catalog/application/product_form/product_form_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/create_product_use_case.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/product_form/product_form_fields.dart';
@@ -24,8 +24,8 @@ class ProductFormSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ProductFormCubit(existing: existing, createProduct: sl<CreateProductUseCase>()),
-      child: BlocListener<ProductFormCubit, ProductFormState>(
+      create: (_) => ProductFormBloc(existing: existing, createProduct: sl<CreateProductUseCase>()),
+      child: BlocListener<ProductFormBloc, ProductFormState>(
         listenWhen: (prev, curr) => prev.submitting && !curr.submitting,
         listener: (context, state) =>
             state.created != null ? Navigator.of(context).pop(state.created) : HapticService.error(),
@@ -44,7 +44,7 @@ class _ProductFormContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.t;
 
-    final submitting = context.select<ProductFormCubit, bool>((bloc) => bloc.state.submitting);
+    final submitting = context.select<ProductFormBloc, bool>((bloc) => bloc.state.submitting);
     return PopScope(
       canPop: !submitting,
       child: Column(
@@ -87,7 +87,7 @@ class _ErrorBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final failure = context.select<ProductFormCubit, Failure?>((bloc) => bloc.state.submitError);
+    final failure = context.select<ProductFormBloc, Failure?>((bloc) => bloc.state.submitError);
     if (failure == null) return const SizedBox.shrink();
     final message = switch (failure.type) {
       FailureType.network || FailureType.timeout => t.form.offlineError,
@@ -106,9 +106,9 @@ class _ActionsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final cubit = context.read<ProductFormCubit>();
+    final bloc = context.read<ProductFormBloc>();
 
-    final data = context.select<ProductFormCubit, ({bool submitting, bool hasError})>(
+    final data = context.select<ProductFormBloc, ({bool submitting, bool hasError})>(
       (bloc) => (submitting: bloc.state.submitting, hasError: bloc.state.submitError != null),
     );
     return SheetActions(
@@ -121,7 +121,7 @@ class _ActionsSection extends StatelessWidget {
         label: data.hasError ? t.actions.retry : t.form.create,
         loading: data.submitting,
         loadingLabel: t.form.creating,
-        onPressed: data.submitting ? null : cubit.submit,
+        onPressed: data.submitting ? null : () => bloc.add(const ProductFormSubmitted()),
       ),
     );
   }
