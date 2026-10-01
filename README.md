@@ -57,14 +57,26 @@ Viven en `domain/validators`, se muestran en vivo y bloquean el envío antes de 
 
 Nombre, SKU y stock aplican al crear un producto; al editar solo se valida el precio.
 
-**Plus**
+## Plus
 
-- **Filtros**, en la misma hoja "Ordenar y filtrar", combinables con búsqueda y orden:
-  - Rango de precio en BOB: mínimo, máximo o ambos.
-  - Moneda: Todas, BOB o USD.
-  - Solo con stock: oculta los productos con stock 0.
-  - El botón "Ver N productos" cuenta en vivo antes de aplicar; un badge en el buscador indica cuántos filtros hay activos y "Restablecer" los limpia.
-- Paginación de 10, cache offline con Hive, header API key, Sentry y logging, crear / eliminar productos, i18n es / en / pt, tema claro / oscuro, flavors dev / qa / prod.
+Se cubrieron todos los plus sugeridos:
+
+1. **Paginación**: páginas de 10 con paginador numerado, "Mostrando 1–10 de N" y pull to refresh.
+2. **Filtros**, en la misma hoja "Ordenar y filtrar", combinables con búsqueda y orden:
+   - Rango de precio en BOB: mínimo, máximo o ambos.
+   - Moneda: Todas, BOB o USD.
+   - Solo con stock: oculta los productos con stock 0.
+   - "Ver N productos" cuenta en vivo antes de aplicar; un badge en el buscador muestra los filtros activos y "Restablecer" los limpia.
+3. **Cache local (Hive)**: sin conexión muestra el último listado marcado como offline; se puede desactivar o sincronizar desde Ajustes.
+4. **Header API key**: `x-api-key` desde el `.env` en cada petición.
+5. **Telemetría y errores**:
+   - Sentry con captura de pantalla, solo para bugs reales; sin PII ni secretos.
+   - Logging legible de peticiones en debug, con secretos censurados.
+   - Reintento automático de GET ante 5xx y espera ante 429.
+6. **UI cuidada**: tema claro / oscuro, skeletons, estados vacío / error / sin resultados, feedback háptico.
+7. **Diseño de pantallas**: Resumen (valor del inventario, stock bajo y sin stock), Productos, Detalle y Ajustes (tema, idioma, cache, versión, prueba de Sentry).
+
+Extra: crear y eliminar productos, i18n es / en / pt con cambio en vivo y flavors dev / qa / prod.
 
 ## Arquitectura
 
