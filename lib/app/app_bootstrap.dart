@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:warehouse/app/env_config.dart';
@@ -20,6 +21,8 @@ Future<void> bootstrap(Widget Function() builder) async {
   };
   LoggerService.i('$emoji Booting ${EnvConfig.env.name}', name: 'BOOT');
   EnvConfig.validate();
+  // Android < 15 no es edge-to-edge por defecto: la nav bar transparente se ve negra.
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   Bloc.observer = AppBlocObserver();
   await HiveLocalStore.init();
