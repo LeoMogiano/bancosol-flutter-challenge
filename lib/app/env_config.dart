@@ -17,6 +17,9 @@ abstract final class EnvConfig {
 
   static bool get isProd => env == Environment.prod;
 
+  // Falla al arrancar con un mensaje legible, y no en la primera petición.
+  static void validate() => baseUrl;
+
   static String get baseUrl {
     if (_baseUrl.isEmpty) {
       throw StateError('BASE_URL vacío. Ejecuta con --dart-define-from-file=.env.<flavor>.');

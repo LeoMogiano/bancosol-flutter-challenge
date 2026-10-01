@@ -19,7 +19,7 @@ Future<void> bootstrap(Widget Function() builder) async {
     Environment.dev => '🐛',
   };
   LoggerService.i('$emoji Booting ${EnvConfig.env.name}', name: 'BOOT');
-  EnvConfig.baseUrl; // Falla aquí, legible, y no en la primera petición.
+  EnvConfig.validate();
 
   Bloc.observer = AppBlocObserver();
   await HiveLocalStore.init();
