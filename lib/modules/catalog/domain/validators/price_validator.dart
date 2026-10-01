@@ -1,11 +1,5 @@
 enum PriceError { empty, incompleteDecimals, notPositive, tooHigh, currencyEmpty, unchanged }
 
-class InvalidPriceException implements Exception {
-  const InvalidPriceException(this.error);
-
-  final PriceError error;
-}
-
 const double maxPrice = 999999.99;
 
 // double.tryParse aceptaría 'NaN', 'Infinity' o '1e5'.

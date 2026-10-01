@@ -108,6 +108,7 @@ class _Translations$failures$pt extends Translations$failures$es {
 	@override String get rateLimit => 'Você fez muitas solicitações seguidas. Aguarde alguns segundos e tente novamente.';
 	@override String get server => 'Um erro no servidor ocorreu. Tente novamente.';
 	@override String get cache => 'Não conseguimos ler os dados armazenados no seu dispositivo.';
+	@override String get validation => 'Os dados informados não são válidos. Revise-os e tente novamente.';
 	@override String get unexpected => 'Um erro inesperado ocorreu. Tente novamente.';
 }
 
@@ -375,6 +376,7 @@ extension on TranslationsPt {
 			'failures.rateLimit' => 'Você fez muitas solicitações seguidas. Aguarde alguns segundos e tente novamente.',
 			'failures.server' => 'Um erro no servidor ocorreu. Tente novamente.',
 			'failures.cache' => 'Não conseguimos ler os dados armazenados no seu dispositivo.',
+			'failures.validation' => 'Os dados informados não são válidos. Revise-os e tente novamente.',
 			'failures.unexpected' => 'Um erro inesperado ocorreu. Tente novamente.',
 			'environmentLabel' => ({required Object env}) => 'Ambiente: ${env}',
 			'summary.eyebrow' => 'GESTÃO DE CATÁLOGO',
