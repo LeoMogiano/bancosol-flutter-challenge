@@ -33,6 +33,8 @@ class ProductsState extends Equatable {
   final Failure? failure;
   final String? highlightId;
 
+  bool get isLoading => isRefreshing || status == ProductsStatus.loading || status == ProductsStatus.initial;
+
   int get pageCount => ProductQuery.pageCount(visible.length);
 
   List<Product> get pageItems => ProductQuery.page(visible, page);

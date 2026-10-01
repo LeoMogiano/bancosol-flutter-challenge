@@ -8,9 +8,9 @@ import 'package:warehouse/core/utils/app_clock.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/entities/products_snapshot.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/get_products.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/get_products_use_case.dart';
 
-class _MockGetProducts extends Mock implements GetProducts;
+class _MockGetProducts extends Mock implements GetProductsUseCase;
 
 // Dispara los timers a mano: probar una ventana de 2.2 s no debe tardar 2.2 s.
 class _ManualClock extends AppClock {
@@ -30,7 +30,7 @@ void main() {
   late _MockGetProducts getProducts;
   late _ManualClock clock;
 
-  ProductsBloc build() => ProductsBloc(getProducts: getProducts, useCache: () => true, clock: clock);
+  ProductsBloc build() => ProductsBloc(getProducts: getProducts, clock: clock);
 
   setUp(() {
     getProducts = _MockGetProducts();
@@ -39,7 +39,7 @@ void main() {
 
   blocTest<ProductsBloc, ProductsState>(
     'carga el catálogo y lo muestra ordenado por nombre',
-    setUp: () => when(() => getProducts(useCache: true)).thenAnswer(
+    setUp: () => when(() => getProducts()).thenAnswer(
       (_) async => ProductsSnapshot(
         products: [
           _product(2, name: 'Zapato'),
@@ -58,7 +58,7 @@ void main() {
 
   blocTest<ProductsBloc, ProductsState>(
     'un refresco fallido informa el error sin borrar la lista en pantalla',
-    setUp: () => when(() => getProducts(useCache: true)).thenThrow(const Failure(FailureType.server, statusCode: 500)),
+    setUp: () => when(() => getProducts()).thenThrow(const Failure(FailureType.server, statusCode: 500)),
     build: build,
     seed: () => ProductsState(status: ProductsStatus.success, all: [_product(1)], visible: [_product(1)]),
     act: (bloc) => bloc.add(const ProductsRefreshed()),
@@ -66,6 +66,17 @@ void main() {
       expect(bloc.state.status, ProductsStatus.success);
       expect(bloc.state.all, hasLength(1));
       expect(bloc.state.failure?.type, FailureType.server);
+    },
+  );
+
+  blocTest<ProductsBloc, ProductsState>(
+    'un error inesperado no deja el refresco colgado',
+    setUp: () => when(() => getProducts()).thenThrow(StateError('bug')),
+    build: build,
+    act: (bloc) => bloc.add(const ProductsRefreshed()),
+    verify: (bloc) {
+      expect(bloc.state.isRefreshing, isFalse);
+      expect(bloc.state.failure?.type, FailureType.unexpected);
     },
   );
 

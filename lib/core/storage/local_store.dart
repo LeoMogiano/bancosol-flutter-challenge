@@ -1,62 +1,59 @@
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:warehouse/core/error/failure.dart';
-
-abstract final class StoreBox {
-  static const String settings = 'settings';
-  static const String productsCache = 'products_cache';
-
-  static const List<String> all = [settings, productsCache];
-}
+import 'package:warehouse/core/storage/keys/store_box.dart';
+import 'package:warehouse/core/storage/keys/store_key.dart';
+import 'package:warehouse/core/utils/logger_service.dart';
 
 abstract interface class LocalStore {
-  T? read<T>(String box, String key);
+  T? read<T>(StoreKey key);
 
-  Future<void> write(String box, String key, Object? value);
+  Future<void> write(StoreKey key, Object? value);
 
-  Future<void> delete(String box, String key);
+  Future<void> delete(StoreKey key);
 }
 
 class HiveLocalStore implements LocalStore {
   static Future<void> init() async {
     await Hive.initFlutter();
-    for (final name in StoreBox.all) {
+    for (final name in StoreBox.values.map((b) => b.id)) {
       try {
         await Hive.openBox<dynamic>(name);
-      } on Object {
+      } on Object catch (e, s) {
         // Caja corrupta: se descarta (solo cache y preferencias) para que la app siempre arranque.
+        LoggerService.e('Caja "$name" corrupta: se borró y se recrea vacía', name: 'STORE', error: e, stackTrace: s);
         await Hive.deleteBoxFromDisk(name);
         await Hive.openBox<dynamic>(name);
       }
     }
   }
 
-  Box<dynamic> _box(String name) => Hive.box<dynamic>(name);
+  Box<dynamic> _box(StoreKey key) => Hive.box<dynamic>(key.box.id);
 
   @override
-  T? read<T>(String box, String key) {
+  T? read<T>(StoreKey key) {
     try {
-      final value = _box(box).get(key);
+      final value = _box(key).get(key.id);
       return value is T ? value : null;
     } on Object catch (e) {
-      throw Failure(FailureType.cache, detail: InternalDetail('read $box/$key: $e'));
+      throw Failure(FailureType.cache, detail: InternalDetail('read ${key.box.id}/${key.id}: $e'));
     }
   }
 
   @override
-  Future<void> write(String box, String key, Object? value) async {
+  Future<void> write(StoreKey key, Object? value) async {
     try {
-      await _box(box).put(key, value);
+      await _box(key).put(key.id, value);
     } on Object catch (e) {
-      throw Failure(FailureType.cache, detail: InternalDetail('write $box/$key: $e'));
+      throw Failure(FailureType.cache, detail: InternalDetail('write ${key.box.id}/${key.id}: $e'));
     }
   }
 
   @override
-  Future<void> delete(String box, String key) async {
+  Future<void> delete(StoreKey key) async {
     try {
-      await _box(box).delete(key);
+      await _box(key).delete(key.id);
     } on Object catch (e) {
-      throw Failure(FailureType.cache, detail: InternalDetail('delete $box/$key: $e'));
+      throw Failure(FailureType.cache, detail: InternalDetail('delete ${key.box.id}/${key.id}: $e'));
     }
   }
 }

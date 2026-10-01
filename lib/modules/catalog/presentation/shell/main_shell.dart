@@ -1,32 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
+import 'package:warehouse/modules/catalog/application/search_focus/search_focus_cubit.dart';
+import 'package:warehouse/shared/formatters/time_formatter.dart';
 import 'package:warehouse/shared/widgets/feedback/offline_badge.dart';
 import 'package:warehouse/shared/widgets/navigation/app_nav_bar.dart';
-
-// Queda pendiente si Productos aún no se construyó (IndexedStack crea las ramas al visitarlas).
-class SearchFocusRequest {
-  final ValueNotifier<int> _requests = ValueNotifier(0);
-  bool _pending = false;
-
-  Listenable get changes => _requests;
-
-  void request() {
-    _pending = true;
-    _requests.value++;
-  }
-
-  bool consume() {
-    final pending = _pending;
-    _pending = false;
-    return pending;
-  }
-
-  void dispose() => _requests.dispose();
-}
 
 class MainShell extends StatelessWidget {
   const MainShell({required this.navigationShell, super.key});
@@ -36,10 +16,10 @@ class MainShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    return RepositoryProvider<SearchFocusRequest>(
-      create: (_) => SearchFocusRequest(),
-      dispose: (request) => request.dispose(),
-      // Builder: el onSearch necesita un context por debajo del RepositoryProvider.
+
+    return BlocProvider<SearchFocusCubit>(
+      create: (_) => SearchFocusCubit(),
+      // Builder: el onSearch necesita un context por debajo del BlocProvider.
       child: Builder(
         builder: (context) => Stack(
           children: [
@@ -57,11 +37,11 @@ class MainShell extends StatelessWidget {
                     builder: (context, data) {
                       if (!data.offline) return const SizedBox.shrink();
                       return Padding(
-                        padding: const EdgeInsets.only(left: 20, bottom: 102),
+                        padding: const EdgeInsets.only(left: 20, bottom: 10),
                         child: OfflineBadge(
                           title: t.products.offline,
                           subtitle: data.syncedAt != null
-                              ? t.products.lastSync(time: DateFormat.Hm().format(data.syncedAt!))
+                              ? t.products.lastSync(time: TimeFormatter.format(context, data.syncedAt!))
                               : t.settings.neverSynced,
                         ),
                       );
@@ -95,7 +75,7 @@ class MainShell extends StatelessWidget {
                     },
                     onSearch: () {
                       navigationShell.goBranch(1, initialLocation: navigationShell.currentIndex != 1);
-                      context.read<SearchFocusRequest>().request();
+                      context.read<SearchFocusCubit>().request();
                     },
                   ),
                 ],

@@ -1,4 +1,4 @@
-part of 'product_detail_cubit.dart';
+part of 'product_detail_bloc.dart';
 
 class ProductDetailState extends Equatable {
   const ProductDetailState({this.sharing = false, this.shareError, this.confirmedShares = 0});

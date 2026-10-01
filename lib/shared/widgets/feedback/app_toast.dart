@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:warehouse/core/services/haptic_service.dart';
 import 'package:warehouse/core/theme/app_dimens.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 
@@ -9,7 +10,20 @@ abstract final class AppToast {
   static OverlayEntry? _current;
   static Timer? _timer;
 
-  static void show(BuildContext context, String message, {IconData icon = Icons.check_circle_rounded}) {
+  static void showSuccess(BuildContext context, String message, {IconData icon = Icons.check_circle_rounded}) {
+    HapticService.success();
+    _show(context, message, icon);
+  }
+
+  static void showError(BuildContext context, String message) {
+    HapticService.error();
+    _show(context, message, Icons.error_rounded);
+  }
+
+  static void showInfo(BuildContext context, String message, {IconData icon = Icons.info_outline_rounded}) =>
+      _show(context, message, icon);
+
+  static void _show(BuildContext context, String message, IconData icon) {
     _dismiss();
     final colors = context.colors;
     final top = MediaQuery.paddingOf(context).top + 8;
@@ -20,10 +34,7 @@ abstract final class AppToast {
         right: 16,
         child: IgnorePointer(
           child: Center(
-            child: TweenAnimationBuilder<double>(
-              tween: Tween(begin: 0, end: 1),
-              duration: const Duration(milliseconds: 200),
-              builder: (_, opacity, child) => Opacity(opacity: opacity, child: child),
+            child: _FadeIn(
               child: Material(
                 color: colors.ink,
                 elevation: 6,
@@ -62,4 +73,30 @@ abstract final class AppToast {
     _current?.remove();
     _current = null;
   }
+}
+
+// FadeTransition anima la opacidad en la capa sin repintar el toast en cada frame.
+class _FadeIn extends StatefulWidget {
+  const _FadeIn({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_FadeIn> createState() => _FadeInState();
+}
+
+class _FadeInState extends State<_FadeIn> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 200),
+  )..forward();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => FadeTransition(opacity: _controller, child: widget.child);
 }

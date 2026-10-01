@@ -25,10 +25,12 @@ class ProductAvatar extends StatelessWidget {
     Color(0xFF545A45),
   ];
 
+  static final RegExp _spaces = RegExp(r'\s+');
+
   String _initials() {
     final name = product.name.trim();
     if (name.isEmpty) return '?';
-    return name.split(RegExp(r'\s+')).take(2).map((word) => word[0]).join().toUpperCase();
+    return name.split(_spaces).take(2).map((word) => word[0]).join().toUpperCase();
   }
 
   @override

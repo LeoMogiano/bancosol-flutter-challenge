@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-enum FailureType { network, timeout, notFound, rateLimit, server, parse, cache, unexpected }
+enum FailureType { network, timeout, notFound, rateLimit, server, parse, cache, validation, unexpected }
 
 class Failure extends Equatable implements Exception {
   const Failure(this.type, {this.statusCode, this.detail});

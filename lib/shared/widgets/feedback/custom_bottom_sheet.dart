@@ -1,23 +1,21 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
+import 'package:warehouse/core/services/haptic_service.dart';
 import 'package:warehouse/core/theme/app_dimens.dart';
+import 'package:warehouse/core/theme/app_fonts.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 
-class CustomBottomSheet extends StatefulWidget {
+class CustomBottomSheet extends StatelessWidget {
   const CustomBottomSheet({required this.child, super.key});
 
   final Widget child;
 
   static Future<T?> show<T>(BuildContext context, Widget child) {
-    unawaited(HapticFeedback.lightImpact());
+    HapticService.selection();
     return showModalBottomSheet<T>(
       context: context,
       useRootNavigator: true,
       isScrollControlled: true,
-      enableDrag: false,
       backgroundColor: Colors.transparent,
       barrierColor: context.colors.scrim,
       sheetAnimationStyle: AppMotion.sheet,
@@ -26,25 +24,14 @@ class CustomBottomSheet extends StatefulWidget {
   }
 
   @override
-  State<CustomBottomSheet> createState() => _CustomBottomSheetState();
-}
-
-class _CustomBottomSheetState extends State<CustomBottomSheet> {
-  void _onVerticalDragEnd(DragEndDetails details) {
-    if (details.velocity.pixelsPerSecond.dy > 200) {
-      Navigator.of(context).maybePop();
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final viewInsets = MediaQuery.of(context).viewInsets;
+    final viewInsets = MediaQuery.viewInsetsOf(context);
     final colors = context.colors;
 
     return Padding(
       padding: EdgeInsets.only(bottom: viewInsets.bottom),
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.88),
+        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.88),
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: colors.surface,
@@ -55,9 +42,9 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _Handle(onDragEnd: _onVerticalDragEnd),
+                const _Handle(),
                 Flexible(
-                  child: SingleChildScrollView(padding: const EdgeInsets.fromLTRB(22, 4, 22, 16), child: widget.child),
+                  child: SingleChildScrollView(padding: const EdgeInsets.fromLTRB(22, 4, 22, 16), child: child),
                 ),
               ],
             ),
@@ -69,24 +56,18 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
 }
 
 class _Handle extends StatelessWidget {
-  const _Handle({required this.onDragEnd});
-
-  final void Function(DragEndDetails) onDragEnd;
+  const _Handle();
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
 
-    return GestureDetector(
-      onVerticalDragEnd: onDragEnd,
-      behavior: HitTestBehavior.opaque,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Container(
-          width: 36,
-          height: 4,
-          decoration: BoxDecoration(color: colors.line, borderRadius: BorderRadius.circular(2)),
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Container(
+        width: 36,
+        height: 4,
+        decoration: BoxDecoration(color: colors.line, borderRadius: BorderRadius.circular(2)),
       ),
     );
   }
@@ -114,7 +95,7 @@ class SheetHeader extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 19.65.sp,
                   fontWeight: FontWeight.w400,
-                  fontFamily: 'PlayfairDisplay',
+                  fontFamily: AppFont.playfairDisplay.family,
                   color: colors.ink,
                 ),
               ),

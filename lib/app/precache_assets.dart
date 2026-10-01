@@ -19,7 +19,9 @@ class _PrecacheAssetsState extends State<PrecacheAssets> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_cached) {
-      unawaited(precacheImage(const AssetImage(AppAssets.logo), context));
+      for (final asset in AppAssets.precached) {
+        unawaited(precacheImage(AssetImage(asset), context));
+      }
       _cached = true;
     }
   }

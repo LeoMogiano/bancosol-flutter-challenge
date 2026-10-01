@@ -10,6 +10,7 @@ class StockIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final colors = context.colors;
 
     late final Color dotColor;
@@ -17,27 +18,27 @@ class StockIndicator extends StatelessWidget {
 
     if (stock == 0) {
       dotColor = colors.bad;
-      label = context.t.stock.out;
+      label = t.stock.out;
     } else if (stock >= 1 && stock <= 5) {
       dotColor = colors.warn;
-      label = context.t.stock.units(n: stock);
+      label = t.stock.units(n: stock);
     } else {
       dotColor = colors.ok;
-      label = context.t.stock.units(n: stock);
+      label = t.stock.units(n: stock);
     }
 
     return Row(
       mainAxisSize: MainAxisSize.min,
+      spacing: 4,
       children: [
         Container(
           width: 7,
           height: 7,
           decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
         ),
-        const SizedBox(width: 4),
         Text(
           label,
-          style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w500, color: dotColor),
+          style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500, color: dotColor),
         ),
       ],
     );

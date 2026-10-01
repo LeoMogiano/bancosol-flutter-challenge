@@ -42,8 +42,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	// Translations
 
-	/// es: 'WareHouse'
-	String get appName => 'WareHouse';
+	/// es: 'Warehouse'
+	String get appName => 'Warehouse';
 
 	late final Translations$nav$es nav = Translations$nav$es.internal(_root);
 	late final Translations$actions$es actions = Translations$actions$es.internal(_root);
@@ -146,6 +146,9 @@ class Translations$failures$es {
 
 	/// es: 'No pudimos leer los datos guardados en el dispositivo.'
 	String get cache => 'No pudimos leer los datos guardados en el dispositivo.';
+
+	/// es: 'Los datos ingresados no son válidos. Revísalos e inténtalo nuevamente.'
+	String get validation => 'Los datos ingresados no son válidos. Revísalos e inténtalo nuevamente.';
 
 	/// es: 'Ocurrió un problema inesperado. Inténtalo nuevamente.'
 	String get unexpected => 'Ocurrió un problema inesperado. Inténtalo nuevamente.';
@@ -566,6 +569,12 @@ class Translations$toasts$es {
 
 	/// es: 'Compartido'
 	String get shared => 'Compartido';
+
+	/// es: 'Error de prueba enviado · {id}'
+	String sentrySent({required Object id}) => 'Error de prueba enviado · ${id}';
+
+	/// es: 'Sentry no está activo en este build'
+	String get sentryDisabled => 'Sentry no está activo en este build';
 }
 
 // Path: share
@@ -626,6 +635,15 @@ class Translations$settings$es {
 
 	/// es: 'Versión'
 	String get version => 'Versión';
+
+	/// es: 'Diagnóstico'
+	String get diagnostics => 'Diagnóstico';
+
+	/// es: 'Probar Sentry'
+	String get sentryTest => 'Probar Sentry';
+
+	/// es: 'Envía un error de prueba al dashboard'
+	String get sentryTestHint => 'Envía un error de prueba al dashboard';
 }
 
 /// The flat map containing all translations for locale <es>.
@@ -636,7 +654,7 @@ class Translations$settings$es {
 extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'appName' => 'WareHouse',
+			'appName' => 'Warehouse',
 			'nav.summary' => 'Resumen',
 			'nav.products' => 'Productos',
 			'nav.settings' => 'Ajustes',
@@ -652,6 +670,7 @@ extension on Translations {
 			'failures.rateLimit' => 'Hiciste muchas solicitudes seguidas. Espera unos segundos e inténtalo nuevamente.',
 			'failures.server' => 'Ocurrió un problema con el servidor. Inténtalo nuevamente.',
 			'failures.cache' => 'No pudimos leer los datos guardados en el dispositivo.',
+			'failures.validation' => 'Los datos ingresados no son válidos. Revísalos e inténtalo nuevamente.',
 			'failures.unexpected' => 'Ocurrió un problema inesperado. Inténtalo nuevamente.',
 			'environmentLabel' => ({required Object env}) => 'Ambiente: ${env}',
 			'summary.eyebrow' => 'GESTIÓN DE CATÁLOGO',
@@ -761,6 +780,8 @@ extension on Translations {
 			'toasts.listUpdated' => 'Lista actualizada',
 			'toasts.synced' => 'Catálogo sincronizado',
 			'toasts.shared' => 'Compartido',
+			'toasts.sentrySent' => ({required Object id}) => 'Error de prueba enviado · ${id}',
+			'toasts.sentryDisabled' => 'Sentry no está activo en este build',
 			'share.text' => ({required Object name, required Object price, required Object currency, required Object sku}) => 'Nombre: ${name}\nPrecio: ${price} ${currency}\nSKU: ${sku}',
 			'settings.eyebrow' => 'PREFERENCIAS',
 			'settings.title' => 'Ajustes',
@@ -775,6 +796,9 @@ extension on Translations {
 			'settings.neverSynced' => 'Sin sincronizar',
 			'settings.about' => 'Acerca de',
 			'settings.version' => 'Versión',
+			'settings.diagnostics' => 'Diagnóstico',
+			'settings.sentryTest' => 'Probar Sentry',
+			'settings.sentryTestHint' => 'Envía un error de prueba al dashboard',
 			_ => null,
 		};
 	}

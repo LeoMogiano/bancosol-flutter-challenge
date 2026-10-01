@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/core/network/api_client.dart';
+import 'package:warehouse/core/storage/keys/products_cache_key.dart';
+import 'package:warehouse/core/storage/keys/store_key.dart';
 import 'package:warehouse/core/storage/local_store.dart';
 import 'package:warehouse/modules/catalog/data/datasources/product_local_data_source.dart';
 import 'package:warehouse/modules/catalog/data/datasources/product_remote_data_source.dart';
@@ -10,24 +12,19 @@ import 'package:warehouse/modules/catalog/data/repositories/product_repository_i
 import '../../../../helpers/fake_adapter.dart';
 
 class _MemoryStore implements LocalStore {
-  final Map<String, Map<String, Object?>> _boxes = {};
+  final Map<StoreKey, Object?> _values = {};
 
   @override
-  T? read<T>(String box, String key) {
-    final value = _boxes[box]?[key];
+  T? read<T>(StoreKey key) {
+    final value = _values[key];
     return value is T ? value : null;
   }
 
   @override
-  Future<void> write(String box, String key, Object? value) async {
-    _boxes.putIfAbsent(box, () => {});
-    _boxes[box]![key] = value;
-  }
+  Future<void> write(StoreKey key, Object? value) async => _values[key] = value;
 
   @override
-  Future<void> delete(String box, String key) async {
-    _boxes[box]?.remove(key);
-  }
+  Future<void> delete(StoreKey key) async => _values.remove(key);
 }
 
 void main() {
@@ -107,7 +104,7 @@ void main() {
 
     await repo.getProducts(useCache: false);
 
-    expect(store.read<Object?>('products_cache', 'items'), isNull);
-    expect(store.read<Object?>('products_cache', 'synced_at'), isNull);
+    expect(store.read<Object?>(ProductsCacheKey.items), isNull);
+    expect(store.read<Object?>(ProductsCacheKey.syncedAt), isNull);
   });
 }

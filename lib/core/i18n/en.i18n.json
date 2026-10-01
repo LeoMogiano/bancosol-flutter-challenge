@@ -1,5 +1,5 @@
 {
-  "appName": "WareHouse",
+  "appName": "Warehouse",
   "nav": {
     "summary": "Summary",
     "products": "Products",
@@ -22,6 +22,7 @@
     "rateLimit": "You made too many requests in a row. Wait a few seconds and try again.",
     "server": "A server error occurred. Try again.",
     "cache": "We couldn't read the data stored on your device.",
+    "validation": "The data you entered isn't valid. Check it and try again.",
     "unexpected": "An unexpected error occurred. Try again."
   },
   "environmentLabel": "Environment: {env}",
@@ -156,7 +157,9 @@
     "deleted": "Product deleted",
     "listUpdated": "List updated",
     "synced": "Catalog synced",
-    "shared": "Shared"
+    "shared": "Shared",
+    "sentrySent": "Test error sent · {id}",
+    "sentryDisabled": "Sentry is not enabled in this build"
   },
   "share": {
     "text": "Name: {name}\nPrice: {price} {currency}\nSKU: {sku}"
@@ -174,6 +177,9 @@
     "syncedAt": "Synced {time}",
     "neverSynced": "Not synced yet",
     "about": "About",
-    "version": "Version"
+    "version": "Version",
+    "diagnostics": "Diagnostics",
+    "sentryTest": "Test Sentry",
+    "sentryTestHint": "Sends a test error to the dashboard"
   }
 }

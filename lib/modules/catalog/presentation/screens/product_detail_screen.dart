@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sizer/sizer.dart';
+import 'package:warehouse/core/constants/app_routes.dart';
 import 'package:warehouse/core/di/service_locator.dart';
-import 'package:warehouse/core/i18n/failure_i18n.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
-import 'package:warehouse/modules/catalog/application/product_detail/product_detail_cubit.dart';
+import 'package:warehouse/modules/catalog/application/product_detail/product_detail_bloc.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/share_product.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/delete_confirm_sheet.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/price_edit_sheet.dart';
-import 'package:warehouse/modules/catalog/presentation/widgets/product_avatar.dart';
-import 'package:warehouse/modules/catalog/presentation/widgets/stock_indicator.dart';
-import 'package:warehouse/shared/formatters/price_formatter.dart';
-import 'package:warehouse/shared/widgets/buttons/app_button.dart';
+import 'package:warehouse/modules/catalog/presentation/widgets/product_detail/detail_bottom_bar.dart';
+import 'package:warehouse/modules/catalog/presentation/widgets/product_detail/detail_header.dart';
+import 'package:warehouse/modules/catalog/presentation/widgets/product_detail/detail_info_table.dart';
+import 'package:warehouse/modules/catalog/presentation/widgets/product_detail/detail_price_card.dart';
 import 'package:warehouse/shared/widgets/buttons/app_icon_button.dart';
-import 'package:warehouse/shared/widgets/cards/app_card.dart';
 import 'package:warehouse/shared/widgets/feedback/app_toast.dart';
 import 'package:warehouse/shared/widgets/layout/app_top_bar.dart';
 import 'package:warehouse/shared/widgets/layout/custom_scaffold.dart';
+
+// Abierto por deep link no hay ruta debajo: se vuelve al listado en vez de dejar el stack vacío.
+void _closeDetail(BuildContext context) => context.canPop() ? context.pop() : context.go(AppRoutes.products);
 
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({required this.remoteId, super.key});
@@ -39,7 +41,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     if (_closing) return;
     _closing = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) Navigator.of(context).pop();
+      if (mounted) _closeDetail(context);
     });
   }
 
@@ -51,19 +53,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<ProductsBloc, ProductsState, Product?>(
-      selector: (state) => state.all.where((p) => p.remoteId == widget.remoteId).firstOrNull,
-      builder: (context, product) {
-        if (product == null) {
-          _closeOnce();
-          return const SizedBox.shrink();
-        }
+    final product = context.select<ProductsBloc, Product?>(
+      (bloc) => bloc.state.all.where((p) => p.remoteId == widget.remoteId).firstOrNull,
+    );
+    if (product == null) {
+      _closeOnce();
+      return const SizedBox.shrink();
+    }
 
-        return BlocProvider(
-          create: (_) => ProductDetailCubit(shareProduct: sl<ShareProduct>()),
-          child: _ProductDetailContent(product: product, edited: _edited, onPriceEdited: () => _edited.value = true),
-        );
-      },
+    return BlocProvider(
+      create: (_) => sl<ProductDetailBloc>(),
+      child: _ProductDetailContent(product: product, edited: _edited, onPriceEdited: () => _edited.value = true),
     );
   }
 }
@@ -76,18 +76,20 @@ class _ProductDetailContent extends StatelessWidget {
   final VoidCallback onPriceEdited;
 
   Future<void> _openPriceEdit(BuildContext context) async {
+    final t = context.t;
     final updated = await PriceEditSheet.open(context, product);
     if (updated != null && context.mounted) {
       context.read<ProductsBloc>().add(ProductUpserted(updated));
-      AppToast.show(context, context.t.toasts.priceUpdated);
+      AppToast.showSuccess(context, t.toasts.priceUpdated);
       onPriceEdited();
     }
   }
 
   Future<void> _openDelete(BuildContext context) async {
+    final t = context.t;
     final deleted = await DeleteConfirmSheet.open(context, product);
     if (deleted && context.mounted) {
-      AppToast.show(context, context.t.toasts.deleted, icon: Icons.delete_rounded);
+      AppToast.showSuccess(context, t.toasts.deleted, icon: Icons.delete_rounded);
       context.read<ProductsBloc>().add(ProductRemoved(product.remoteId));
     }
   }
@@ -95,186 +97,34 @@ class _ProductDetailContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final colors = context.colors;
 
     return CustomScaffold(
       padding: EdgeInsets.zero,
-      bottomBar: BlocListener<ProductDetailCubit, ProductDetailState>(
-        listenWhen: (prev, curr) =>
-            prev.confirmedShares != curr.confirmedShares || (curr.shareError != null && prev.shareError == null),
-        listener: (context, state) {
-          final error = state.shareError;
-          error == null
-              ? AppToast.show(context, t.toasts.shared, icon: Icons.ios_share_rounded)
-              : AppToast.show(context, error.message, icon: Icons.error_rounded);
-        },
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: colors.bg,
-            border: Border(top: BorderSide(color: colors.line)),
-          ),
-          child: SafeArea(
-            top: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 10,
-                    child: BlocSelector<ProductDetailCubit, ProductDetailState, bool>(
-                      selector: (state) => state.sharing,
-                      builder: (context, sharing) => AppButton(
-                        label: t.detail.share,
-                        variant: AppButtonVariant.outline,
-                        icon: Icons.ios_share_rounded,
-                        loading: sharing,
-                        onPressed: () => context.read<ProductDetailCubit>().share(
-                          product,
-                          text: t.share.text(
-                            name: product.name,
-                            price: PriceFormatter.format(product.price),
-                            currency: product.currency,
-                            sku: product.sku,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    flex: 13,
-                    child: AppButton(
-                      label: t.detail.editPrice,
-                      icon: Icons.edit_rounded,
-                      onPressed: () => _openPriceEdit(context),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
+      bottomBar: DetailBottomBar(product: product, onEditPrice: () => _openPriceEdit(context)),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AppTopBar.compact(
               title: t.detail.title,
-              onBack: () => Navigator.of(context).pop(),
+              onBack: () => _closeDetail(context),
               action: AppIconButton(
                 icon: Icons.delete_outline_rounded,
-                color: colors.bad,
+                color: context.colors.bad,
                 tooltip: t.delete.confirm,
                 onPressed: () => _openDelete(context),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 20,
                 children: [
-                  Row(
-                    children: [
-                      ProductAvatar(product: product, size: 68),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              product.name,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 19.65.sp,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'PlayfairDisplay',
-                                color: colors.ink,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: colors.surface2,
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              child: Text(
-                                product.sku,
-                                style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w500, color: colors.ink3),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  AppCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
-                          textBaseline: TextBaseline.alphabetic,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                t.detail.price,
-                                style: TextStyle(fontSize: 14.sp, color: colors.ink2),
-                              ),
-                            ),
-                            ValueListenableBuilder(
-                              valueListenable: edited,
-                              builder: (_, editedValue, _) {
-                                if (!editedValue) return const SizedBox.shrink();
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: colors.accentSoft,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Text(
-                                    t.detail.updated,
-                                    style: TextStyle(
-                                      fontSize: 12.5.sp,
-                                      color: colors.accent,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
-                          textBaseline: TextBaseline.alphabetic,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                PriceFormatter.format(product.price),
-                                style: TextStyle(fontSize: 25.25.sp, fontWeight: FontWeight.w700, color: colors.accent),
-                              ),
-                            ),
-                            Text(
-                              product.currency,
-                              style: TextStyle(fontSize: 14.5.sp, fontWeight: FontWeight.w600, color: colors.ink3),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  _InfoTable(product: product),
-                  const SizedBox(height: 20),
-                  Text(
-                    t.detail.note,
-                    style: TextStyle(fontSize: 14.sp, color: colors.ink3),
-                  ),
+                  DetailHeader(product: product),
+                  DetailPriceCard(price: product.price, currency: product.currency, edited: edited),
+                  DetailInfoTable(product: product),
+                  const _DetailNote(),
                 ],
               ),
             ),
@@ -285,77 +135,32 @@ class _ProductDetailContent extends StatelessWidget {
   }
 }
 
-class _InfoTable extends StatelessWidget {
-  const _InfoTable({required this.product});
-
-  final Product product;
+class _DetailNote extends StatelessWidget {
+  const _DetailNote();
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     final t = context.t;
-
-    return Column(
-      children: [
-        _InfoRow(label: t.detail.sku, value: product.sku),
-        const SizedBox(height: 12),
-        _InfoRow(
-          label: t.detail.stock,
-          value: '',
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              StockIndicator(stock: product.stock),
-              const SizedBox(width: 8),
-              Icon(Icons.lock_rounded, size: 16, color: colors.ink3),
-            ],
-          ),
-        ),
-        const SizedBox(height: 12),
-        _InfoRow(
-          label: t.detail.currency,
-          value: product.currency,
-          trailing: Icon(Icons.lock_rounded, size: 16, color: colors.ink3),
-        ),
-        const SizedBox(height: 12),
-        _InfoRow(label: t.detail.id, value: '${product.id}'),
-      ],
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  const _InfoRow({required this.label, required this.value, this.trailing});
-
-  final String label;
-  final String value;
-  final Widget? trailing;
-
-  @override
-  Widget build(BuildContext context) {
     final colors = context.colors;
 
-    return Row(
-      children: [
-        Expanded(
-          flex: 3,
-          child: Text(
-            label,
-            style: TextStyle(fontSize: 14.5.sp, color: colors.ink2),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 8,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Icon(Icons.info_outline_rounded, size: 16, color: colors.ink3),
           ),
-        ),
-        Expanded(
-          flex: 5,
-          child: Text(
-            value,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.end,
-            style: TextStyle(fontSize: 14.5.sp, fontWeight: FontWeight.w500, color: colors.ink),
+          Expanded(
+            child: Text(
+              t.detail.note,
+              style: TextStyle(fontSize: 13.5.sp, color: colors.ink3, height: 1.4),
+            ),
           ),
-        ),
-        if (trailing != null) ...[const SizedBox(width: 8), trailing!],
-      ],
+        ],
+      ),
     );
   }
 }

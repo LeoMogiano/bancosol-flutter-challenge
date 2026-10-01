@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/di/service_locator.dart';
-import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/core/i18n/failure_i18n.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
+import 'package:warehouse/core/services/haptic_service.dart';
+import 'package:warehouse/core/theme/app_fonts.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
-import 'package:warehouse/modules/catalog/application/delete_product/delete_product_cubit.dart';
+import 'package:warehouse/modules/catalog/application/delete_product/delete_product_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/delete_product.dart';
 import 'package:warehouse/shared/widgets/buttons/app_button.dart';
 import 'package:warehouse/shared/widgets/feedback/custom_bottom_sheet.dart';
 import 'package:warehouse/shared/widgets/feedback/error_banner.dart';
@@ -26,11 +26,11 @@ class DeleteConfirmSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => DeleteProductCubit(product: product, deleteProduct: sl<DeleteProduct>()),
-      child: BlocListener<DeleteProductCubit, DeleteProductState>(
-        listenWhen: (prev, curr) => !prev.deleted && curr.deleted,
-        listener: (context, _) => Navigator.of(context).pop(true),
-        child: BlocBuilder<DeleteProductCubit, DeleteProductState>(
+      create: (_) => sl<DeleteProductBloc>(param1: product),
+      child: BlocListener<DeleteProductBloc, DeleteProductState>(
+        listenWhen: (prev, curr) => prev.submitting && !curr.submitting,
+        listener: (context, state) => state.deleted ? Navigator.of(context).pop(true) : HapticService.error(),
+        child: BlocBuilder<DeleteProductBloc, DeleteProductState>(
           builder: (context, state) => PopScope(canPop: !state.submitting, child: _content(context, state)),
         ),
       ),
@@ -55,7 +55,7 @@ class DeleteConfirmSheet extends StatelessWidget {
         Text(
           t.delete.title,
           textAlign: TextAlign.center,
-          style: TextStyle(fontFamily: 'PlayfairDisplay', fontSize: 19.65.sp, color: colors.ink),
+          style: TextStyle(fontFamily: AppFont.playfairDisplay.family, fontSize: 19.65.sp, color: colors.ink),
         ),
         const SizedBox(height: 10),
         Text(
@@ -63,7 +63,12 @@ class DeleteConfirmSheet extends StatelessWidget {
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14.5.sp, height: 1.5, color: colors.ink2),
         ),
-        if (failure != null) ...[const SizedBox(height: 16), ErrorBanner(message: _errorMessage(t, failure))],
+        if (failure != null) ...[
+          const SizedBox(height: 16),
+          ErrorBanner(
+            message: failure.messageFor(offline: t.delete.offlineError, server: t.delete.serverError),
+          ),
+        ],
         const SizedBox(height: 22),
         SheetActions(
           secondary: AppButton(
@@ -76,16 +81,10 @@ class DeleteConfirmSheet extends StatelessWidget {
             variant: AppButtonVariant.danger,
             loading: state.submitting,
             loadingLabel: t.delete.deleting,
-            onPressed: context.read<DeleteProductCubit>().confirm,
+            onPressed: () => context.read<DeleteProductBloc>().add(const DeleteProductConfirmed()),
           ),
         ),
       ],
     );
   }
-
-  static String _errorMessage(Translations t, Failure failure) => switch (failure.type) {
-    FailureType.network || FailureType.timeout => t.delete.offlineError,
-    FailureType.notFound => failure.message,
-    _ => t.delete.serverError,
-  };
 }

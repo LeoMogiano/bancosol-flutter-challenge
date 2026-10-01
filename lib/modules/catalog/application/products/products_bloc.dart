@@ -3,19 +3,18 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/core/error/failure.dart';
-import 'package:warehouse/core/theme/app_dimens.dart';
 import 'package:warehouse/core/utils/app_clock.dart';
+import 'package:warehouse/core/utils/logger_service.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/services/product_query.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/get_products.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/get_products_use_case.dart';
 
 part 'products_event.dart';
 part 'products_state.dart';
 
 class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
-  ProductsBloc({required GetProducts getProducts, required bool Function() useCache, AppClock clock = const AppClock()})
+  ProductsBloc({required GetProductsUseCase getProducts, AppClock clock = const AppClock()})
     : _getProducts = getProducts,
-      _useCache = useCache,
       _clock = clock,
       super(const ProductsState()) {
     on<ProductsRequested>(_onRequested);
@@ -29,8 +28,9 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
     on<_HighlightExpired>(_onHighlightExpired);
   }
 
-  final GetProducts _getProducts;
-  final bool Function() _useCache;
+  static const Duration highlightDuration = Duration(milliseconds: 2200);
+
+  final GetProductsUseCase _getProducts;
   final AppClock _clock;
   Timer? _highlightTimer;
 
@@ -46,7 +46,7 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
 
   Future<void> _load(Emitter<ProductsState> emit) async {
     try {
-      final snapshot = await _getProducts(useCache: _useCache());
+      final snapshot = await _getProducts();
       emit(
         _withView(
           state.copyWith(
@@ -59,16 +59,24 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
         ),
       );
     } on Failure catch (failure) {
-      // Con datos ya en pantalla, un refresco fallido no los borra: solo se informa.
-      final hasData = state.all.isNotEmpty;
-      emit(
-        state.copyWith(
-          status: hasData ? ProductsStatus.success : ProductsStatus.failure,
-          failure: () => failure,
-          isRefreshing: false,
-        ),
-      );
+      _emitFailure(emit, failure);
+    } on Object catch (e, st) {
+      // Sin esto, isRefreshing queda en true y quien espera el fin del refresco nunca sigue.
+      LoggerService.e('Carga de productos', name: 'CATALOG', error: e, stackTrace: st);
+      _emitFailure(emit, const Failure(FailureType.unexpected));
     }
+  }
+
+  // Con datos ya en pantalla, un refresco fallido no los borra: solo se informa.
+  void _emitFailure(Emitter<ProductsState> emit, Failure failure) {
+    final hasData = state.all.isNotEmpty;
+    emit(
+      state.copyWith(
+        status: hasData ? ProductsStatus.success : ProductsStatus.failure,
+        failure: () => failure,
+        isRefreshing: false,
+      ),
+    );
   }
 
   void _onQueryChanged(ProductsQueryChanged event, Emitter<ProductsState> emit) {
@@ -99,7 +107,7 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
     emit(_withView(state.copyWith(status: ProductsStatus.success, all: all, highlightId: () => product.remoteId)));
 
     _highlightTimer?.cancel();
-    _highlightTimer = _clock.timer(AppMotion.highlight, () {
+    _highlightTimer = _clock.timer(highlightDuration, () {
       if (!isClosed) add(const _HighlightExpired());
     });
   }

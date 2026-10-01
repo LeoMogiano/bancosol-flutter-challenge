@@ -39,7 +39,7 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsEn $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsEn(meta: meta ?? this.$meta);
 
 	// Translations
-	@override String get appName => 'WareHouse';
+	@override String get appName => 'Warehouse';
 	@override late final _Translations$nav$en nav = _Translations$nav$en._(_root);
 	@override late final _Translations$actions$en actions = _Translations$actions$en._(_root);
 	@override late final _Translations$theme$en theme = _Translations$theme$en._(_root);
@@ -108,6 +108,7 @@ class _Translations$failures$en extends Translations$failures$es {
 	@override String get rateLimit => 'You made too many requests in a row. Wait a few seconds and try again.';
 	@override String get server => 'A server error occurred. Try again.';
 	@override String get cache => 'We couldn\'t read the data stored on your device.';
+	@override String get validation => 'The data you entered isn\'t valid. Check it and try again.';
 	@override String get unexpected => 'An unexpected error occurred. Try again.';
 }
 
@@ -312,6 +313,8 @@ class _Translations$toasts$en extends Translations$toasts$es {
 	@override String get listUpdated => 'List updated';
 	@override String get synced => 'Catalog synced';
 	@override String get shared => 'Shared';
+	@override String sentrySent({required Object id}) => 'Test error sent · ${id}';
+	@override String get sentryDisabled => 'Sentry is not enabled in this build';
 }
 
 // Path: share
@@ -344,6 +347,9 @@ class _Translations$settings$en extends Translations$settings$es {
 	@override String get neverSynced => 'Not synced yet';
 	@override String get about => 'About';
 	@override String get version => 'Version';
+	@override String get diagnostics => 'Diagnostics';
+	@override String get sentryTest => 'Test Sentry';
+	@override String get sentryTestHint => 'Sends a test error to the dashboard';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -354,7 +360,7 @@ class _Translations$settings$en extends Translations$settings$es {
 extension on TranslationsEn {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'appName' => 'WareHouse',
+			'appName' => 'Warehouse',
 			'nav.summary' => 'Summary',
 			'nav.products' => 'Products',
 			'nav.settings' => 'Settings',
@@ -370,6 +376,7 @@ extension on TranslationsEn {
 			'failures.rateLimit' => 'You made too many requests in a row. Wait a few seconds and try again.',
 			'failures.server' => 'A server error occurred. Try again.',
 			'failures.cache' => 'We couldn\'t read the data stored on your device.',
+			'failures.validation' => 'The data you entered isn\'t valid. Check it and try again.',
 			'failures.unexpected' => 'An unexpected error occurred. Try again.',
 			'environmentLabel' => ({required Object env}) => 'Environment: ${env}',
 			'summary.eyebrow' => 'CATALOG MANAGEMENT',
@@ -479,6 +486,8 @@ extension on TranslationsEn {
 			'toasts.listUpdated' => 'List updated',
 			'toasts.synced' => 'Catalog synced',
 			'toasts.shared' => 'Shared',
+			'toasts.sentrySent' => ({required Object id}) => 'Test error sent · ${id}',
+			'toasts.sentryDisabled' => 'Sentry is not enabled in this build',
 			'share.text' => ({required Object name, required Object price, required Object currency, required Object sku}) => 'Name: ${name}\nPrice: ${price} ${currency}\nSKU: ${sku}',
 			'settings.eyebrow' => 'PREFERENCES',
 			'settings.title' => 'Settings',
@@ -493,6 +502,9 @@ extension on TranslationsEn {
 			'settings.neverSynced' => 'Not synced yet',
 			'settings.about' => 'About',
 			'settings.version' => 'Version',
+			'settings.diagnostics' => 'Diagnostics',
+			'settings.sentryTest' => 'Test Sentry',
+			'settings.sentryTestHint' => 'Sends a test error to the dashboard',
 			_ => null,
 		};
 	}

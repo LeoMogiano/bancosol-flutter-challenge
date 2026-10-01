@@ -11,7 +11,7 @@ import 'package:warehouse/app/state_provider.dart';
 import 'package:warehouse/core/i18n/app_locale_sync.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/app_theme.dart';
-import 'package:warehouse/modules/catalog/application/preferences/preferences_cubit.dart';
+import 'package:warehouse/modules/catalog/application/preferences/preferences_bloc.dart';
 
 Future<void> main() async {
   SentryWidgetsFlutterBinding.ensureInitialized();
@@ -24,11 +24,11 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StateProvider(
-      child: BlocListener<PreferencesCubit, PreferencesState>(
+      child: BlocListener<PreferencesBloc, PreferencesState>(
         listenWhen: (prev, curr) => prev.languageCode != curr.languageCode,
         listener: (_, state) => applyAppLocale(state.languageCode),
         child: Sizer(
-          builder: (_, _, _) => BlocSelector<PreferencesCubit, PreferencesState, ThemeMode>(
+          builder: (_, _, _) => BlocSelector<PreferencesBloc, PreferencesState, ThemeMode>(
             selector: (state) => state.themeMode,
             builder: (context, themeMode) => MaterialApp.router(
               debugShowCheckedModeBanner: false,
@@ -40,10 +40,9 @@ class MainApp extends StatelessWidget {
               supportedLocales: AppLocaleUtils.supportedLocales,
               localizationsDelegates: GlobalMaterialLocalizations.delegates,
               routerConfig: appRouter,
-              builder: (context, child) => MediaQuery(
-                data: MediaQuery.of(context).copyWith(
-                  textScaler: MediaQuery.textScalerOf(context).clamp(minScaleFactor: 0.8, maxScaleFactor: 1.15),
-                ),
+              builder: (_, child) => MediaQuery.withClampedTextScaling(
+                minScaleFactor: 0.8,
+                maxScaleFactor: 1.15,
                 child: PrecacheAssets(child: child ?? const SizedBox.shrink()),
               ),
             ),

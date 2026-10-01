@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:warehouse/core/theme/app_fonts.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/shared/widgets/buttons/app_icon_button.dart';
 
@@ -33,15 +34,14 @@ class AppTopBar extends StatelessWidget {
     final eyebrowSize = 12.sp;
     final colors = context.colors;
 
-    return Container(
-      height: 120,
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 14),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Expanded(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -61,7 +61,7 @@ class AppTopBar extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 22.65.sp,
                     fontWeight: FontWeight.w400,
-                    fontFamily: 'PlayfairDisplay',
+                    fontFamily: AppFont.playfairDisplay.family,
                     color: colors.ink,
                     height: 1.05,
                   ),

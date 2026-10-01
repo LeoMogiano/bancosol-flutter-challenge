@@ -1,41 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
+import 'package:warehouse/core/services/haptic_service.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
+import 'package:warehouse/shared/widgets/lists/app_tile.dart';
 
 class AppSwitchTile extends StatelessWidget {
-  const AppSwitchTile({required this.title, required this.value, required this.onChanged, this.subtitle, super.key});
+  const AppSwitchTile({
+    required this.title,
+    required this.value,
+    required this.onChanged,
+    this.subtitle,
+    this.icon,
+    super.key,
+  });
 
   final String title;
   final bool value;
   final ValueChanged<bool> onChanged;
   final String? subtitle;
+  final IconData? icon;
+
+  void _toggle(bool next) {
+    HapticService.toggle(on: next);
+    onChanged(next);
+  }
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
 
-    return Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w500, color: colors.ink),
-              ),
-              if (subtitle != null) ...[
-                const SizedBox(height: 2),
-                Text(
-                  subtitle!,
-                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w400, color: colors.ink2),
-                ),
-              ],
-            ],
-          ),
+    return AppTile(
+      title: title,
+      subtitle: subtitle,
+      icon: icon,
+      onTap: () => _toggle(!value),
+      trailing: Switch(
+        value: value,
+        onChanged: _toggle,
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        thumbColor: WidgetStatePropertyAll(colors.surface),
+        trackColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected) ? colors.accent : colors.surface2,
         ),
-        Switch.adaptive(value: value, onChanged: onChanged, activeThumbColor: colors.accent),
-      ],
+        trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+      ),
     );
   }
 }

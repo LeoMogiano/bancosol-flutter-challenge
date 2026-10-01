@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:warehouse/core/services/logger_service.dart';
+import 'package:warehouse/core/utils/logger_service.dart';
 
 class RedactingLogInterceptor extends Interceptor {
   static final _sensitivePattern = RegExp(
@@ -10,6 +10,9 @@ class RedactingLogInterceptor extends Interceptor {
     'api_key|apiKey|x-api-key)',
     caseSensitive: false,
   );
+
+  // Los agrega sentry_dio en el adapter; solo aparecían al reintentar, cuando el options ya los trae. Ruido en el log.
+  static const _hiddenHeaders = {'sentry-trace', 'baggage'};
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
@@ -63,7 +66,9 @@ class RedactingLogInterceptor extends Interceptor {
   Map<String, dynamic> _redactHeaders(Map<String, dynamic> headers) {
     final redacted = <String, dynamic>{};
     headers.forEach((key, value) {
-      if (key.toLowerCase() == 'x-api-key' || key.toLowerCase() == 'authorization') {
+      final name = key.toLowerCase();
+      if (_hiddenHeaders.contains(name)) return;
+      if (name == 'x-api-key' || name == 'authorization') {
         redacted[key] = '***';
       } else {
         redacted[key] = value;

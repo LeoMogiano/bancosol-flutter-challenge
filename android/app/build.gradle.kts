@@ -31,23 +31,34 @@ android {
         create("dev") {
             dimension = "env"
             applicationIdSuffix = ".dev"
-            resValue("string", "app_name", "WareHouse Dev")
+            resValue("string", "app_name", "Warehouse Dev")
         }
         create("qa") {
             dimension = "env"
             applicationIdSuffix = ".qa"
-            resValue("string", "app_name", "WareHouse QA")
+            resValue("string", "app_name", "Warehouse QA")
         }
         create("prod") {
             dimension = "env"
-            resValue("string", "app_name", "WareHouse")
+            resValue("string", "app_name", "Warehouse")
         }
     }
 
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
         }
+    }
+}
+
+androidComponents {
+    // Flutter forces R8 on every release; dev stays unminified for readable native traces.
+    beforeVariants(selector().withFlavor("env" to "dev").withBuildType("release")) {
+        it.isMinifyEnabled = false
+        it.shrinkResources = false
     }
 }
 

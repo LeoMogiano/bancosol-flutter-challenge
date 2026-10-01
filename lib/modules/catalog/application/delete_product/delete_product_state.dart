@@ -1,4 +1,4 @@
-part of 'delete_product_cubit.dart';
+part of 'delete_product_bloc.dart';
 
 class DeleteProductState extends Equatable {
   const DeleteProductState({this.submitting = false, this.submitError, this.deleted = false});

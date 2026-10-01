@@ -26,7 +26,7 @@ class ProductDto {
     );
   }
 
-  factory ProductDto.fromDomain(Product p) => ProductDto(
+  factory ProductDto.fromEntity(Product p) => ProductDto(
     remoteId: p.remoteId,
     id: p.id,
     sku: p.sku,
@@ -56,7 +56,7 @@ class ProductDto {
 
   Map<String, Object?> toCacheJson() => {'_id': remoteId, ...toJson()};
 
-  Product toDomain() =>
+  Product toEntity() =>
       Product(remoteId: remoteId, id: id, sku: sku, name: name, price: price, currency: currency, stock: stock);
 
   static Map<String, Object?> draftJson(ProductDraft d) => {

@@ -1,5 +1,5 @@
 {
-  "appName": "WareHouse",
+  "appName": "Warehouse",
   "nav": {
     "summary": "Resumo",
     "products": "Produtos",
@@ -22,6 +22,7 @@
     "rateLimit": "Você fez muitas solicitações seguidas. Aguarde alguns segundos e tente novamente.",
     "server": "Um erro no servidor ocorreu. Tente novamente.",
     "cache": "Não conseguimos ler os dados armazenados no seu dispositivo.",
+    "validation": "Os dados informados não são válidos. Revise-os e tente novamente.",
     "unexpected": "Um erro inesperado ocorreu. Tente novamente."
   },
   "environmentLabel": "Ambiente: {env}",
@@ -156,7 +157,9 @@
     "deleted": "Produto excluído",
     "listUpdated": "Lista atualizada",
     "synced": "Catálogo sincronizado",
-    "shared": "Compartilhado"
+    "shared": "Compartilhado",
+    "sentrySent": "Erro de teste enviado · {id}",
+    "sentryDisabled": "O Sentry não está ativo neste build"
   },
   "share": {
     "text": "Nome: {name}\nPreço: {price} {currency}\nSKU: {sku}"
@@ -174,6 +177,9 @@
     "syncedAt": "Sincronizado {time}",
     "neverSynced": "Ainda não sincronizado",
     "about": "Sobre",
-    "version": "Versão"
+    "version": "Versão",
+    "diagnostics": "Diagnóstico",
+    "sentryTest": "Testar Sentry",
+    "sentryTestHint": "Envia um erro de teste ao painel"
   }
 }
