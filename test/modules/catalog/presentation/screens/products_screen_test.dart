@@ -7,38 +7,47 @@ import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/app_theme.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
+import 'package:warehouse/modules/catalog/application/search_focus/search_focus_cubit.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/get_products.dart';
 import 'package:warehouse/modules/catalog/presentation/screens/products_screen.dart';
-import 'package:warehouse/modules/catalog/presentation/shell/main_shell.dart';
 
 class _MockGetProducts extends Mock implements GetProducts;
+
+Future<void> _pumpScreen(WidgetTester tester, {required ProductsBloc bloc, required SearchFocusCubit focus}) async {
+  tester.view
+    ..physicalSize = const Size(411 * 2.625, 891 * 2.625)
+    ..devicePixelRatio = 2.625;
+  addTearDown(tester.view.reset);
+  await tester.pumpWidget(
+    TranslationProvider(
+      child: Sizer(
+        builder: (_, _, _) => MaterialApp(
+          theme: AppTheme.light,
+          home: MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: bloc),
+              BlocProvider.value(value: focus),
+            ],
+            child: const ProductsScreen(),
+          ),
+        ),
+      ),
+    ),
+  );
+}
 
 void main() {
   setUp(() => LocaleSettings.setLocale(AppLocale.es));
 
   testWidgets('si la API falla muestra el error y "Reintentar" vuelve a pedir el catálogo', (tester) async {
-    tester.view
-      ..physicalSize = const Size(411 * 2.625, 891 * 2.625)
-      ..devicePixelRatio = 2.625;
-    addTearDown(tester.view.reset);
     final getProducts = _MockGetProducts();
     when(() => getProducts(useCache: true)).thenThrow(const Failure(FailureType.network));
     final bloc = ProductsBloc(getProducts: getProducts, useCache: () => true)..add(const ProductsRequested());
+    final focus = SearchFocusCubit();
     addTearDown(bloc.close);
+    addTearDown(focus.close);
 
-    await tester.pumpWidget(
-      TranslationProvider(
-        child: Sizer(
-          builder: (_, _, _) => MaterialApp(
-            theme: AppTheme.light,
-            home: RepositoryProvider(
-              create: (_) => SearchFocusRequest(),
-              child: BlocProvider.value(value: bloc, child: const ProductsScreen()),
-            ),
-          ),
-        ),
-      ),
-    );
+    await _pumpScreen(tester, bloc: bloc, focus: focus);
     await tester.pumpAndSettle();
 
     expect(find.text(t.products.errorTitle), findsOneWidget);
@@ -46,5 +55,18 @@ void main() {
     await tester.pumpAndSettle();
 
     verify(() => getProducts(useCache: true)).called(2);
+  });
+
+  testWidgets('una búsqueda pedida antes de abrir Productos enfoca el campo al construirse', (tester) async {
+    final bloc = ProductsBloc(getProducts: _MockGetProducts(), useCache: () => true);
+    final focus = SearchFocusCubit()..request();
+    addTearDown(bloc.close);
+    addTearDown(focus.close);
+
+    await _pumpScreen(tester, bloc: bloc, focus: focus);
+    await tester.pump();
+
+    expect(tester.widget<EditableText>(find.byType(EditableText)).focusNode.hasFocus, isTrue);
+    expect(focus.state, isFalse);
   });
 }
