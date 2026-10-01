@@ -12,4 +12,10 @@ extension FailureI18n on Failure {
     FailureType.validation => t.failures.validation,
     FailureType.parse || FailureType.unexpected => t.failures.unexpected,
   };
+
+  String messageFor({required String offline, required String server}) => switch (type) {
+    FailureType.network || FailureType.timeout => offline,
+    FailureType.notFound || FailureType.validation => message,
+    _ => server,
+  };
 }

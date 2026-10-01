@@ -152,11 +152,7 @@ class _ServerError extends StatelessWidget {
     final t = context.t;
     final failure = context.select<PriceEditBloc, Failure?>((bloc) => bloc.state.submitError);
     if (failure == null) return const SizedBox.shrink();
-    final message = switch (failure.type) {
-      FailureType.network || FailureType.timeout => t.priceEdit.offlineError,
-      FailureType.notFound || FailureType.validation => failure.message,
-      _ => t.priceEdit.serverError,
-    };
+    final message = failure.messageFor(offline: t.priceEdit.offlineError, server: t.priceEdit.serverError);
     return Padding(
       padding: const EdgeInsets.only(top: 14),
       child: ErrorBanner(title: t.priceEdit.errorTitle, message: message),
