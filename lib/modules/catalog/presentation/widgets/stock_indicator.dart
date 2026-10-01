@@ -8,24 +8,19 @@ class StockIndicator extends StatelessWidget {
 
   final int stock;
 
+  static String labelFor(Translations t, int stock) => stock == 0 ? t.stock.out : t.stock.units(n: stock);
+
   @override
   Widget build(BuildContext context) {
     final t = context.t;
     final colors = context.colors;
 
-    late final Color dotColor;
-    late final String label;
-
-    if (stock == 0) {
-      dotColor = colors.bad;
-      label = t.stock.out;
-    } else if (stock >= 1 && stock <= 5) {
-      dotColor = colors.warn;
-      label = t.stock.units(n: stock);
-    } else {
-      dotColor = colors.ok;
-      label = t.stock.units(n: stock);
-    }
+    final label = labelFor(t, stock);
+    final dotColor = switch (stock) {
+      0 => colors.bad,
+      <= 5 => colors.warn,
+      _ => colors.ok,
+    };
 
     return Row(
       mainAxisSize: MainAxisSize.min,

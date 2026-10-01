@@ -9,4 +9,11 @@ void main() {
     expect(out, isNot(contains('"v"')));
     expect(out, contains('Cuaderno'));
   });
+
+  test('oculta secretos en la query de la URL', () {
+    final out = RedactingLogInterceptor.redactUrl(Uri.parse('https://api.test/p?access_token=abc&q=lapiz'));
+
+    expect(out, isNot(contains('abc')));
+    expect(out, contains('q=lapiz'));
+  });
 }

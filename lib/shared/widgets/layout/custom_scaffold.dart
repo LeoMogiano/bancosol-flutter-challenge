@@ -57,6 +57,7 @@ class CustomScaffold extends StatelessWidget {
     content = GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () => FocusScope.of(context).unfocus(),
+      excludeFromSemantics: true,
       child: content,
     );
 

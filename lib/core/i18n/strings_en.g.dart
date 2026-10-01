@@ -57,6 +57,7 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$toasts$en toasts = _Translations$toasts$en._(_root);
 	@override late final _Translations$share$en share = _Translations$share$en._(_root);
 	@override late final _Translations$settings$en settings = _Translations$settings$en._(_root);
+	@override late final _Translations$a11y$en a11y = _Translations$a11y$en._(_root);
 }
 
 // Path: nav
@@ -352,6 +353,16 @@ class _Translations$settings$en extends Translations$settings$es {
 	@override String get sentryTestHint => 'Sends a test error to the dashboard';
 }
 
+// Path: a11y
+class _Translations$a11y$en extends Translations$a11y$es {
+	_Translations$a11y$en._(TranslationsEn root) : this._root = root, super.internal(root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String page({required Object n}) => 'Page ${n}';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -505,6 +516,7 @@ extension on TranslationsEn {
 			'settings.diagnostics' => 'Diagnostics',
 			'settings.sentryTest' => 'Test Sentry',
 			'settings.sentryTestHint' => 'Sends a test error to the dashboard',
+			'a11y.page' => ({required Object n}) => 'Page ${n}',
 			_ => null,
 		};
 	}

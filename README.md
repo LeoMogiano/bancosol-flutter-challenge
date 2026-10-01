@@ -1,134 +1,216 @@
 # Warehouse
 
-App Flutter (Android + iOS) para gestionar un catálogo de productos sobre la API de [CrudCrud](https://crudcrud.com).
+App Flutter (Android + iOS) para gestionar un catálogo de productos sobre [CrudCrud](https://crudcrud.com).
 
-| Requisito del examen | Cómo se resolvió |
-|---|---|
-| Listar productos (nombre, SKU, precio, moneda, stock) con carga y errores | Skeletons, estados de error / vacío / sin resultados con reintento |
-| Buscar por nombre o SKU | Debounce de 350 ms; ignora mayúsculas, espacios y guiones (`1004` encuentra `SKU-1004`) |
-| Editar **solo** el precio | Hoja con validación en vivo; `precio > 0` y `moneda no vacía` se validan antes de tocar la red |
-| Ordenar por precio (asc/desc), nombre y SKU | Orden estable (desempata por id); USD se compara convertido a BOB |
-| Compartir producto con el share sheet nativo | `ShareService` sobre un `MethodChannel` propio (`app/share`) en Kotlin y Swift, texto estructurado Nombre / Precio / SKU |
-| Bloc, reutilización de widgets | `flutter_bloc`; widgets genéricos en `lib/shared/widgets` |
+## Capturas
 
-**Plus implementados:** filtros (rango de precio, moneda, solo con stock), paginación de 10, cache local con Hive (muestra el último listado sin conexión), header API key, telemetría con Sentry, crear y eliminar productos, i18n es / en / pt con cambio en vivo, tema claro / oscuro, flavors dev / qa / prod.
+### iOS
 
-## Requisitos
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/ios-products.webp" width="250" alt="Productos"><br><sub>Productos</sub></td>
+    <td align="center"><img src="docs/screenshots/ios-settings.webp" width="250" alt="Ajustes"><br><sub>Ajustes</sub></td>
+    <td align="center"><img src="docs/screenshots/ios-edit-price.webp" width="250" alt="Editar precio"><br><sub>Editar precio</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/ios-share.webp" width="250" alt="Compartir"><br><sub>Compartir</sub></td>
+    <td align="center"><img src="docs/screenshots/ios-offline.webp" width="250" alt="Cache offline"><br><sub>Cache offline</sub></td>
+  </tr>
+</table>
 
-- Flutter 3.47 (Dart 3.13)
-- Xcode con un simulador iOS y CocoaPods
-- Android SDK con un emulador
+### Android
 
-## Puesta en marcha
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/android-summary.webp" width="250" alt="Resumen"><br><sub>Resumen</sub></td>
+    <td align="center"><img src="docs/screenshots/android-new-product.webp" width="250" alt="Nuevo producto"><br><sub>Nuevo producto</sub></td>
+    <td align="center"><img src="docs/screenshots/android-share.webp" width="250" alt="Compartir"><br><sub>Compartir</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/android-filters.webp" width="250" alt="Ordenar y filtrar"><br><sub>Ordenar y filtrar</sub></td>
+  </tr>
+</table>
+
+## Inicio rápido
+
+Requisitos: Flutter 3.47 (Dart 3.13) y Android SDK. En **Windows / Linux** corre en Android; en **macOS** además iOS (Xcode + CocoaPods).
 
 ```bash
-cp .env.example .env.dev        # y .env.qa / .env.prod si se usan esos flavors
+cp .env.example .env.dev      # copy en Windows; igual para .env.qa / .env.prod
 flutter pub get
-dart run slang                  # genera las traducciones (lib/core/i18n/strings*.g.dart)
+dart run slang                # genera las traducciones
 flutter run --flavor dev --dart-define-from-file=.env.dev
 ```
 
-En VS Code, `.vscode/launch.json` trae las 6 combinaciones (Debug / Release × dev / qa / prod).
+En VS Code, `.vscode/launch.json` trae Debug / Release × dev / qa / prod.
 
-| Variable | Uso |
+| Variable (`.env.<flavor>`) | Uso |
 |---|---|
-| `BASE_URL` | Endpoint de CrudCrud, p. ej. `https://crudcrud.com/api/<id>` |
-| `API_KEY` | Se envía como header `x-api-key` (CrudCrud lo ignora; vacío = no se envía) |
-| `SENTRY_DSN` | Vacío = Sentry apagado en ese ambiente |
+| `BASE_URL` | Endpoint de CrudCrud: `https://crudcrud.com/api/<id>` |
+| `API_KEY` | Header `x-api-key`; vacío = no se envía |
+| `SENTRY_DSN` | Vacío = Sentry apagado |
 
-El ambiente **no** está en el `.env`: sale del flavor (`appFlavor`), así no pueden desalinearse.
+El ambiente no vive en el `.env`: sale del flavor, así no pueden desalinearse.
 
-### Flavors
+## Criterios de aceptación
 
-| Flavor | Nombre | Android `applicationId` / iOS bundle id |
+| # | Criterio | Implementación |
 |---|---|---|
-| dev | Warehouse Dev | `com.bancosol.warehouse.dev` |
-| qa | Warehouse QA | `com.bancosol.warehouse.qa` |
-| prod | Warehouse | `com.bancosol.warehouse` |
+| 1 | Listar nombre, SKU, precio, moneda y stock | Lista paginada con tarjetas reutilizables |
+| 1 | Carga y errores | Skeletons; estados de error, vacío y sin resultados con reintento |
+| 2 | Buscar por nombre o SKU | Debounce de 350 ms; ignora mayúsculas, espacios y guiones (`1004` → `SKU-1004`) |
+| 3 | Editar solo el precio | Hoja que solo expone el campo precio; nombre, SKU, moneda y stock se conservan |
+| 3 | Reflejar el cambio en el listado | El producto se actualiza en el bloc compartido y se resalta unos segundos |
+| 3 | Carga y errores | Botón con progreso, hoja bloqueada durante el envío, error → "Reintentar" |
+| 4 | Ordenar por precio asc / desc | Mayor precio / Menor precio; USD se convierte a BOB para comparar |
+| 4 | Ordenar por nombre y SKU | Nombre A–Z y SKU A–Z, sin distinguir mayúsculas; empates se resuelven por id para que el orden no salte entre recargas |
+| 5 | Compartir con el sheet nativo | `MethodChannel` propio (`app/share`): `ACTION_SEND` en Kotlin, `UIActivityViewController` en Swift |
+| 5 | Información estructurada | Una línea por campo (`Nombre: …` / `Precio: 1,500.50 BOB` / `SKU: …`) en el idioma activo; el nombre va como asunto para correo |
+| — | `precio > 0` y moneda no vacía | Validación en vivo en dominio, antes de tocar la red (ver [Validaciones](#validaciones)) |
+| — | Errores claros | `Failure` tipado traducido a un mensaje por caso (offline, 404, 429, servidor…) |
+| — | Componentes genéricos | `CustomScaffold`, `CustomInput`, `CustomBottomSheet`, `AppButton`, `AppStateView` en `lib/shared/widgets` |
+| — | Manejo de estado | `flutter_bloc` |
 
-### iOS: Archive desde Xcode
+### Validaciones
 
-`--dart-define-from-file` es un flag de la CLI de Flutter; Xcode no lo conoce. Por eso cada scheme (`dev`, `qa`, `prod`) tiene una *pre-action* que ejecuta `ios/scripts/generate_dart_defines_xcconfig.sh .env.<flavor>`: escribe `ios/Flutter/DartDefines.xcconfig` (ignorado por git) con las variables en base64. Así un Archive para TestFlight arranca con su `BASE_URL` y no con una pantalla en blanco.
+Viven en `domain/validators`, se muestran en vivo y bloquean el envío antes de tocar la red.
 
-Las build configurations y schemes por flavor se crearon con `ios/scripts/setup_flavors.rb` (gem `xcodeproj`); el script es idempotente y solo hace falta volver a correrlo si se agrega un flavor.
+| Campo | Reglas |
+|---|---|
+| Precio | Obligatorio; número con hasta 2 decimales (rechaza `12.`, `NaN`, `1e5`); `> 0`; `≤ 999,999.99`; distinto al actual. Un cambio ≥ 50 % avisa sin bloquear |
+| Moneda | No vacía |
+| Nombre | ≥ 3 caracteres, no solo números, no repetido |
+| SKU | ≥ 4 caracteres, mayúsculas, números y guiones (`SKU-1003`), no repetido sin distinguir mayúsculas |
+| Stock | Entero entre 0 y 99,999 |
+| Filtro de precio | Mínimo ≤ máximo |
+
+Nombre, SKU y stock aplican al crear un producto; al editar solo se valida el precio.
+
+## Plus
+
+Se cubrieron todos los plus sugeridos:
+
+1. **Paginación**: páginas de 10 con paginador numerado, "Mostrando 1–10 de N" y pull to refresh.
+2. **Filtros**, en la misma hoja "Ordenar y filtrar", combinables con búsqueda y orden:
+   - Rango de precio en BOB: mínimo, máximo o ambos.
+   - Moneda: Todas, BOB o USD.
+   - Solo con stock: oculta los productos con stock 0.
+   - "Ver N productos" cuenta en vivo antes de aplicar; un badge en el buscador muestra los filtros activos y "Restablecer" los limpia.
+3. **Cache local (Hive)**: sin conexión muestra el último listado marcado como offline; se puede desactivar o sincronizar desde Ajustes.
+4. **Header API key**: `x-api-key` desde el `.env` en cada petición.
+5. **Telemetría y errores**:
+   - Sentry con captura de pantalla, solo para bugs reales; sin PII ni secretos.
+   - Logging legible de peticiones en debug, con secretos censurados.
+   - Reintento automático de GET ante 5xx y espera ante 429.
+6. **UI cuidada**: tema claro / oscuro, skeletons, estados vacío / error / sin resultados.
+7. **Diseño de pantallas**: Resumen (valor del inventario, stock bajo y sin stock), Productos, Detalle y Ajustes (tema, idioma, cache, versión, prueba de Sentry).
+
+### Extra
+
+- **Crear y eliminar productos**, con las mismas validaciones y estados que la edición.
+- **i18n** es / en / pt con cambio en vivo desde Ajustes.
+- **Flavors** dev / qa / prod, cada uno con su nombre y bundle id (ver [Flavors](#flavors)).
+- **Logo propio** como ícono de la app (adaptive icon en Android) en lugar del de Flutter.
+- **Splash nativo** sin paquetes: `core-splashscreen` en Android y `LaunchScreen.storyboard` en iOS.
+- **Hápticos nativos**: en iOS siguen el HIG de Apple; en Android, por `MethodChannel` (`app/haptics`), usan las constantes del sistema y solo se activan en equipos con actuador háptico real, porque en los que solo tienen motor de vibración la respuesta se siente tosca.
 
 ## Arquitectura
 
-Clean architecture por capas, con **un solo módulo** (`catalog`) porque la app es un único flujo.
+Clean architecture con un único módulo (`catalog`).
 
 ```
 lib/
-├── app/                  raíz de composición: arranque, DI (get_it), router (go_router), Sentry, env
-├── core/                 infraestructura que NO dibuja: red, Failure, Hive, servicios de plataforma (share, háptica), tema, i18n, tiempo
-├── shared/               lo que dibuja y se reutiliza en toda la app
-│   ├── widgets/          CustomScaffold, CustomInput, CustomBottomSheet, AppButton, AppStateView, AppNavBar…
-│   └── formatters/       formato de precio y TextInputFormatters (precio, SKU, stock, nombre)
+├── app/               composición: arranque, DI (get_it), router (go_router), env
+├── core/              infraestructura sin UI: red, Failure, Hive, share, tema, i18n
+├── shared/            widgets y formatters reutilizables
 └── modules/catalog/
-    ├── domain/           Dart puro: entidades, interfaces de repositorio, casos de uso, validadores, ProductQuery
-    ├── data/             DTOs, datasources remoto / Hive, repositorios (producto y compartir)
-    ├── application/      ProductsBloc (catálogo) y un bloc por pantalla / hoja
-    └── presentation/     pantallas, hojas y widgets propios del catálogo
+    ├── domain/        Dart puro: entidades, contratos, casos de uso, validadores
+    ├── data/          DTOs, datasources (remoto / Hive), repositorios
+    ├── application/   blocs
+    └── presentation/  pantallas, hojas y widgets del módulo
 ```
 
 ```mermaid
 flowchart LR
-  UI[Pantallas / hojas] --> B[Bloc]
-  B --> UC[Caso de uso]
-  UC --> R[ProductRepository]
-  R --> API[ApiClient · dio]
-  R --> H[(Hive)]
-  API --> I[api key → log]
+  UI[Pantallas / hojas] --> B[Bloc] --> UC[Caso de uso] --> R[Repositorio]
+  R --> API[ApiClient · dio] & H[(Hive)]
 ```
 
-- **Domain** no importa Flutter, dio ni JSON. Los repositorios lanzan `Failure`; nunca una excepción de dio.
-- **`ProductsBloc`** es único y compartido por Resumen, Productos y Ajustes: búsqueda, orden, filtros y paginación se calculan en cliente sobre la lista cargada (CrudCrud no filtra).
-- **Cada hoja** (editar precio, nuevo producto, eliminar, filtros) crea su propio bloc, que muere al cerrarla. Mientras hay una petición en curso la hoja no se puede cerrar, y el envío usa `droppable()`: un doble tap no dispara dos peticiones.
-- **Reconstrucciones mínimas**: `context.select` en widgets chicos, `BlocSelector` para trozos de una pantalla grande, nunca un `BlocBuilder` alrededor de una pantalla. Estándar completo en [CONTRIBUTING.md](CONTRIBUTING.md#reconstrucciones).
+- **Domain** no conoce Flutter, dio ni JSON; los repositorios solo lanzan `Failure`.
+- **`ProductsBloc`** es compartido: búsqueda, orden, filtros y paginación se resuelven en cliente (CrudCrud no filtra).
+- **Cada hoja** tiene su propio bloc; los envíos usan `droppable()` y la hoja no se cierra con una petición en curso.
+- Reconstrucciones mínimas con `context.select` / `BlocSelector` (ver [CONTRIBUTING](CONTRIBUTING.md#reconstrucciones)).
+
+## Dependencias
+
+| Uso | Paquetes |
+|---|---|
+| Estado | `flutter_bloc`, `bloc_concurrency` (`droppable()`), `equatable` |
+| DI y navegación | `get_it`, `go_router` |
+| Red | `dio` |
+| Cache local | `hive_ce_flutter` |
+| Telemetría | `sentry_flutter`, `sentry_dio` |
+| i18n y formato | `slang`, `slang_flutter`, `flutter_localizations`, `intl` |
+| UI | `sizer` (tamaños de texto), `shimmer` (skeletons) |
+| Plataforma | `package_info_plus` (versión en Ajustes) |
+| Tests y calidad | `bloc_test`, `mocktail`, `fake_async`, `very_good_analysis` |
 
 ## Decisiones técnicas
 
 | Decisión | Por qué |
 |---|---|
-| `Failure(type, statusCode, detail)` con `enum FailureType` | El `switch` sobre el enum es exhaustivo; el texto para el usuario se resuelve en la UI con slang, así no queda congelado en un idioma. `InternalDetail` oculta el detalle técnico en `toString()` |
-| `ApiClient` con un único `_send` | Toda respuesta o error sale como dato o `Failure`. Si un DTO no sabe leer la respuesta, el `Failure(parse)` lleva la línea exacta que falló |
-| Log propio que censura secretos | El `LogInterceptor` de dio imprime cuerpos y headers en crudo; el nuestro oculta `x-api-key`, tokens y contraseñas. Solo corre en debug |
-| Sentry acotado | Issue solo para bugs reales (parse / inesperados y HTTP 400, 405, 5xx); 404 y 429 quedan como breadcrumb. cada issue lleva captura de pantalla. `sendDefaultPii: false`, sin cuerpos y sin la api key |
-| Cache Hive sin adapters | Se guardan mapas JSON: sin `build_runner`. El cache es descartable: si está corrupto se ignora y la app igual arranca |
-| Fuentes variables | Outfit (sustituye a Poppins) y Playfair Display (sustituye a DM Serif Display), ambas variables, recortadas a latín y al eje 400–700: 140 KB en total |
-| Tamaños de texto con `sizer` | Solo valores de una tabla px → sp calibrada en 411 × 891; paddings, radios y alturas son fijos para no descuadrar en tablet |
-| Imágenes | Íconos de Android en WebP y PNG de iOS comprimidos; las banderas se precargan |
-| Splash nativo a mano | `core-splashscreen` en Android y `LaunchScreen.storyboard` en iOS; sin paquetes |
-| Dependencias evitadas | `share_plus` (MethodChannel propio), `flutter_native_splash`, `shared_preferences` (Hive cubre), `connectivity_plus`, `logger`, `build_runner` |
+| `Failure(type, statusCode, detail)` + `enum FailureType` | `switch` exhaustivo; el mensaje se traduce en la UI y el detalle técnico no se filtra en `toString()` |
+| `ApiClient` con un único `_send` | Toda respuesta sale como dato o `Failure`; un error de parseo indica el campo exacto |
+| Logger propio | Legible y censura `x-api-key`, tokens y contraseñas; solo en debug |
+| Sentry acotado | Issue solo para bugs reales (parse, inesperados, 400/405/5xx); 404 y 429 como breadcrumb; sin PII |
+| Hive sin adapters | Mapas JSON, sin `build_runner`; cache corrupto se descarta |
+| Sin paquetes evitables | Share, splash y logging propios; sin `share_plus`, `shared_preferences`, `connectivity_plus` |
+| Peso y rendimiento | Fuentes variables recortadas (140 KB), íconos WebP, texto con `sizer` calibrado y medidas fijas |
 
-## Testing
+## Flavors
+
+| Flavor | Nombre | Bundle / applicationId |
+|---|---|---|
+| dev | Warehouse Dev | `com.bancosol.warehouse.dev` |
+| qa | Warehouse QA | `com.bancosol.warehouse.qa` |
+| prod | Warehouse | `com.bancosol.warehouse` |
+
+iOS: Xcode no entiende `--dart-define-from-file`, así que cada scheme tiene una pre-action (`ios/scripts/generate_dart_defines_xcconfig.sh`) que genera `DartDefines.xcconfig` desde `.env.<flavor>`; un Archive arranca con su configuración. `ios/scripts/setup_flavors.rb` solo se vuelve a correr al agregar un flavor.
+
+## Tamaño del APK
+
+Release del flavor prod (`flutter build apk --release --flavor prod --dart-define-from-file=.env.prod`, con `--split-per-abi` para uno por arquitectura):
+
+| APK | Peso | Dispositivos |
+|---|---|---|
+| `arm64-v8a` | 21.6 MB | Casi todos los teléfonos actuales |
+| `armeabi-v7a` | 19.0 MB | Teléfonos antiguos de 32 bits |
+| `x86_64` | 23.2 MB | Emuladores y Chromebooks |
+| Universal (las 3) | 61.5 MB | Cualquier dispositivo |
+
+## Tests
 
 ```bash
-flutter test --dart-define-from-file=.env.dev
 flutter test --coverage --dart-define-from-file=.env.dev
 ```
 
-Pocos tests, cada uno una regla concreta. Algunos ejemplos:
-
-| Capa | Reglas probadas |
+| Capa | Reglas |
 |---|---|
-| Red | Cada error HTTP / de red se traduce a su `FailureType`; un GET con 500 se reintenta y un POST nunca; los secretos no aparecen en los logs ni en Sentry |
-| Dominio | El precio se valida en orden (vacío, decimales incompletos, ≤ 0, tope, moneda, sin cambios) antes de tocar la red; ≥ 50 % avisa sin bloquear; búsqueda por SKU sin guion; orden estable; paginación de 10 |
-| Datos | Sin conexión y con cache se muestra el último listado como offline; un 500 no se disfraza de offline; el PUT no envía `_id` |
-| Estado | Un refresco fallido no borra la lista; buscar vuelve a la página 1; el producto editado se resalta y se apaga solo; un 404 al eliminar se da por eliminado |
-| UI | Guardar está deshabilitado con el mismo precio; tras un error de servidor el botón pasa a "Reintentar"; el formatter de precio mantiene el cursor |
-| DI | Todo el grafo se resuelve y los interceptores van en orden |
+| Red | Cada error HTTP se mapea a su `FailureType`; GET con 500 reintenta, POST nunca; secretos fuera de logs y Sentry |
+| Dominio | Validación de precio en orden antes de la red; búsqueda por SKU sin guion; orden estable; páginas de 10 |
+| Datos | Sin conexión se muestra el cache como offline; un 500 no se disfraza de offline; el PUT no envía `_id` |
+| Estado | Un refresco fallido no borra la lista; buscar vuelve a la página 1; un 404 al eliminar cuenta como eliminado |
+| UI | Guardar deshabilitado con el mismo precio; tras error el botón pasa a "Reintentar"; el formatter conserva el cursor |
+| DI | El grafo completo se resuelve y los interceptores van en orden |
 
-CI (`.github/workflows/ci.yaml`): formato → `flutter analyze` → tests con cobertura.
+CI (`.github/workflows/ci.yaml`) ejecuta formato, análisis, tamaño de pantallas y tests con cobertura.
 
-## Limitaciones conocidas
+## Limitaciones
 
-- CrudCrud gratuito expira y limita la cantidad de peticiones por endpoint. Un 429 se informa al usuario y se reintenta con espera; si el endpoint expiró, hay que crear uno nuevo y cambiar `BASE_URL`.
-- `PUT` en CrudCrud reemplaza el documento entero, así que se envían todos los campos (sin `_id`).
-- La tasa USD → BOB es fija (6.96), como en el prototipo.
-- Sin cola offline: crear, editar y eliminar requieren conexión.
-- En Android, `ACTION_SEND` no informa si el usuario terminó de compartir; por eso el aviso "Compartido" solo aparece en iOS.
-- El build release usa las claves de debug (prueba técnica).
+- CrudCrud gratuito expira y limita peticiones: un 429 se informa y reintenta; si expiró, crear otro endpoint y cambiar `BASE_URL`.
+- `PUT` reemplaza el documento entero, por eso se envían todos los campos.
+- El build release firma con las claves de debug.
 
-## Convención de commits
+## Contribuir
 
-[Conventional Commits](https://www.conventionalcommits.org): `type(scope): Descripción`, con gitflow (`main` ← `develop` ← `feature/*`). Ver [CONTRIBUTING.md](CONTRIBUTING.md).
+Ramas, commits y reglas de código en [CONTRIBUTING.md](CONTRIBUTING.md).

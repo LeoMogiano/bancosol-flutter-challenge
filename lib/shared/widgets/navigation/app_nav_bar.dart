@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/shared/widgets/buttons/app_icon_button.dart';
@@ -22,7 +21,6 @@ class AppNavBar extends StatelessWidget {
   final ValueChanged<int> onTap;
   final VoidCallback onSearch;
 
-  static const double _margin = 24;
   static const double _minBottom = 16;
 
   static final _shadow = BoxShadow(
@@ -36,8 +34,8 @@ class AppNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final inset = MediaQuery.paddingOf(context).bottom;
-    // En iOS el inset ya separa la barra del home indicator; sumarle el margen la deja flotando alta.
-    final bottom = defaultTargetPlatform == TargetPlatform.iOS ? math.max(_minBottom, inset) : _margin + inset;
+    // El inset ya separa la barra de la navegación del sistema; sumarle margen la deja flotando alta.
+    final bottom = math.max(_minBottom, inset);
 
     return Padding(
       padding: EdgeInsets.fromLTRB(16, 0, 16, bottom),
