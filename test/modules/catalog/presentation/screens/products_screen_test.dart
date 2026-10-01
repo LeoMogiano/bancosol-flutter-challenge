@@ -41,8 +41,8 @@ void main() {
 
   testWidgets('si la API falla muestra el error y "Reintentar" vuelve a pedir el catálogo', (tester) async {
     final getProducts = _MockGetProducts();
-    when(() => getProducts(useCache: true)).thenThrow(const Failure(FailureType.network));
-    final bloc = ProductsBloc(getProducts: getProducts, useCache: () => true)..add(const ProductsRequested());
+    when(getProducts.call).thenThrow(const Failure(FailureType.network));
+    final bloc = ProductsBloc(getProducts: getProducts)..add(const ProductsRequested());
     final focus = SearchFocusCubit();
     addTearDown(bloc.close);
     addTearDown(focus.close);
@@ -54,11 +54,11 @@ void main() {
     await tester.tap(find.text(t.actions.retry));
     await tester.pumpAndSettle();
 
-    verify(() => getProducts(useCache: true)).called(2);
+    verify(getProducts.call).called(2);
   });
 
   testWidgets('una búsqueda pedida antes de abrir Productos enfoca el campo al construirse', (tester) async {
-    final bloc = ProductsBloc(getProducts: _MockGetProducts(), useCache: () => true);
+    final bloc = ProductsBloc(getProducts: _MockGetProducts());
     final focus = SearchFocusCubit()..request();
     addTearDown(bloc.close);
     addTearDown(focus.close);

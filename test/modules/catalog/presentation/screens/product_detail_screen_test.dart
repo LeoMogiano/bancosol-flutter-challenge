@@ -14,7 +14,7 @@ void main() {
   testWidgets('abierto por deep link sin historial, al cerrarse vuelve a Productos en vez de dejar el stack vacío', (
     tester,
   ) async {
-    final bloc = ProductsBloc(getProducts: _MockGetProducts(), useCache: () => true);
+    final bloc = ProductsBloc(getProducts: _MockGetProducts());
     addTearDown(bloc.close);
     final router = GoRouter(
       initialLocation: AppRoutes.productDetail('no-existe'),

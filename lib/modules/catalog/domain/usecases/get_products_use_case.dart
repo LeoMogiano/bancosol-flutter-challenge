@@ -1,10 +1,12 @@
 import 'package:warehouse/modules/catalog/domain/entities/products_snapshot.dart';
+import 'package:warehouse/modules/catalog/domain/repositories/preferences_repository.dart';
 import 'package:warehouse/modules/catalog/domain/repositories/product_repository.dart';
 
 class GetProductsUseCase {
-  const GetProductsUseCase(this._repository);
+  const GetProductsUseCase(this._products, this._preferences);
 
-  final ProductRepository _repository;
+  final ProductRepository _products;
+  final PreferencesRepository _preferences;
 
-  Future<ProductsSnapshot> call({required bool useCache}) => _repository.getProducts(useCache: useCache);
+  Future<ProductsSnapshot> call() => _products.getProducts(useCache: _preferences.load().cacheEnabled);
 }
