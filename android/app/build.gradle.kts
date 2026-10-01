@@ -47,7 +47,18 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
         }
+    }
+}
+
+androidComponents {
+    // Flutter forces R8 on every release; dev stays unminified for readable native traces.
+    beforeVariants(selector().withFlavor("env" to "dev").withBuildType("release")) {
+        it.isMinifyEnabled = false
+        it.shrinkResources = false
     }
 }
 
