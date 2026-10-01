@@ -3,6 +3,12 @@ part of 'preferences_bloc.dart';
 class PreferencesState extends Equatable {
   const PreferencesState({required this.themeMode, required this.languageCode, required this.cacheEnabled});
 
+  factory PreferencesState.from(AppPreferences preferences) => PreferencesState(
+    themeMode: ThemeMode.values.byName(preferences.themeMode.name),
+    languageCode: preferences.languageCode,
+    cacheEnabled: preferences.cacheEnabled,
+  );
+
   final ThemeMode themeMode;
 
   // null = idioma del dispositivo.
