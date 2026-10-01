@@ -28,7 +28,6 @@ class SettingsScreen extends StatelessWidget {
         children: [
           AppTopBar.large(eyebrow: t.settings.eyebrow, title: t.settings.title),
           Padding(
-            // 130: holgura para que la barra de navegación flotante no tape la última sección.
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 130),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

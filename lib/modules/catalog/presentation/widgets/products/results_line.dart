@@ -27,7 +27,7 @@ class ResultsLine extends StatelessWidget {
             Expanded(
               child: Text(
                 t.products.results(n: data.count),
-                style: TextStyle(fontSize: 14.sp, color: colors.ink2),
+                style: TextStyle(fontSize: 15.sp, color: colors.ink2),
               ),
             ),
             if (data.filtered)
