@@ -1,8 +1,26 @@
 import 'package:go_router/go_router.dart';
 import 'package:warehouse/app/router/app_routes.dart';
-import 'package:warehouse/modules/catalog/presentation/screens/home_placeholder_screen.dart';
+import 'package:warehouse/modules/catalog/presentation/screens/products_screen.dart';
+import 'package:warehouse/modules/catalog/presentation/screens/settings_placeholder_screen.dart';
+import 'package:warehouse/modules/catalog/presentation/screens/summary_screen.dart';
+import 'package:warehouse/modules/catalog/presentation/shell/main_shell.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: AppRoutes.home,
-  routes: [GoRoute(path: AppRoutes.home, builder: (_, _) => const HomePlaceholderScreen())],
+  initialLocation: AppRoutes.summary,
+  routes: [
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, shell) => MainShell(navigationShell: shell),
+      branches: [
+        StatefulShellBranch(
+          routes: [GoRoute(path: AppRoutes.summary, builder: (_, _) => const SummaryScreen())],
+        ),
+        StatefulShellBranch(
+          routes: [GoRoute(path: AppRoutes.products, builder: (_, _) => const ProductsScreen())],
+        ),
+        StatefulShellBranch(
+          routes: [GoRoute(path: AppRoutes.settings, builder: (_, _) => const SettingsPlaceholderScreen())],
+        ),
+      ],
+    ),
+  ],
 );
