@@ -10,6 +10,12 @@ import 'package:warehouse/core/network/interceptors/redacting_log_interceptor.da
 import 'package:warehouse/core/network/interceptors/retry_interceptor.dart';
 import 'package:warehouse/core/storage/local_store.dart';
 import 'package:warehouse/modules/catalog/application/preferences/preferences_cubit.dart';
+import 'package:warehouse/modules/catalog/domain/repositories/product_repository.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/create_product.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/delete_product.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/get_product.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/get_products.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/update_product_price.dart';
 
 // get_it registra fábricas perezosas: un cableado roto solo explota al resolver.
 void main() {
@@ -24,6 +30,12 @@ void main() {
   test('todo el grafo de dependencias se resuelve sin errores', () {
     expect(sl.get<ApiClient>, returnsNormally);
     expect(sl.get<PreferencesCubit>, returnsNormally);
+    expect(sl.get<ProductRepository>, returnsNormally);
+    expect(sl.get<GetProducts>, returnsNormally);
+    expect(sl.get<GetProduct>, returnsNormally);
+    expect(sl.get<UpdateProductPrice>, returnsNormally);
+    expect(sl.get<CreateProduct>, returnsNormally);
+    expect(sl.get<DeleteProduct>, returnsNormally);
   });
 
   test('los interceptores van en orden: api key → retry → log', () {
