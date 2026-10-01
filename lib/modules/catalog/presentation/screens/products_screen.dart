@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sizer/sizer.dart';
+import 'package:warehouse/app/router/app_routes.dart';
 import 'package:warehouse/core/i18n/failure_i18n.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
@@ -9,6 +11,7 @@ import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/services/product_query.dart';
 import 'package:warehouse/modules/catalog/presentation/shell/main_shell.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/filter_sheet.dart';
+import 'package:warehouse/modules/catalog/presentation/widgets/product_form_sheet.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/product_tile.dart';
 import 'package:warehouse/shared/widgets/buttons/app_button.dart';
 import 'package:warehouse/shared/widgets/buttons/app_icon_button.dart';
@@ -81,6 +84,19 @@ class _ProductsScreenState extends State<ProductsScreen> {
       ..add(ProductsFiltersApplied(result.filters));
   }
 
+  Future<void> _openProductForm(BuildContext context) async {
+    final bloc = context.read<ProductsBloc>();
+    final created = await ProductFormSheet.open(context, existing: bloc.state.all);
+    if (created != null && context.mounted) {
+      bloc.add(ProductUpserted(created));
+      _searchController.clear();
+      bloc
+        ..add(const ProductsQueryChanged(''))
+        ..add(const ProductsFiltersApplied(ProductFilters.none));
+      AppToast.show(context, context.t.toasts.created);
+    }
+  }
+
   void _goToPage(int page) {
     context.read<ProductsBloc>().add(ProductsPageChanged(page));
     if (_scrollController.hasClients) _scrollController.animateTo(0, duration: _scrollDuration, curve: Curves.easeOut);
@@ -107,7 +123,14 @@ class _ProductsScreenState extends State<ProductsScreen> {
             AppTopBar.large(
               eyebrow: t.products.eyebrow,
               title: t.products.title,
-              actions: [AppButton(label: t.products.newShort, compact: true, icon: Icons.add_rounded, onPressed: null)],
+              actions: [
+                AppButton(
+                  label: t.products.newShort,
+                  compact: true,
+                  icon: Icons.add_rounded,
+                  onPressed: () => _openProductForm(context),
+                ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
@@ -253,7 +276,11 @@ class _ProductList extends StatelessWidget {
           itemBuilder: (context, index) {
             if (index == items.length) return _PaginationFooter(onPageChanged: onPageChanged);
             final product = items[index];
-            return ProductTile(product: product, highlighted: product.remoteId == data.highlightId, onTap: () {});
+            return ProductTile(
+              product: product,
+              highlighted: product.remoteId == data.highlightId,
+              onTap: () => context.push(AppRoutes.productDetail(product.remoteId)),
+            );
           },
         );
       },
