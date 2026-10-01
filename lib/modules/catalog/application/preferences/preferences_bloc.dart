@@ -2,9 +2,9 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/core/error/failure.dart';
-import 'package:warehouse/core/services/logger_service.dart';
 import 'package:warehouse/core/storage/keys/settings_key.dart';
 import 'package:warehouse/core/storage/local_store.dart';
+import 'package:warehouse/core/utils/logger_service.dart';
 
 part 'preferences_event.dart';
 part 'preferences_state.dart';

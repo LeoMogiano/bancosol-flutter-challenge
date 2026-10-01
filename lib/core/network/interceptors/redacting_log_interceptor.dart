@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:warehouse/core/services/logger_service.dart';
+import 'package:warehouse/core/utils/logger_service.dart';
 
 class RedactingLogInterceptor extends Interceptor {
   static final _sensitivePattern = RegExp(

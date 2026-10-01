@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:warehouse/core/services/logger_service.dart';
+import 'package:warehouse/core/utils/logger_service.dart';
 
 class AppBlocObserver extends BlocObserver {
   @override

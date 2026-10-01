@@ -7,7 +7,7 @@ import 'package:sentry_dio/sentry_dio.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/core/network/network_config.dart';
-import 'package:warehouse/core/services/logger_service.dart';
+import 'package:warehouse/core/utils/logger_service.dart';
 
 typedef Decoder<T> = T Function(Object? data);
 
