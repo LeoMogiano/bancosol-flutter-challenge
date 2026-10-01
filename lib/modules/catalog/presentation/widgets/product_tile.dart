@@ -36,13 +36,14 @@ class ProductTile extends StatelessWidget {
           border: Border.all(color: borderColor, width: borderWidth),
         ),
         child: Row(
+          spacing: 12,
           children: [
             ProductAvatar(product: product),
-            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 3,
                 children: [
                   Text(
                     product.name,
@@ -50,8 +51,8 @@ class ProductTile extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600, color: colors.ink),
                   ),
-                  const SizedBox(height: 3),
                   Row(
+                    spacing: 8,
                     children: [
                       Flexible(
                         child: Text(
@@ -61,23 +62,21 @@ class ProductTile extends StatelessWidget {
                           style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w400, color: colors.ink3),
                         ),
                       ),
-                      const SizedBox(width: 8),
                       StockIndicator(stock: product.stock),
                     ],
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 12),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
+              spacing: 3,
               children: [
                 Text(
                   PriceFormatter.format(product.price),
                   style: TextStyle(fontSize: 15.5.sp, fontWeight: FontWeight.w700, color: colors.ink),
                 ),
-                const SizedBox(height: 3),
                 Text(
                   product.currency,
                   style: TextStyle(fontSize: 12.5.sp, fontWeight: FontWeight.w400, color: colors.ink3),

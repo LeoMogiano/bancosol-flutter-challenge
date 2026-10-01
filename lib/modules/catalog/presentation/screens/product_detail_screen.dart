@@ -4,6 +4,7 @@ import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/di/service_locator.dart';
 import 'package:warehouse/core/i18n/failure_i18n.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
+import 'package:warehouse/core/theme/app_fonts.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/product_detail/product_detail_cubit.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
@@ -76,18 +77,20 @@ class _ProductDetailContent extends StatelessWidget {
   final VoidCallback onPriceEdited;
 
   Future<void> _openPriceEdit(BuildContext context) async {
+    final t = context.t;
     final updated = await PriceEditSheet.open(context, product);
     if (updated != null && context.mounted) {
       context.read<ProductsBloc>().add(ProductUpserted(updated));
-      AppToast.show(context, context.t.toasts.priceUpdated);
+      AppToast.show(context, t.toasts.priceUpdated);
       onPriceEdited();
     }
   }
 
   Future<void> _openDelete(BuildContext context) async {
+    final t = context.t;
     final deleted = await DeleteConfirmSheet.open(context, product);
     if (deleted && context.mounted) {
-      AppToast.show(context, context.t.toasts.deleted, icon: Icons.delete_rounded);
+      AppToast.show(context, t.toasts.deleted, icon: Icons.delete_rounded);
       context.read<ProductsBloc>().add(ProductRemoved(product.remoteId));
     }
   }
@@ -110,7 +113,6 @@ class _ProductDetailContent extends StatelessWidget {
         },
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: colors.bg,
             border: Border(top: BorderSide(color: colors.line)),
           ),
           child: SafeArea(
@@ -118,6 +120,7 @@ class _ProductDetailContent extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
               child: Row(
+                spacing: 10,
                 children: [
                   Expanded(
                     flex: 10,
@@ -140,12 +143,11 @@ class _ProductDetailContent extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
                   Expanded(
                     flex: 13,
                     child: AppButton(
                       label: t.detail.editPrice,
-                      icon: Icons.edit_rounded,
+                      icon: Icons.edit_outlined,
                       onPressed: () => _openPriceEdit(context),
                     ),
                   ),
@@ -173,36 +175,34 @@ class _ProductDetailContent extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 20,
                 children: [
                   Row(
+                    spacing: 16,
                     children: [
-                      ProductAvatar(product: product, size: 68),
-                      const SizedBox(width: 16),
+                      ProductAvatar(product: product, size: 76),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 8,
                           children: [
                             Text(
                               product.name,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                fontSize: 19.65.sp,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'PlayfairDisplay',
+                                fontSize: 21.sp,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: AppFont.playfairDisplay.family,
                                 color: colors.ink,
                               ),
                             ),
-                            const SizedBox(height: 8),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: colors.surface2,
-                                borderRadius: BorderRadius.circular(14),
-                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(color: colors.surface2, borderRadius: BorderRadius.circular(8)),
                               child: Text(
                                 product.sku,
-                                style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w500, color: colors.ink3),
+                                style: TextStyle(fontSize: 12.5.sp, fontWeight: FontWeight.w500, color: colors.ink2),
                               ),
                             ),
                           ],
@@ -210,10 +210,11 @@ class _ProductDetailContent extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
                   AppCard(
+                    padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 6,
                       children: [
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -248,32 +249,52 @@ class _ProductDetailContent extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.baseline,
                           textBaseline: TextBaseline.alphabetic,
+                          spacing: 6,
                           children: [
-                            Expanded(
+                            Flexible(
                               child: Text(
                                 PriceFormatter.format(product.price),
-                                style: TextStyle(fontSize: 25.25.sp, fontWeight: FontWeight.w700, color: colors.accent),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 30.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color: colors.accent,
+                                  height: 1.1,
+                                ),
                               ),
                             ),
                             Text(
                               product.currency,
-                              style: TextStyle(fontSize: 14.5.sp, fontWeight: FontWeight.w600, color: colors.ink3),
+                              style: TextStyle(fontSize: 13.5.sp, fontWeight: FontWeight.w600, color: colors.ink2),
                             ),
                           ],
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
                   _InfoTable(product: product),
-                  const SizedBox(height: 20),
-                  Text(
-                    t.detail.note,
-                    style: TextStyle(fontSize: 14.sp, color: colors.ink3),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 8,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Icon(Icons.info_outline_rounded, size: 16, color: colors.ink3),
+                        ),
+                        Expanded(
+                          child: Text(
+                            t.detail.note,
+                            style: TextStyle(fontSize: 13.5.sp, color: colors.ink3, height: 1.4),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -294,68 +315,65 @@ class _InfoTable extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final t = context.t;
+    final divider = Divider(height: 1, color: colors.line);
 
-    return Column(
-      children: [
-        _InfoRow(label: t.detail.sku, value: product.sku),
-        const SizedBox(height: 12),
-        _InfoRow(
-          label: t.detail.stock,
-          value: '',
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              StockIndicator(stock: product.stock),
-              const SizedBox(width: 8),
-              Icon(Icons.lock_rounded, size: 16, color: colors.ink3),
-            ],
+    return AppCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        children: [
+          _InfoRow(label: t.detail.sku, value: product.sku),
+          divider,
+          _InfoRow(
+            label: t.detail.stock,
+            value: '',
+            trailing: StockIndicator(stock: product.stock),
           ),
-        ),
-        const SizedBox(height: 12),
-        _InfoRow(
-          label: t.detail.currency,
-          value: product.currency,
-          trailing: Icon(Icons.lock_rounded, size: 16, color: colors.ink3),
-        ),
-        const SizedBox(height: 12),
-        _InfoRow(label: t.detail.id, value: '${product.id}'),
-      ],
+          divider,
+          _InfoRow(label: t.detail.currency, value: product.currency),
+          divider,
+          _InfoRow(label: t.detail.id, value: '${product.id}', valueWeight: FontWeight.w400),
+        ],
+      ),
     );
   }
 }
 
 class _InfoRow extends StatelessWidget {
-  const _InfoRow({required this.label, required this.value, this.trailing});
+  const _InfoRow({required this.label, required this.value, this.trailing, this.valueWeight = FontWeight.w600});
 
   final String label;
   final String value;
   final Widget? trailing;
+  final FontWeight valueWeight;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
 
-    return Row(
-      children: [
-        Expanded(
-          flex: 3,
-          child: Text(
-            label,
-            style: TextStyle(fontSize: 14.5.sp, color: colors.ink2),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: Text(
+              label,
+              style: TextStyle(fontSize: 14.5.sp, color: colors.ink2),
+            ),
           ),
-        ),
-        Expanded(
-          flex: 5,
-          child: Text(
-            value,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.end,
-            style: TextStyle(fontSize: 14.5.sp, fontWeight: FontWeight.w500, color: colors.ink),
+          Expanded(
+            flex: 5,
+            child: Text(
+              value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.end,
+              style: TextStyle(fontSize: 14.5.sp, fontWeight: valueWeight, color: colors.ink),
+            ),
           ),
-        ),
-        if (trailing != null) ...[const SizedBox(width: 8), trailing!],
-      ],
+          if (trailing != null) ...[const SizedBox(width: 8), trailing!],
+        ],
+      ),
     );
   }
 }
