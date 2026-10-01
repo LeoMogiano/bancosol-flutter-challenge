@@ -223,30 +223,30 @@ class _ResultsLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    return BlocSelector<ProductsBloc, ProductsState, ({int count, bool filtered})>(
-      selector: (state) => (count: state.visible.length, filtered: state.filters.activeCount > 0),
-      builder: (context, data) => Padding(
-        padding: const EdgeInsets.fromLTRB(22, 8, 12, 4),
-        child: SizedBox(
-          height: 36,
-          child: Row(
-            children: [
-              Expanded(
+    final data = context.select<ProductsBloc, ({int count, bool filtered})>(
+      (bloc) => (count: bloc.state.visible.length, filtered: bloc.state.filters.activeCount > 0),
+    );
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(22, 8, 12, 4),
+      child: SizedBox(
+        height: 36,
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                t.products.results(n: data.count),
+                style: TextStyle(fontSize: 14.sp, color: context.colors.ink2),
+              ),
+            ),
+            if (data.filtered)
+              TextButton(
+                onPressed: onClearFilters,
                 child: Text(
-                  t.products.results(n: data.count),
-                  style: TextStyle(fontSize: 14.sp, color: context.colors.ink2),
+                  t.products.clearFilters,
+                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600, color: context.colors.accent),
                 ),
               ),
-              if (data.filtered)
-                TextButton(
-                  onPressed: onClearFilters,
-                  child: Text(
-                    t.products.clearFilters,
-                    style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600, color: context.colors.accent),
-                  ),
-                ),
-            ],
-          ),
+          ],
         ),
       ),
     );
@@ -262,32 +262,32 @@ class _ProductList extends StatelessWidget {
   Widget build(BuildContext context) {
     // Se seleccionan `visible` y `page` (mismas instancias entre emisiones), no `pageItems`, que es una lista
     // nueva en cada acceso y reconstruiría la lista entera con cualquier cambio de estado.
-    return BlocSelector<
-      ProductsBloc,
-      ProductsState,
-      ({List<Product> visible, int page, String? highlightId, bool offline})
-    >(
-      selector: (state) =>
-          (visible: state.visible, page: state.page, highlightId: state.highlightId, offline: state.isOffline),
-      builder: (context, data) {
-        final items = ProductQuery.page(data.visible, data.page);
-        return Padding(
-          // Holgura para que la barra de navegación flotante (y el aviso offline) no tapen el último elemento.
-          padding: EdgeInsets.fromLTRB(20, 4, 20, data.offline ? 190 : 130),
-          child: Column(
-            spacing: 8,
-            children: [
-              for (final product in items)
-                ProductTile(
-                  product: product,
-                  highlighted: product.remoteId == data.highlightId,
-                  onTap: () => context.push(AppRoutes.productDetail(product.remoteId)),
-                ),
-              _PaginationFooter(onPageChanged: onPageChanged),
-            ],
-          ),
-        );
-      },
+    // Se seleccionan `visible` y `page` (mismas instancias entre emisiones), no `pageItems`, que es una lista
+    // nueva en cada acceso y reconstruiría la lista entera con cualquier cambio de estado.
+    final data = context.select<ProductsBloc, ({List<Product> visible, int page, String? highlightId, bool offline})>(
+      (bloc) => (
+        visible: bloc.state.visible,
+        page: bloc.state.page,
+        highlightId: bloc.state.highlightId,
+        offline: bloc.state.isOffline,
+      ),
+    );
+    final items = ProductQuery.page(data.visible, data.page);
+    return Padding(
+      // Holgura para que la barra de navegación flotante (y el aviso offline) no tapen el último elemento.
+      padding: EdgeInsets.fromLTRB(20, 4, 20, data.offline ? 190 : 130),
+      child: Column(
+        spacing: 8,
+        children: [
+          for (final product in items)
+            ProductTile(
+              product: product,
+              highlighted: product.remoteId == data.highlightId,
+              onTap: () => context.push(AppRoutes.productDetail(product.remoteId)),
+            ),
+          _PaginationFooter(onPageChanged: onPageChanged),
+        ],
+      ),
     );
   }
 }
@@ -300,25 +300,27 @@ class _PaginationFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    return BlocSelector<ProductsBloc, ProductsState, ({int page, int pageCount, int shown, int total})>(
-      selector: (state) =>
-          (page: state.page, pageCount: state.pageCount, shown: state.pageItems.length, total: state.visible.length),
-      builder: (context, data) {
-        final from = (data.page - 1) * ProductQuery.pageSize + 1;
-        return Padding(
-          padding: const EdgeInsets.only(top: 12),
-          child: Column(
-            spacing: 12,
-            children: [
-              Text(
-                t.products.showing(from: '$from', to: '${from + data.shown - 1}', total: '${data.total}'),
-                style: TextStyle(fontSize: 13.sp, color: context.colors.ink3),
-              ),
-              AppPaginator(page: data.page, pageCount: data.pageCount, onChanged: onPageChanged),
-            ],
+    final data = context.select<ProductsBloc, ({int page, int pageCount, int shown, int total})>(
+      (bloc) => (
+        page: bloc.state.page,
+        pageCount: bloc.state.pageCount,
+        shown: bloc.state.pageItems.length,
+        total: bloc.state.visible.length,
+      ),
+    );
+    final from = (data.page - 1) * ProductQuery.pageSize + 1;
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Column(
+        spacing: 12,
+        children: [
+          Text(
+            t.products.showing(from: '$from', to: '${from + data.shown - 1}', total: '${data.total}'),
+            style: TextStyle(fontSize: 13.sp, color: context.colors.ink3),
           ),
-        );
-      },
+          AppPaginator(page: data.page, pageCount: data.pageCount, onChanged: onPageChanged),
+        ],
+      ),
     );
   }
 }

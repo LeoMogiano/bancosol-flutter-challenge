@@ -79,17 +79,15 @@ class _ThemeSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    return BlocSelector<PreferencesCubit, PreferencesState, ThemeMode>(
-      selector: (state) => state.themeMode,
-      builder: (context, themeMode) => AppSegmented<ThemeMode>(
-        // "Sistema" no está en el diseño: el modo efectivo del dispositivo se muestra como Claro u Oscuro.
-        selected: themeMode == ThemeMode.system ? (context.isDarkMode ? ThemeMode.dark : ThemeMode.light) : themeMode,
-        onChanged: context.read<PreferencesCubit>().setThemeMode,
-        segments: [
-          AppSegment(value: ThemeMode.light, label: t.theme.light, icon: Icons.light_mode_rounded),
-          AppSegment(value: ThemeMode.dark, label: t.theme.dark, icon: Icons.dark_mode_rounded),
-        ],
-      ),
+    final themeMode = context.select<PreferencesCubit, ThemeMode>((bloc) => bloc.state.themeMode);
+    return AppSegmented<ThemeMode>(
+      // "Sistema" no está en el diseño: el modo efectivo del dispositivo se muestra como Claro u Oscuro.
+      selected: themeMode == ThemeMode.system ? (context.isDarkMode ? ThemeMode.dark : ThemeMode.light) : themeMode,
+      onChanged: context.read<PreferencesCubit>().setThemeMode,
+      segments: [
+        AppSegment(value: ThemeMode.light, label: t.theme.light, icon: Icons.light_mode_rounded),
+        AppSegment(value: ThemeMode.dark, label: t.theme.dark, icon: Icons.dark_mode_rounded),
+      ],
     );
   }
 }
@@ -100,18 +98,16 @@ class _LanguageSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    return BlocSelector<PreferencesCubit, PreferencesState, String?>(
-      selector: (state) => state.languageCode,
-      builder: (context, languageCode) => AppSegmented<String?>(
-        selected: languageCode,
-        onChanged: context.read<PreferencesCubit>().setLanguageCode,
-        segments: [
-          AppSegment(value: null, label: t.settings.deviceLanguage),
-          const AppSegment(value: 'es', label: 'ES'),
-          const AppSegment(value: 'en', label: 'EN'),
-          const AppSegment(value: 'pt', label: 'PT'),
-        ],
-      ),
+    final languageCode = context.select<PreferencesCubit, String?>((bloc) => bloc.state.languageCode);
+    return AppSegmented<String?>(
+      selected: languageCode,
+      onChanged: context.read<PreferencesCubit>().setLanguageCode,
+      segments: [
+        AppSegment(value: null, label: t.settings.deviceLanguage),
+        const AppSegment(value: 'es', label: 'ES'),
+        const AppSegment(value: 'en', label: 'EN'),
+        const AppSegment(value: 'pt', label: 'PT'),
+      ],
     );
   }
 }

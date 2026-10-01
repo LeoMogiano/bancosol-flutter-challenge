@@ -52,19 +52,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<ProductsBloc, ProductsState, Product?>(
-      selector: (state) => state.all.where((p) => p.remoteId == widget.remoteId).firstOrNull,
-      builder: (context, product) {
-        if (product == null) {
-          _closeOnce();
-          return const SizedBox.shrink();
-        }
+    final product = context.select<ProductsBloc, Product?>(
+      (bloc) => bloc.state.all.where((p) => p.remoteId == widget.remoteId).firstOrNull,
+    );
+    if (product == null) {
+      _closeOnce();
+      return const SizedBox.shrink();
+    }
 
-        return BlocProvider(
-          create: (_) => ProductDetailCubit(shareProduct: sl<ShareProduct>()),
-          child: _ProductDetailContent(product: product, edited: _edited, onPriceEdited: () => _edited.value = true),
-        );
-      },
+    return BlocProvider(
+      create: (_) => ProductDetailCubit(shareProduct: sl<ShareProduct>()),
+      child: _ProductDetailContent(product: product, edited: _edited, onPriceEdited: () => _edited.value = true),
     );
   }
 }

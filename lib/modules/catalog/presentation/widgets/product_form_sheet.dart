@@ -51,43 +51,39 @@ class _ProductFormContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.t;
 
-    return BlocSelector<ProductFormCubit, ProductFormState, bool>(
-      selector: (state) => state.submitting,
-      builder: (context, submitting) {
-        return PopScope(
-          canPop: !submitting,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SheetHeader(title: t.form.title),
-              const SizedBox(height: 18),
-              const _SkuField(),
-              const SizedBox(height: 12),
-              const _NameField(),
-              const SizedBox(height: 12),
-              // Lado a lado no deja espacio para el monto en pantallas de 320–360 dp.
-              LayoutBuilder(
-                builder: (_, constraints) => constraints.maxWidth < _sideBySideMinWidth
-                    ? const Column(spacing: 12, children: [_PriceField(), _StockField()])
-                    : const Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        spacing: 10,
-                        children: [
-                          Expanded(flex: 5, child: _PriceField()),
-                          Expanded(flex: 4, child: _StockField()),
-                        ],
-                      ),
-              ),
-              const SizedBox(height: 12),
-              const _CurrencyField(),
-              const SizedBox(height: 18),
-              const _ErrorBanner(),
-              const _ActionsSection(),
-            ],
+    final submitting = context.select<ProductFormCubit, bool>((bloc) => bloc.state.submitting);
+    return PopScope(
+      canPop: !submitting,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SheetHeader(title: t.form.title),
+          const SizedBox(height: 18),
+          const _SkuField(),
+          const SizedBox(height: 12),
+          const _NameField(),
+          const SizedBox(height: 12),
+          // Lado a lado no deja espacio para el monto en pantallas de 320–360 dp.
+          LayoutBuilder(
+            builder: (_, constraints) => constraints.maxWidth < _sideBySideMinWidth
+                ? const Column(spacing: 12, children: [_PriceField(), _StockField()])
+                : const Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 10,
+                    children: [
+                      Expanded(flex: 5, child: _PriceField()),
+                      Expanded(flex: 4, child: _StockField()),
+                    ],
+                  ),
           ),
-        );
-      },
+          const SizedBox(height: 12),
+          const _CurrencyField(),
+          const SizedBox(height: 18),
+          const _ErrorBanner(),
+          const _ActionsSection(),
+        ],
+      ),
     );
   }
 }
@@ -100,29 +96,25 @@ class _SkuField extends StatelessWidget {
     final t = context.t;
     final cubit = context.read<ProductFormCubit>();
 
-    return BlocSelector<ProductFormCubit, ProductFormState, (String, SkuError?)>(
-      selector: (state) => (state.sku, cubit.skuError),
-      builder: (context, data) {
-        final errorText = data.$2 != null
-            ? switch (data.$2) {
-                SkuError.empty => t.validation.skuEmpty,
-                SkuError.tooShort => t.validation.skuTooShort,
-                SkuError.invalidFormat => t.validation.skuFormat,
-                SkuError.duplicate => t.validation.skuDuplicate,
-                null => null,
-              }
-            : null;
+    final data = context.select<ProductFormCubit, (String, SkuError?)>((bloc) => (bloc.state.sku, bloc.skuError));
+    final errorText = data.$2 != null
+        ? switch (data.$2) {
+            SkuError.empty => t.validation.skuEmpty,
+            SkuError.tooShort => t.validation.skuTooShort,
+            SkuError.invalidFormat => t.validation.skuFormat,
+            SkuError.duplicate => t.validation.skuDuplicate,
+            null => null,
+          }
+        : null;
 
-        return CustomInput(
-          label: t.form.sku,
-          initialValue: data.$1,
-          textCapitalization: TextCapitalization.characters,
-          inputFormatters: [SkuInputFormatter()],
-          onChanged: cubit.skuChanged,
-          onBlur: () => cubit.fieldBlurred(ProductField.sku),
-          errorText: errorText,
-        );
-      },
+    return CustomInput(
+      label: t.form.sku,
+      initialValue: data.$1,
+      textCapitalization: TextCapitalization.characters,
+      inputFormatters: [SkuInputFormatter()],
+      onChanged: cubit.skuChanged,
+      onBlur: () => cubit.fieldBlurred(ProductField.sku),
+      errorText: errorText,
     );
   }
 }
@@ -135,28 +127,24 @@ class _NameField extends StatelessWidget {
     final t = context.t;
     final cubit = context.read<ProductFormCubit>();
 
-    return BlocSelector<ProductFormCubit, ProductFormState, (String, NameError?)>(
-      selector: (state) => (state.name, cubit.nameError),
-      builder: (context, data) {
-        final errorText = data.$2 != null
-            ? switch (data.$2) {
-                NameError.empty => t.validation.nameEmpty,
-                NameError.tooShort => t.validation.nameTooShort,
-                NameError.onlyDigits => t.validation.nameOnlyDigits,
-                NameError.duplicate => t.validation.nameDuplicate,
-                null => null,
-              }
-            : null;
+    final data = context.select<ProductFormCubit, (String, NameError?)>((bloc) => (bloc.state.name, bloc.nameError));
+    final errorText = data.$2 != null
+        ? switch (data.$2) {
+            NameError.empty => t.validation.nameEmpty,
+            NameError.tooShort => t.validation.nameTooShort,
+            NameError.onlyDigits => t.validation.nameOnlyDigits,
+            NameError.duplicate => t.validation.nameDuplicate,
+            null => null,
+          }
+        : null;
 
-        return CustomInput(
-          label: t.form.name,
-          initialValue: data.$1,
-          inputFormatters: [NameInputFormatter()],
-          onChanged: cubit.nameChanged,
-          onBlur: () => cubit.fieldBlurred(ProductField.name),
-          errorText: errorText,
-        );
-      },
+    return CustomInput(
+      label: t.form.name,
+      initialValue: data.$1,
+      inputFormatters: [NameInputFormatter()],
+      onChanged: cubit.nameChanged,
+      onBlur: () => cubit.fieldBlurred(ProductField.name),
+      errorText: errorText,
     );
   }
 }
@@ -169,30 +157,28 @@ class _PriceField extends StatelessWidget {
     final t = context.t;
     final cubit = context.read<ProductFormCubit>();
 
-    return BlocSelector<ProductFormCubit, ProductFormState, (String, String, PriceError?)>(
-      selector: (state) => (state.price, state.currency, cubit.priceError),
-      builder: (context, data) {
-        final errorText = data.$3 != null
-            ? switch (data.$3) {
-                PriceError.empty => t.validation.priceEmpty,
-                PriceError.incompleteDecimals => t.validation.priceIncomplete,
-                PriceError.notPositive => t.validation.priceNotPositive,
-                PriceError.tooHigh => t.validation.priceTooHigh,
-                PriceError.currencyEmpty => t.validation.currencyEmpty,
-                PriceError.unchanged => null,
-                null => null,
-              }
-            : null;
+    final data = context.select<ProductFormCubit, (String, String, PriceError?)>(
+      (bloc) => (bloc.state.price, bloc.state.currency, bloc.priceError),
+    );
+    final errorText = data.$3 != null
+        ? switch (data.$3) {
+            PriceError.empty => t.validation.priceEmpty,
+            PriceError.incompleteDecimals => t.validation.priceIncomplete,
+            PriceError.notPositive => t.validation.priceNotPositive,
+            PriceError.tooHigh => t.validation.priceTooHigh,
+            PriceError.currencyEmpty => t.validation.currencyEmpty,
+            PriceError.unchanged => null,
+            null => null,
+          }
+        : null;
 
-        return PriceField(
-          label: t.form.price,
-          currency: data.$2,
-          initialValue: data.$1,
-          onChanged: cubit.priceChanged,
-          onBlur: () => cubit.fieldBlurred(ProductField.price),
-          errorText: errorText,
-        );
-      },
+    return PriceField(
+      label: t.form.price,
+      currency: data.$2,
+      initialValue: data.$1,
+      onChanged: cubit.priceChanged,
+      onBlur: () => cubit.fieldBlurred(ProductField.price),
+      errorText: errorText,
     );
   }
 }
@@ -205,27 +191,23 @@ class _StockField extends StatelessWidget {
     final t = context.t;
     final cubit = context.read<ProductFormCubit>();
 
-    return BlocSelector<ProductFormCubit, ProductFormState, (String, StockError?)>(
-      selector: (state) => (state.stock, cubit.stockError),
-      builder: (context, data) {
-        final errorText = data.$2 != null
-            ? switch (data.$2) {
-                StockError.empty => t.validation.stockEmpty,
-                StockError.tooHigh => t.validation.stockTooHigh,
-                null => null,
-              }
-            : null;
+    final data = context.select<ProductFormCubit, (String, StockError?)>((bloc) => (bloc.state.stock, bloc.stockError));
+    final errorText = data.$2 != null
+        ? switch (data.$2) {
+            StockError.empty => t.validation.stockEmpty,
+            StockError.tooHigh => t.validation.stockTooHigh,
+            null => null,
+          }
+        : null;
 
-        return CustomInput(
-          label: t.form.stock,
-          initialValue: data.$1,
-          keyboardType: TextInputType.number,
-          inputFormatters: [StockInputFormatter()],
-          onChanged: cubit.stockChanged,
-          onBlur: () => cubit.fieldBlurred(ProductField.stock),
-          errorText: errorText,
-        );
-      },
+    return CustomInput(
+      label: t.form.stock,
+      initialValue: data.$1,
+      keyboardType: TextInputType.number,
+      inputFormatters: [StockInputFormatter()],
+      onChanged: cubit.stockChanged,
+      onBlur: () => cubit.fieldBlurred(ProductField.stock),
+      errorText: errorText,
     );
   }
 }
@@ -238,6 +220,8 @@ class _CurrencyField extends StatelessWidget {
     final t = context.t;
     final cubit = context.read<ProductFormCubit>();
 
+    final currency = context.select<ProductFormCubit, String>((bloc) => bloc.state.currency);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 8,
@@ -246,18 +230,13 @@ class _CurrencyField extends StatelessWidget {
           t.form.currency,
           style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600, color: context.colors.ink2),
         ),
-        BlocSelector<ProductFormCubit, ProductFormState, String>(
-          selector: (state) => state.currency,
-          builder: (context, currency) {
-            return AppSegmented<String>(
-              segments: const [
-                AppSegment(value: 'BOB', label: 'BOB'),
-                AppSegment(value: 'USD', label: 'USD'),
-              ],
-              selected: currency,
-              onChanged: cubit.currencyChanged,
-            );
-          },
+        AppSegmented<String>(
+          segments: const [
+            AppSegment(value: 'BOB', label: 'BOB'),
+            AppSegment(value: 'USD', label: 'USD'),
+          ],
+          selected: currency,
+          onChanged: cubit.currencyChanged,
         ),
       ],
     );
@@ -270,20 +249,15 @@ class _ErrorBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    return BlocSelector<ProductFormCubit, ProductFormState, bool>(
-      selector: (state) => state.submitError != null,
-      builder: (context, hasError) {
-        if (!hasError) return const SizedBox.shrink();
-        final failure = context.read<ProductFormCubit>().state.submitError!;
-        final message = switch (failure.type) {
-          FailureType.network || FailureType.timeout => t.form.offlineError,
-          _ => t.form.serverError,
-        };
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 18),
-          child: ErrorBanner(message: message),
-        );
-      },
+    final failure = context.select<ProductFormCubit, Failure?>((bloc) => bloc.state.submitError);
+    if (failure == null) return const SizedBox.shrink();
+    final message = switch (failure.type) {
+      FailureType.network || FailureType.timeout => t.form.offlineError,
+      _ => t.form.serverError,
+    };
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 18),
+      child: ErrorBanner(message: message),
     );
   }
 }
@@ -296,23 +270,21 @@ class _ActionsSection extends StatelessWidget {
     final t = context.t;
     final cubit = context.read<ProductFormCubit>();
 
-    return BlocSelector<ProductFormCubit, ProductFormState, ({bool submitting, bool hasError})>(
-      selector: (state) => (submitting: state.submitting, hasError: state.submitError != null),
-      builder: (context, data) {
-        return SheetActions(
-          secondary: AppButton(
-            label: t.actions.cancel,
-            variant: AppButtonVariant.outline,
-            onPressed: data.submitting ? null : () => Navigator.of(context).maybePop(),
-          ),
-          primary: AppButton(
-            label: data.hasError ? t.actions.retry : t.form.create,
-            loading: data.submitting,
-            loadingLabel: t.form.creating,
-            onPressed: data.submitting ? null : cubit.submit,
-          ),
-        );
-      },
+    final data = context.select<ProductFormCubit, ({bool submitting, bool hasError})>(
+      (bloc) => (submitting: bloc.state.submitting, hasError: bloc.state.submitError != null),
+    );
+    return SheetActions(
+      secondary: AppButton(
+        label: t.actions.cancel,
+        variant: AppButtonVariant.outline,
+        onPressed: data.submitting ? null : () => Navigator.of(context).maybePop(),
+      ),
+      primary: AppButton(
+        label: data.hasError ? t.actions.retry : t.form.create,
+        loading: data.submitting,
+        loadingLabel: t.form.creating,
+        onPressed: data.submitting ? null : cubit.submit,
+      ),
     );
   }
 }

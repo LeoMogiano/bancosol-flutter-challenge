@@ -107,33 +107,31 @@ class _PriceInput extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.t;
     final cubit = context.read<PriceEditCubit>();
-    return BlocSelector<PriceEditCubit, PriceEditState, ({PriceError? error, int? changePercent})>(
-      selector: (_) => (error: cubit.error, changePercent: cubit.changePercent),
-      builder: (context, data) {
-        final error = switch (data.error) {
-          PriceError.incompleteDecimals => t.validation.priceIncomplete,
-          PriceError.notPositive => t.validation.priceNotPositive,
-          PriceError.tooHigh => t.validation.priceTooHigh,
-          PriceError.currencyEmpty => t.validation.currencyEmpty,
-          PriceError.empty || PriceError.unchanged || null => null,
-        };
-        final helper = switch (data.error) {
-          PriceError.empty => t.validation.priceEmpty,
-          PriceError.unchanged => t.validation.priceUnchanged,
-          _ when data.changePercent != null => t.priceEdit.bigChange(percent: data.changePercent!),
-          _ => t.priceEdit.help,
-        };
-        return PriceField(
-          currency: cubit.state.product.currency,
-          large: true,
-          autofocus: true,
-          initialValue: cubit.state.draft,
-          onChanged: cubit.draftChanged,
-          errorText: error,
-          helperText: helper,
-          helperIsWarning: data.error == null && data.changePercent != null,
-        );
-      },
+    final data = context.select<PriceEditCubit, ({PriceError? error, int? changePercent})>(
+      (bloc) => (error: bloc.error, changePercent: bloc.changePercent),
+    );
+    final error = switch (data.error) {
+      PriceError.incompleteDecimals => t.validation.priceIncomplete,
+      PriceError.notPositive => t.validation.priceNotPositive,
+      PriceError.tooHigh => t.validation.priceTooHigh,
+      PriceError.currencyEmpty => t.validation.currencyEmpty,
+      PriceError.empty || PriceError.unchanged || null => null,
+    };
+    final helper = switch (data.error) {
+      PriceError.empty => t.validation.priceEmpty,
+      PriceError.unchanged => t.validation.priceUnchanged,
+      _ when data.changePercent != null => t.priceEdit.bigChange(percent: data.changePercent!),
+      _ => t.priceEdit.help,
+    };
+    return PriceField(
+      currency: cubit.state.product.currency,
+      large: true,
+      autofocus: true,
+      initialValue: cubit.state.draft,
+      onChanged: cubit.draftChanged,
+      errorText: error,
+      helperText: helper,
+      helperIsWarning: data.error == null && data.changePercent != null,
     );
   }
 }
@@ -144,20 +142,16 @@ class _ServerError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    return BlocSelector<PriceEditCubit, PriceEditState, Failure?>(
-      selector: (state) => state.submitError,
-      builder: (_, failure) {
-        if (failure == null) return const SizedBox.shrink();
-        final message = switch (failure.type) {
-          FailureType.network || FailureType.timeout => t.priceEdit.offlineError,
-          FailureType.notFound => failure.message,
-          _ => t.priceEdit.serverError,
-        };
-        return Padding(
-          padding: const EdgeInsets.only(top: 14),
-          child: ErrorBanner(title: t.priceEdit.errorTitle, message: message),
-        );
-      },
+    final failure = context.select<PriceEditCubit, Failure?>((bloc) => bloc.state.submitError);
+    if (failure == null) return const SizedBox.shrink();
+    final message = switch (failure.type) {
+      FailureType.network || FailureType.timeout => t.priceEdit.offlineError,
+      FailureType.notFound => failure.message,
+      _ => t.priceEdit.serverError,
+    };
+    return Padding(
+      padding: const EdgeInsets.only(top: 14),
+      child: ErrorBanner(title: t.priceEdit.errorTitle, message: message),
     );
   }
 }
@@ -169,21 +163,20 @@ class _Actions extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.t;
     final cubit = context.read<PriceEditCubit>();
-    return BlocSelector<PriceEditCubit, PriceEditState, ({bool canSubmit, bool submitting, bool failed})>(
-      selector: (state) =>
-          (canSubmit: cubit.canSubmit, submitting: state.submitting, failed: state.submitError != null),
-      builder: (context, data) => SheetActions(
-        secondary: AppButton(
-          label: t.actions.cancel,
-          variant: AppButtonVariant.outline,
-          onPressed: data.submitting ? null : () => Navigator.of(context).maybePop(),
-        ),
-        primary: AppButton(
-          label: data.failed ? t.actions.retry : t.priceEdit.save,
-          loading: data.submitting,
-          loadingLabel: t.priceEdit.saving,
-          onPressed: data.canSubmit ? cubit.submit : null,
-        ),
+    final data = context.select<PriceEditCubit, ({bool canSubmit, bool submitting, bool failed})>(
+      (bloc) => (canSubmit: bloc.canSubmit, submitting: bloc.state.submitting, failed: bloc.state.submitError != null),
+    );
+    return SheetActions(
+      secondary: AppButton(
+        label: t.actions.cancel,
+        variant: AppButtonVariant.outline,
+        onPressed: data.submitting ? null : () => Navigator.of(context).maybePop(),
+      ),
+      primary: AppButton(
+        label: data.failed ? t.actions.retry : t.priceEdit.save,
+        loading: data.submitting,
+        loadingLabel: t.priceEdit.saving,
+        onPressed: data.canSubmit ? cubit.submit : null,
       ),
     );
   }

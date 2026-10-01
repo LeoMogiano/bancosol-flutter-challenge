@@ -2,7 +2,7 @@
 
 ## Ramas
 
-Gitflow: `main` (releases) ← `develop` (integración) ← `feature/<tema>` / `fix/<tema>`. Cada rama se integra con `git merge --no-ff`.
+Gitflow: `main` (releases) ← `cert` (certificación) ← `develop` (integración) ← `feature/<tema>` / `fix/<tema>`. Cada rama se integra con `git merge --no-ff`; un cambio solo sube a `cert` cuando `develop` está cerrado, y a `main` cuando `cert` está aprobado.
 
 ## Commits
 
@@ -31,6 +31,36 @@ flutter test --dart-define-from-file=.env.dev
 - Textos visibles solo desde slang (`context.t`); nada escrito a mano.
 - Colores solo desde `context.colors`.
 - `fontSize` solo con valores `.sp` de la tabla px → sp; paddings, radios y alturas son fijos.
-- `BlocSelector` en las hojas del árbol; los formularios guardan su estado en un cubit, no en `setState`.
+- Estado de un Bloc en la UI: ver [Reconstrucciones](#reconstrucciones). Los formularios guardan su estado en un cubit, no en `setState`.
 - Comentarios solo para explicar un porqué que no es obvio.
 - Tests: pocos y esenciales, cada uno con una regla concreta y nombre en español.
+
+## Reconstrucciones
+
+Objetivo: que un cambio de estado reconstruya solo lo que muestra ese dato.
+
+| Caso | Usar |
+|---|---|
+| Widget chico cuyo `build` depende del dato (campo, sección de hoja, tile, footer) | `context.select` al inicio del `build` |
+| Trozo dentro de un `build` grande (pantalla, `CustomScaffold`) que no amerita un widget propio | `BlocSelector` alrededor de ese trozo |
+| El `BlocProvider` se crea en el mismo `build` (el `context` está por encima) | `BlocSelector` / `BlocBuilder` debajo del provider |
+| Efectos: toasts, navegación, foco | `BlocListener`, nunca dentro de `build` |
+
+```dart
+@override
+Widget build(BuildContext context) {
+  final t = context.t;
+  final data = context.select<ProductsBloc, ({int page, int pageCount})>(
+    (bloc) => (page: bloc.state.page, pageCount: bloc.state.pageCount),
+  );
+  return AppPaginator(page: data.page, pageCount: data.pageCount, onChanged: onPageChanged);
+}
+```
+
+- `context.select` reconstruye **todo** el `build` del widget dueño del `context`: nunca en una pantalla entera. Si el dato se usa en un trozo, se extrae ese trozo a un widget o se usa `BlocSelector`.
+- Se selecciona lo mínimo: un valor o un record. Los records se comparan por valor, así que varios campos en un record no reconstruyen si ninguno cambió.
+- Nunca seleccionar una lista recién calculada (`pageItems`, `where(...).toList()`): es una instancia nueva en cada acceso y reconstruye siempre. Se seleccionan las fuentes (`visible`, `page`) y se calcula en el `build`.
+- Genéricos explícitos (`context.select<Bloc, T>((bloc) => ...)`): el lint `avoid_types_on_closure_parameters` no permite tipar el parámetro.
+- Solo en `build`, al inicio y antes de cualquier `return`. Nunca en callbacks, `initState` ni `itemBuilder`; ahí va `context.read`.
+- `BlocBuilder` sin `buildWhen` solo en hojas cortas donde todo el contenido depende del estado.
+- Hijos que no dependen del dato van `const` o en widgets propios, así no se reconstruyen con el padre.
