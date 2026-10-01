@@ -13,5 +13,9 @@
         "**/build": true,
         "**/.dart_tool": true,
         "lib/core/i18n/strings*.g.dart": true
+    },
+    "files.watcherExclude": {
+        "**/build/**": true,
+        "**/.dart_tool/**": true
     }
 }
