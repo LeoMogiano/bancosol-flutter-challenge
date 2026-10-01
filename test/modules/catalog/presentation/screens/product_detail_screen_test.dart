@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:warehouse/app/router/app_routes.dart';
+import 'package:warehouse/core/constants/app_routes.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/get_products_use_case.dart';
 import 'package:warehouse/modules/catalog/presentation/screens/product_detail_screen.dart';

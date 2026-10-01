@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:warehouse/app/env_config.dart';
+import 'package:warehouse/core/config/env_config.dart';
 import 'package:warehouse/core/network/interceptors/api_key_interceptor.dart';
 
 typedef AppRunner = FutureOr<void> Function();
