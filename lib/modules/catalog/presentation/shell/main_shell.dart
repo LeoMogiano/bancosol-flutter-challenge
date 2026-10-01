@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 import 'package:warehouse/modules/catalog/application/search_focus/search_focus_cubit.dart';
+import 'package:warehouse/shared/formatters/time_formatter.dart';
 import 'package:warehouse/shared/widgets/feedback/offline_badge.dart';
 import 'package:warehouse/shared/widgets/navigation/app_nav_bar.dart';
 
@@ -41,7 +41,7 @@ class MainShell extends StatelessWidget {
                         child: OfflineBadge(
                           title: t.products.offline,
                           subtitle: data.syncedAt != null
-                              ? t.products.lastSync(time: DateFormat.Hm().format(data.syncedAt!))
+                              ? t.products.lastSync(time: TimeFormatter.format(context, data.syncedAt!))
                               : t.settings.neverSynced,
                         ),
                       );
