@@ -50,6 +50,8 @@ El ambiente **no** está en el `.env`: sale del flavor (`appFlavor`), así no pu
 
 `--dart-define-from-file` es un flag de la CLI de Flutter; Xcode no lo conoce. Por eso cada scheme (`dev`, `qa`, `prod`) tiene una *pre-action* que ejecuta `ios/scripts/generate_dart_defines_xcconfig.sh .env.<flavor>`: escribe `ios/Flutter/DartDefines.xcconfig` (ignorado por git) con las variables en base64. Así un Archive para TestFlight arranca con su `BASE_URL` y no con una pantalla en blanco.
 
+Las build configurations y schemes por flavor se crearon con `ios/scripts/setup_flavors.rb` (gem `xcodeproj`); el script es idempotente y solo hace falta volver a correrlo si se agrega un flavor.
+
 ## Arquitectura
 
 Clean architecture por capas, con **un solo módulo** (`catalog`) porque la app es un único flujo.
