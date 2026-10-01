@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:warehouse/core/services/haptic_service.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 
 class AppPaginator extends StatelessWidget {
@@ -11,6 +12,12 @@ class AppPaginator extends StatelessWidget {
 
   static const double _buttonSize = 36;
   static const double _buttonRadius = 20;
+
+  void _go(int target) {
+    if (target == page) return;
+    HapticService.selection();
+    onChanged(target);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +39,7 @@ class AppPaginator extends StatelessWidget {
           children: [
             _NavigationButton(
               icon: Icons.chevron_left_rounded,
-              onPressed: page > 1 ? () => onChanged(page - 1) : null,
+              onPressed: page > 1 ? () => _go(page - 1) : null,
               enabled: page > 1,
             ),
             ...pages.map((pageNum) {
@@ -56,7 +63,7 @@ class AppPaginator extends StatelessWidget {
                     color: isCurrentPage ? colors.accent : Colors.transparent,
                     borderRadius: BorderRadius.circular(_buttonRadius),
                     child: InkWell(
-                      onTap: () => onChanged(pageNum),
+                      onTap: () => _go(pageNum),
                       borderRadius: BorderRadius.circular(_buttonRadius),
                       child: Container(
                         decoration: isCurrentPage
@@ -83,7 +90,7 @@ class AppPaginator extends StatelessWidget {
             }),
             _NavigationButton(
               icon: Icons.chevron_right_rounded,
-              onPressed: page < pageCount ? () => onChanged(page + 1) : null,
+              onPressed: page < pageCount ? () => _go(page + 1) : null,
               enabled: page < pageCount,
             ),
           ],

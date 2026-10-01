@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
+import 'package:warehouse/core/services/haptic_service.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/filters/filter_draft_cubit.dart';
 import 'package:warehouse/modules/catalog/domain/services/product_query.dart';
@@ -44,7 +45,11 @@ class SortSection extends StatelessWidget {
                         label: option.label,
                         icon: option.icon,
                         isSelected: selected == option.sort,
-                        onTap: () => cubit.sortChanged(option.sort),
+                        onTap: () {
+                          if (selected == option.sort) return;
+                          HapticService.selection();
+                          cubit.sortChanged(option.sort);
+                        },
                       ),
                     ),
                 ],

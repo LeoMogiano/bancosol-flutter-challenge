@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:warehouse/core/services/haptic_service.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 
 class AppSegment<T> {
@@ -26,6 +27,12 @@ class AppSegmented<T> extends StatelessWidget {
   static const double _radius = 20;
   static const double _segmentRadius = 14;
 
+  void _select(T value) {
+    if (value == selected) return;
+    HapticService.selection();
+    onChanged(value);
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
@@ -47,7 +54,7 @@ class AppSegmented<T> extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.only(left: index == 0 ? 0 : _gap),
               child: GestureDetector(
-                onTap: () => onChanged(segment.value),
+                onTap: () => _select(segment.value),
                 child: Container(
                   constraints: const BoxConstraints(minHeight: _minSegmentHeight),
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/core/di/service_locator.dart';
 import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
+import 'package:warehouse/core/services/haptic_service.dart';
 import 'package:warehouse/modules/catalog/application/product_form/product_form_cubit.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/create_product.dart';
@@ -25,8 +26,9 @@ class ProductFormSheet extends StatelessWidget {
     return BlocProvider(
       create: (_) => ProductFormCubit(existing: existing, createProduct: sl<CreateProduct>()),
       child: BlocListener<ProductFormCubit, ProductFormState>(
-        listenWhen: (prev, curr) => prev.created == null && curr.created != null,
-        listener: (context, state) => Navigator.of(context).pop(state.created),
+        listenWhen: (prev, curr) => prev.submitting && !curr.submitting,
+        listener: (context, state) =>
+            state.created != null ? Navigator.of(context).pop(state.created) : HapticService.error(),
         child: const _ProductFormContent(),
       ),
     );

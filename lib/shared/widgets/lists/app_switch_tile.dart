@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:warehouse/core/services/haptic_service.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/shared/widgets/lists/app_tile.dart';
 
@@ -18,6 +19,11 @@ class AppSwitchTile extends StatelessWidget {
   final String? subtitle;
   final IconData? icon;
 
+  void _toggle(bool next) {
+    HapticService.toggle(on: next);
+    onChanged(next);
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
@@ -26,10 +32,10 @@ class AppSwitchTile extends StatelessWidget {
       title: title,
       subtitle: subtitle,
       icon: icon,
-      onTap: () => onChanged(!value),
+      onTap: () => _toggle(!value),
       trailing: Switch(
         value: value,
-        onChanged: onChanged,
+        onChanged: _toggle,
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         thumbColor: WidgetStatePropertyAll(colors.surface),
         trackColor: WidgetStateProperty.resolveWith(
