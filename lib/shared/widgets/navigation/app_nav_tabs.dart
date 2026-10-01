@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 
@@ -67,7 +70,7 @@ class AppNavTabs extends StatelessWidget {
   }
 }
 
-class _Tab extends StatelessWidget {
+class _Tab extends StatefulWidget {
   const _Tab({required this.item, required this.isActive, required this.duration, required this.onTap});
 
   final AppNavItem item;
@@ -76,58 +79,86 @@ class _Tab extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
+  State<_Tab> createState() => _TabState();
+}
+
+class _TabState extends State<_Tab> {
+  static const Duration _pressDuration = Duration(milliseconds: 120);
+  static const double _pressedScale = 0.92;
+
+  bool _pressed = false;
+
+  void _handleTap() {
+    if (!widget.isActive) unawaited(HapticFeedback.selectionClick());
+    widget.onTap();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final item = widget.item;
+    final isActive = widget.isActive;
+    final duration = widget.duration;
 
+    // Sin ripple: la onda se deformaba al cambiar el ancho del tab; la respuesta es un leve encogimiento.
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: onTap,
+        onTap: _handleTap,
+        onHighlightChanged: (pressed) => setState(() => _pressed = pressed),
+        splashFactory: NoSplash.splashFactory,
+        highlightColor: Colors.transparent,
+        hoverColor: Colors.transparent,
         borderRadius: BorderRadius.circular(26),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AnimatedSwitcher(
-                duration: duration,
-                child: Icon(
-                  isActive ? item.activeIcon : item.icon,
-                  key: ValueKey(isActive),
-                  size: 23,
-                  color: isActive ? colors.ink : colors.ink2,
-                ),
-              ),
-              Flexible(
-                child: AnimatedSwitcher(
+        child: AnimatedScale(
+          scale: _pressed ? _pressedScale : 1,
+          duration: duration == Duration.zero ? Duration.zero : _pressDuration,
+          curve: Curves.easeOut,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedSwitcher(
                   duration: duration,
-                  switchInCurve: AppNavTabs._curve,
-                  switchOutCurve: AppNavTabs._curve,
-                  transitionBuilder: (child, animation) => FadeTransition(
-                    opacity: animation,
-                    child: SizeTransition(
-                      sizeFactor: animation,
-                      axis: Axis.horizontal,
-                      alignment: AlignmentDirectional.centerStart,
-                      child: child,
-                    ),
+                  child: Icon(
+                    isActive ? item.activeIcon : item.icon,
+                    key: ValueKey(isActive),
+                    size: 23,
+                    color: isActive ? colors.ink : colors.ink2,
                   ),
-                  child: isActive
-                      ? Padding(
-                          key: const ValueKey(true),
-                          padding: const EdgeInsets.only(left: 7),
-                          child: Text(
-                            item.label,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            softWrap: false,
-                            style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w600, color: colors.ink),
-                          ),
-                        )
-                      : const SizedBox.shrink(key: ValueKey(false)),
                 ),
-              ),
-            ],
+                Flexible(
+                  child: AnimatedSwitcher(
+                    duration: duration,
+                    switchInCurve: AppNavTabs._curve,
+                    switchOutCurve: AppNavTabs._curve,
+                    transitionBuilder: (child, animation) => FadeTransition(
+                      opacity: animation,
+                      child: SizeTransition(
+                        sizeFactor: animation,
+                        axis: Axis.horizontal,
+                        alignment: AlignmentDirectional.centerStart,
+                        child: child,
+                      ),
+                    ),
+                    child: isActive
+                        ? Padding(
+                            key: const ValueKey(true),
+                            padding: const EdgeInsets.only(left: 7),
+                            child: Text(
+                              item.label,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: false,
+                              style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w600, color: colors.ink),
+                            ),
+                          )
+                        : const SizedBox.shrink(key: ValueKey(false)),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
