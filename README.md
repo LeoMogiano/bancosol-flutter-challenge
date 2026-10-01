@@ -19,6 +19,7 @@ En VS Code, `.vscode/launch.json` trae Debug / Release × dev / qa / prod.
 | `BASE_URL` | Endpoint de CrudCrud: `https://crudcrud.com/api/<id>` |
 | `API_KEY` | Header `x-api-key`; vacío = no se envía |
 | `SENTRY_DSN` | Vacío = Sentry apagado |
+| `USD_TO_BOB` | Tasa para comparar precios en USD; vacío = 6.96 |
 
 El ambiente no vive en el `.env`: sale del flavor, así no pueden desalinearse.
 
@@ -106,9 +107,6 @@ CI (`.github/workflows/ci.yaml`) ejecuta formato, análisis, tamaño de pantalla
 
 - CrudCrud gratuito expira y limita peticiones: un 429 se informa y reintenta; si expiró, crear otro endpoint y cambiar `BASE_URL`.
 - `PUT` reemplaza el documento entero, por eso se envían todos los campos.
-- Tasa USD → BOB fija (6.96).
-- Sin cola offline: crear, editar y eliminar requieren conexión.
-- Android no informa si se completó el share; el aviso "Compartido" solo aparece en iOS.
 - El build release firma con las claves de debug.
 
 ## Contribuir
