@@ -56,7 +56,7 @@ class PriceEditContent extends StatelessWidget {
           listenWhen: (prev, curr) => curr.submitError?.type == FailureType.notFound && prev.submitError == null,
           listener: (context, state) {
             final products = context.read<ProductsBloc>();
-            AppToast.show(context, state.submitError!.message, icon: Icons.error_rounded);
+            AppToast.showError(context, state.submitError!.message);
             Navigator.of(context).pop();
             products.add(const ProductsRefreshed());
           },

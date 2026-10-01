@@ -81,7 +81,7 @@ class _ProductDetailContent extends StatelessWidget {
     final updated = await PriceEditSheet.open(context, product);
     if (updated != null && context.mounted) {
       context.read<ProductsBloc>().add(ProductUpserted(updated));
-      AppToast.show(context, t.toasts.priceUpdated);
+      AppToast.showSuccess(context, t.toasts.priceUpdated);
       onPriceEdited();
     }
   }
@@ -90,7 +90,7 @@ class _ProductDetailContent extends StatelessWidget {
     final t = context.t;
     final deleted = await DeleteConfirmSheet.open(context, product);
     if (deleted && context.mounted) {
-      AppToast.show(context, t.toasts.deleted, icon: Icons.delete_rounded);
+      AppToast.showSuccess(context, t.toasts.deleted, icon: Icons.delete_rounded);
       context.read<ProductsBloc>().add(ProductRemoved(product.remoteId));
     }
   }

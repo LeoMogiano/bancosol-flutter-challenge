@@ -9,7 +9,15 @@ abstract final class AppToast {
   static OverlayEntry? _current;
   static Timer? _timer;
 
-  static void show(BuildContext context, String message, {IconData icon = Icons.check_circle_rounded}) {
+  static void showSuccess(BuildContext context, String message, {IconData icon = Icons.check_circle_rounded}) =>
+      _show(context, message, icon);
+
+  static void showError(BuildContext context, String message) => _show(context, message, Icons.error_rounded);
+
+  static void showInfo(BuildContext context, String message, {IconData icon = Icons.info_outline_rounded}) =>
+      _show(context, message, icon);
+
+  static void _show(BuildContext context, String message, IconData icon) {
     _dismiss();
     final colors = context.colors;
     final top = MediaQuery.paddingOf(context).top + 8;

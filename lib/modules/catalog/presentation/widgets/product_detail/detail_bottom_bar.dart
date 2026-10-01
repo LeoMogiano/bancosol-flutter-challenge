@@ -24,9 +24,11 @@ class DetailBottomBar extends StatelessWidget {
           prev.confirmedShares != curr.confirmedShares || (curr.shareError != null && prev.shareError == null),
       listener: (context, state) {
         final error = state.shareError;
-        error == null
-            ? AppToast.show(context, t.toasts.shared, icon: Icons.ios_share_rounded)
-            : AppToast.show(context, error.message, icon: Icons.error_rounded);
+        if (error == null) {
+          AppToast.showSuccess(context, t.toasts.shared, icon: Icons.ios_share_rounded);
+        } else {
+          AppToast.showError(context, error.message);
+        }
       },
       child: DecoratedBox(
         decoration: BoxDecoration(

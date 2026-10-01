@@ -7,7 +7,7 @@ import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/preferences/preferences_cubit.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
-import 'package:warehouse/modules/catalog/presentation/widgets/summary/fake_search_button.dart';
+import 'package:warehouse/modules/catalog/presentation/widgets/summary/search_redirect_button.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/summary/summary_body.dart';
 import 'package:warehouse/shared/widgets/buttons/app_icon_button.dart';
 import 'package:warehouse/shared/widgets/feedback/app_toast.dart';
@@ -37,9 +37,11 @@ class _SummaryScreenState extends State<SummaryScreen> {
       listener: (context, state) {
         _refreshStartedLocally = false;
         final failure = state.failure;
-        failure == null
-            ? AppToast.show(context, t.toasts.synced)
-            : AppToast.show(context, failure.message, icon: Icons.error_rounded);
+        if (failure == null) {
+          AppToast.showSuccess(context, t.toasts.synced);
+        } else {
+          AppToast.showError(context, failure.message);
+        }
       },
       child: CustomScaffold(
         scrollable: true,
@@ -55,7 +57,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                 child: Column(
                   spacing: 20,
                   children: [
-                    FakeSearchButton(label: t.summary.searchHint),
+                    SearchRedirectButton(label: t.summary.searchHint),
                     const SummaryBody(),
                   ],
                 ),
