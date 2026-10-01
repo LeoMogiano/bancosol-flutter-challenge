@@ -1,0 +1,27 @@
+{
+  "appName": "WareHouse",
+  "nav": {
+    "summary": "Summary",
+    "products": "Products",
+    "settings": "Settings"
+  },
+  "actions": {
+    "retry": "Retry",
+    "cancel": "Cancel"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "languageLabel": "Language",
+  "failures": {
+    "network": "No connection. Check your connection and try again.",
+    "timeout": "The server took too long to respond. Try again.",
+    "notFound": "This product no longer exists. Refresh the list.",
+    "rateLimit": "You made too many requests in a row. Wait a few seconds and try again.",
+    "server": "A server error occurred. Try again.",
+    "cache": "We couldn't read the data stored on your device.",
+    "unexpected": "An unexpected error occurred. Try again."
+  },
+  "environmentLabel": "Environment: {env}"
+}

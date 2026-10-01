@@ -1,0 +1,27 @@
+{
+  "appName": "WareHouse",
+  "nav": {
+    "summary": "Resumo",
+    "products": "Produtos",
+    "settings": "Configurações"
+  },
+  "actions": {
+    "retry": "Tentar novamente",
+    "cancel": "Cancelar"
+  },
+  "theme": {
+    "light": "Claro",
+    "dark": "Escuro"
+  },
+  "languageLabel": "Idioma",
+  "failures": {
+    "network": "Sem conexão. Verifique sua conexão e tente novamente.",
+    "timeout": "O servidor demorou muito para responder. Tente novamente.",
+    "notFound": "Este produto não existe mais. Atualize a lista.",
+    "rateLimit": "Você fez muitas solicitações seguidas. Aguarde alguns segundos e tente novamente.",
+    "server": "Um erro no servidor ocorreu. Tente novamente.",
+    "cache": "Não conseguimos ler os dados armazenados no seu dispositivo.",
+    "unexpected": "Um erro inesperado ocorreu. Tente novamente."
+  },
+  "environmentLabel": "Ambiente: {env}"
+}
