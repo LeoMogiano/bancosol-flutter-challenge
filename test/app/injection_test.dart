@@ -8,7 +8,7 @@ import 'package:warehouse/core/network/api_client.dart';
 import 'package:warehouse/core/network/interceptors/api_key_interceptor.dart';
 import 'package:warehouse/core/network/interceptors/redacting_log_interceptor.dart';
 import 'package:warehouse/core/storage/local_store.dart';
-import 'package:warehouse/modules/catalog/application/preferences/preferences_cubit.dart';
+import 'package:warehouse/modules/catalog/application/preferences/preferences_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/repositories/product_repository.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/create_product_use_case.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/delete_product_use_case.dart';
@@ -29,7 +29,7 @@ void main() {
 
   test('todo el grafo de dependencias se resuelve sin errores', () {
     expect(sl.get<ApiClient>, returnsNormally);
-    expect(sl.get<PreferencesCubit>, returnsNormally);
+    expect(sl.get<PreferencesBloc>, returnsNormally);
     expect(sl.get<ProductRepository>, returnsNormally);
     expect(sl.get<GetProductsUseCase>, returnsNormally);
     expect(sl.get<GetProductUseCase>, returnsNormally);

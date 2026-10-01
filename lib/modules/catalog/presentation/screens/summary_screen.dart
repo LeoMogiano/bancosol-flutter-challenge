@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/core/i18n/failure_i18n.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
-import 'package:warehouse/modules/catalog/application/preferences/preferences_cubit.dart';
+import 'package:warehouse/modules/catalog/application/preferences/preferences_bloc.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/summary/search_redirect_button.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/summary/summary_body.dart';
@@ -83,7 +83,7 @@ class _ThemeToggle extends StatelessWidget {
       tooltip: isDark ? t.theme.light : t.theme.dark,
       onPressed: () {
         final nextMode = isDark ? ThemeMode.light : ThemeMode.dark;
-        unawaited(context.read<PreferencesCubit>().setThemeMode(nextMode));
+        context.read<PreferencesBloc>().add(PreferencesThemeModeChanged(nextMode));
       },
     );
   }

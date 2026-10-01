@@ -10,7 +10,7 @@ import 'package:warehouse/core/i18n/strings.g.dart';
 // import 'package:warehouse/core/services/app_bloc_observer.dart';
 import 'package:warehouse/core/services/logger_service.dart';
 import 'package:warehouse/core/storage/local_store.dart';
-import 'package:warehouse/modules/catalog/application/preferences/preferences_cubit.dart';
+import 'package:warehouse/modules/catalog/application/preferences/preferences_bloc.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 
 Future<void> bootstrap(Widget Function() builder) async {
@@ -27,7 +27,7 @@ Future<void> bootstrap(Widget Function() builder) async {
   // Bloc.observer = AppBlocObserver();
   await HiveLocalStore.init();
   await injection();
-  await applyAppLocale(sl<PreferencesCubit>().state.languageCode);
+  await applyAppLocale(sl<PreferencesBloc>().state.languageCode);
   sl<ProductsBloc>().add(const ProductsRequested());
 
   LoggerService.s('App ready', name: 'BOOT');

@@ -1,4 +1,4 @@
-part of 'preferences_cubit.dart';
+part of 'preferences_bloc.dart';
 
 class PreferencesState extends Equatable {
   const PreferencesState({required this.themeMode, required this.languageCode, required this.cacheEnabled});

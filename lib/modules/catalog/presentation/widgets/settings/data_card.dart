@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/core/i18n/failure_i18n.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
-import 'package:warehouse/modules/catalog/application/preferences/preferences_cubit.dart';
+import 'package:warehouse/modules/catalog/application/preferences/preferences_bloc.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 import 'package:warehouse/shared/formatters/time_formatter.dart';
 import 'package:warehouse/shared/widgets/cards/app_card.dart';
@@ -35,14 +35,14 @@ class _CacheTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final enabled = context.select<PreferencesCubit, bool>((cubit) => cubit.state.cacheEnabled);
+    final enabled = context.select<PreferencesBloc, bool>((bloc) => bloc.state.cacheEnabled);
 
     return AppSwitchTile(
       icon: Icons.offline_bolt_outlined,
       title: t.settings.cache,
       subtitle: t.settings.cacheHint,
       value: enabled,
-      onChanged: (value) => context.read<PreferencesCubit>().setCacheEnabled(enabled: value),
+      onChanged: (value) => context.read<PreferencesBloc>().add(PreferencesCacheToggled(enabled: value)),
     );
   }
 }
