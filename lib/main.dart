@@ -40,10 +40,9 @@ class MainApp extends StatelessWidget {
               supportedLocales: AppLocaleUtils.supportedLocales,
               localizationsDelegates: GlobalMaterialLocalizations.delegates,
               routerConfig: appRouter,
-              builder: (context, child) => MediaQuery(
-                data: MediaQuery.of(context).copyWith(
-                  textScaler: MediaQuery.textScalerOf(context).clamp(minScaleFactor: 0.8, maxScaleFactor: 1.15),
-                ),
+              builder: (_, child) => MediaQuery.withClampedTextScaling(
+                minScaleFactor: 0.8,
+                maxScaleFactor: 1.15,
                 child: PrecacheAssets(child: child ?? const SizedBox.shrink()),
               ),
             ),
