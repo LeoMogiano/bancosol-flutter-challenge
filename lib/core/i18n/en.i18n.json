@@ -22,6 +22,7 @@
     "rateLimit": "You made too many requests in a row. Wait a few seconds and try again.",
     "server": "A server error occurred. Try again.",
     "cache": "We couldn't read the data stored on your device.",
+    "validation": "The data you entered isn't valid. Check it and try again.",
     "unexpected": "An unexpected error occurred. Try again."
   },
   "environmentLabel": "Environment: {env}",

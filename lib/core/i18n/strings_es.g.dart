@@ -147,6 +147,9 @@ class Translations$failures$es {
 	/// es: 'No pudimos leer los datos guardados en el dispositivo.'
 	String get cache => 'No pudimos leer los datos guardados en el dispositivo.';
 
+	/// es: 'Los datos ingresados no son válidos. Revísalos e inténtalo nuevamente.'
+	String get validation => 'Los datos ingresados no son válidos. Revísalos e inténtalo nuevamente.';
+
 	/// es: 'Ocurrió un problema inesperado. Inténtalo nuevamente.'
 	String get unexpected => 'Ocurrió un problema inesperado. Inténtalo nuevamente.';
 }
@@ -667,6 +670,7 @@ extension on Translations {
 			'failures.rateLimit' => 'Hiciste muchas solicitudes seguidas. Espera unos segundos e inténtalo nuevamente.',
 			'failures.server' => 'Ocurrió un problema con el servidor. Inténtalo nuevamente.',
 			'failures.cache' => 'No pudimos leer los datos guardados en el dispositivo.',
+			'failures.validation' => 'Los datos ingresados no son válidos. Revísalos e inténtalo nuevamente.',
 			'failures.unexpected' => 'Ocurrió un problema inesperado. Inténtalo nuevamente.',
 			'environmentLabel' => ({required Object env}) => 'Ambiente: ${env}',
 			'summary.eyebrow' => 'GESTIÓN DE CATÁLOGO',

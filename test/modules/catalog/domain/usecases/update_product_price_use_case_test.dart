@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/repositories/product_repository.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/update_product_price_use_case.dart';
-import 'package:warehouse/modules/catalog/domain/validators/price_validator.dart';
 
 class _MockProductRepository extends Mock implements ProductRepository;
 
@@ -34,7 +34,7 @@ void main() {
     });
 
     test('valida el precio antes de tocar la red', () async {
-      expect(() => useCase(product, 0), throwsA(isA<InvalidPriceException>()));
+      expect(() => useCase(product, 0), throwsA(isA<Failure>().having((f) => f.type, 'type', FailureType.validation)));
       verifyNever(() => repository.updatePrice(any(), any()));
     });
 

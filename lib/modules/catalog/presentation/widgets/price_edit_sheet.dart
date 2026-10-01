@@ -155,7 +155,7 @@ class _ServerError extends StatelessWidget {
     if (failure == null) return const SizedBox.shrink();
     final message = switch (failure.type) {
       FailureType.network || FailureType.timeout => t.priceEdit.offlineError,
-      FailureType.notFound => failure.message,
+      FailureType.notFound || FailureType.validation => failure.message,
       _ => t.priceEdit.serverError,
     };
     return Padding(

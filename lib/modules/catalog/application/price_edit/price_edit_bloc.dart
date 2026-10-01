@@ -42,8 +42,6 @@ class PriceEditBloc extends Bloc<PriceEditEvent, PriceEditState> {
       final newPrice = parsePrice(state.draft)!;
       final updated = await _updatePrice(state.product, newPrice);
       emit(state.copyWith(submitting: false, saved: () => updated));
-    } on InvalidPriceException {
-      emit(state.copyWith(submitting: false));
     } on Failure catch (f) {
       emit(state.copyWith(submitting: false, submitError: () => f));
     }

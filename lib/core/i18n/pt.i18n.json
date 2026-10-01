@@ -22,6 +22,7 @@
     "rateLimit": "Você fez muitas solicitações seguidas. Aguarde alguns segundos e tente novamente.",
     "server": "Um erro no servidor ocorreu. Tente novamente.",
     "cache": "Não conseguimos ler os dados armazenados no seu dispositivo.",
+    "validation": "Os dados informados não são válidos. Revise-os e tente novamente.",
     "unexpected": "Um erro inesperado ocorreu. Tente novamente."
   },
   "environmentLabel": "Ambiente: {env}",

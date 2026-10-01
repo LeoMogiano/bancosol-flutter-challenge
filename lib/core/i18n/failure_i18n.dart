@@ -9,6 +9,7 @@ extension FailureI18n on Failure {
     FailureType.rateLimit => t.failures.rateLimit,
     FailureType.server => t.failures.server,
     FailureType.cache => t.failures.cache,
+    FailureType.validation => t.failures.validation,
     FailureType.parse || FailureType.unexpected => t.failures.unexpected,
   };
 }
