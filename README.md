@@ -141,6 +141,20 @@ flowchart LR
 - **Cada hoja** tiene su propio bloc; los envíos usan `droppable()` y la hoja no se cierra con una petición en curso.
 - Reconstrucciones mínimas con `context.select` / `BlocSelector` (ver [CONTRIBUTING](CONTRIBUTING.md#reconstrucciones)).
 
+## Dependencias
+
+| Uso | Paquetes |
+|---|---|
+| Estado | `flutter_bloc`, `bloc_concurrency` (`droppable()`), `equatable` |
+| DI y navegación | `get_it`, `go_router` |
+| Red | `dio` |
+| Cache local | `hive_ce_flutter` |
+| Telemetría | `sentry_flutter`, `sentry_dio` |
+| i18n y formato | `slang`, `slang_flutter`, `flutter_localizations`, `intl` |
+| UI | `sizer` (tamaños de texto), `shimmer` (skeletons) |
+| Plataforma | `package_info_plus` (versión en Ajustes) |
+| Tests y calidad | `bloc_test`, `mocktail`, `fake_async`, `very_good_analysis` |
+
 ## Decisiones técnicas
 
 | Decisión | Por qué |
