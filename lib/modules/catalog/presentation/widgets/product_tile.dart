@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/product_avatar.dart';
@@ -20,70 +21,80 @@ class ProductTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final colors = context.colors;
     final borderColor = highlighted ? colors.accent : colors.line;
     final borderWidth = highlighted ? 2.0 : 1.0;
 
-    return GestureDetector(
+    final price = PriceFormatter.format(product.price);
+
+    return Semantics(
+      button: true,
+      excludeSemantics: true,
+      label:
+          '${product.name}, ${product.sku}, $price ${product.currency}, ${StockIndicator.labelFor(t, product.stock)}',
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: _animationDurationMs),
-        constraints: const BoxConstraints(minHeight: _minHeight),
-        padding: const EdgeInsets.all(_padding),
-        decoration: BoxDecoration(
-          color: colors.surface,
-          borderRadius: BorderRadius.circular(_radius),
-          border: Border.all(color: borderColor, width: borderWidth),
-        ),
-        child: Row(
-          spacing: 12,
-          children: [
-            ProductAvatar(product: product),
-            Expanded(
-              child: Column(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: _animationDurationMs),
+          constraints: const BoxConstraints(minHeight: _minHeight),
+          padding: const EdgeInsets.all(_padding),
+          decoration: BoxDecoration(
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(_radius),
+            border: Border.all(color: borderColor, width: borderWidth),
+          ),
+          child: Row(
+            spacing: 12,
+            children: [
+              ProductAvatar(product: product),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 3,
+                  children: [
+                    Text(
+                      product.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600, color: colors.ink),
+                    ),
+                    Row(
+                      spacing: 8,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            product.sku,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w400, color: colors.ink3),
+                          ),
+                        ),
+                        StockIndicator(stock: product.stock),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 spacing: 3,
                 children: [
                   Text(
-                    product.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600, color: colors.ink),
+                    price,
+                    style: TextStyle(fontSize: 15.5.sp, fontWeight: FontWeight.w700, color: colors.ink),
                   ),
-                  Row(
-                    spacing: 8,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          product.sku,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w400, color: colors.ink3),
-                        ),
-                      ),
-                      StockIndicator(stock: product.stock),
-                    ],
+                  Text(
+                    product.currency,
+                    style: TextStyle(fontSize: 12.5.sp, fontWeight: FontWeight.w400, color: colors.ink3),
                   ),
                 ],
               ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              spacing: 3,
-              children: [
-                Text(
-                  PriceFormatter.format(product.price),
-                  style: TextStyle(fontSize: 15.5.sp, fontWeight: FontWeight.w700, color: colors.ink),
-                ),
-                Text(
-                  product.currency,
-                  style: TextStyle(fontSize: 12.5.sp, fontWeight: FontWeight.w400, color: colors.ink3),
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

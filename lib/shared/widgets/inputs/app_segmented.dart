@@ -53,33 +53,40 @@ class AppSegmented<T> extends StatelessWidget {
           return Expanded(
             child: Padding(
               padding: EdgeInsets.only(left: index == 0 ? 0 : _gap),
-              child: GestureDetector(
-                onTap: () => _select(segment.value),
-                child: Container(
-                  constraints: const BoxConstraints(minHeight: _minSegmentHeight),
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: isSelected ? colors.accent : colors.bg,
-                    borderRadius: BorderRadius.circular(_segmentRadius),
-                  ),
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (segment.leading != null) ...[
-                          segment.leading!,
-                          const SizedBox(width: 6),
-                        ] else if (segment.icon != null) ...[
-                          Icon(segment.icon, size: 18, color: foreground),
-                          const SizedBox(width: 6),
-                        ],
-                        Text(
-                          segment.label,
-                          maxLines: 1,
-                          style: TextStyle(fontSize: 14.5.sp, fontWeight: FontWeight.w500, color: foreground),
+              child: MergeSemantics(
+                child: Semantics(
+                  button: true,
+                  selected: isSelected,
+                  inMutuallyExclusiveGroup: true,
+                  child: GestureDetector(
+                    onTap: () => _select(segment.value),
+                    child: Container(
+                      constraints: const BoxConstraints(minHeight: _minSegmentHeight),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: isSelected ? colors.accent : colors.bg,
+                        borderRadius: BorderRadius.circular(_segmentRadius),
+                      ),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (segment.leading != null) ...[
+                              segment.leading!,
+                              const SizedBox(width: 6),
+                            ] else if (segment.icon != null) ...[
+                              Icon(segment.icon, size: 18, color: foreground),
+                              const SizedBox(width: 6),
+                            ],
+                            Text(
+                              segment.label,
+                              maxLines: 1,
+                              style: TextStyle(fontSize: 14.5.sp, fontWeight: FontWeight.w500, color: foreground),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
