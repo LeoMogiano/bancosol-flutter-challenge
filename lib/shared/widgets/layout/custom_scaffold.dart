@@ -10,6 +10,8 @@ class CustomScaffold extends StatelessWidget {
     this.padding = const EdgeInsets.symmetric(horizontal: AppSpacing.screenH),
     this.safeArea = true,
     this.scrollable = false,
+    this.onRefresh,
+    this.scrollController,
     this.bottomBar,
   });
 
@@ -17,6 +19,8 @@ class CustomScaffold extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final bool safeArea;
   final bool scrollable;
+  final RefreshCallback? onRefresh;
+  final ScrollController? scrollController;
   final Widget? bottomBar;
 
   @override
@@ -26,7 +30,16 @@ class CustomScaffold extends StatelessWidget {
     final navBarIconBrightness = isDark ? Brightness.light : Brightness.dark;
 
     var content = body;
-    if (scrollable) content = SingleChildScrollView(child: content);
+    if (scrollable) {
+      content = SingleChildScrollView(
+        controller: scrollController,
+        physics: onRefresh != null ? const AlwaysScrollableScrollPhysics() : null,
+        child: content,
+      );
+    }
+    if (onRefresh != null) {
+      content = RefreshIndicator(color: context.colors.accent, onRefresh: onRefresh!, child: content);
+    }
     if (safeArea) content = SafeArea(child: content);
     content = Padding(padding: padding, child: content);
     content = GestureDetector(
