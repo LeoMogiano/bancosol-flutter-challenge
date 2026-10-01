@@ -6,7 +6,7 @@ import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/app_theme.dart';
-import 'package:warehouse/modules/catalog/application/price_edit/price_edit_cubit.dart';
+import 'package:warehouse/modules/catalog/application/price_edit/price_edit_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/update_product_price_use_case.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/price_edit_sheet.dart';
@@ -29,7 +29,7 @@ Future<void> _pump(WidgetTester tester, UpdateProductPriceUseCase updatePrice) a
           home: Scaffold(
             body: SingleChildScrollView(
               child: BlocProvider(
-                create: (_) => PriceEditCubit(product: _product, updatePrice: updatePrice),
+                create: (_) => PriceEditBloc(product: _product, updatePrice: updatePrice),
                 child: const PriceEditContent(product: _product),
               ),
             ),
