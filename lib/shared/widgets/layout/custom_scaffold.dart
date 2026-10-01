@@ -48,22 +48,16 @@ class CustomScaffold extends StatelessWidget {
       child: content,
     );
 
-    return Scaffold(
-      backgroundColor: context.colors.bg,
-      appBar: AppBar(
-        toolbarHeight: 0,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: statusBarIconBrightness,
-          statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
-          systemNavigationBarColor: Colors.transparent,
-          systemNavigationBarIconBrightness: navBarIconBrightness,
-        ),
+    // AnnotatedRegion y no un AppBar vacío: en Material 3 el AppBar se tiñe al pasar contenido por debajo.
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: statusBarIconBrightness,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: navBarIconBrightness,
       ),
-      body: content,
-      bottomNavigationBar: bottomBar,
+      child: Scaffold(backgroundColor: context.colors.bg, body: content, bottomNavigationBar: bottomBar),
     );
   }
 }
