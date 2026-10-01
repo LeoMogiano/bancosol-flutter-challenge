@@ -73,10 +73,17 @@ Se cubrieron todos los plus sugeridos:
    - Sentry con captura de pantalla, solo para bugs reales; sin PII ni secretos.
    - Logging legible de peticiones en debug, con secretos censurados.
    - Reintento automático de GET ante 5xx y espera ante 429.
-6. **UI cuidada**: tema claro / oscuro, skeletons, estados vacío / error / sin resultados, feedback háptico.
+6. **UI cuidada**: tema claro / oscuro, skeletons, estados vacío / error / sin resultados.
 7. **Diseño de pantallas**: Resumen (valor del inventario, stock bajo y sin stock), Productos, Detalle y Ajustes (tema, idioma, cache, versión, prueba de Sentry).
 
-Extra: crear y eliminar productos, i18n es / en / pt con cambio en vivo y flavors dev / qa / prod.
+### Extra
+
+- **Crear y eliminar productos**, con las mismas validaciones y estados que la edición.
+- **i18n** es / en / pt con cambio en vivo desde Ajustes.
+- **Flavors** dev / qa / prod, cada uno con su nombre y bundle id (ver [Flavors](#flavors)).
+- **Logo propio** como ícono de la app (adaptive icon en Android) en lugar del de Flutter.
+- **Splash nativo** sin paquetes: `core-splashscreen` en Android y `LaunchScreen.storyboard` en iOS.
+- **Hápticos nativos**: en iOS siguen el HIG de Apple; en Android, por `MethodChannel` (`app/haptics`), usan las constantes del sistema y solo se activan en equipos con actuador háptico real, porque en los que solo tienen motor de vibración la respuesta se siente tosca.
 
 ## Arquitectura
 
