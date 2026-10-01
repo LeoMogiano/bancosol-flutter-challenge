@@ -42,8 +42,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	// Translations
 
-	/// es: 'WareHouse'
-	String get appName => 'WareHouse';
+	/// es: 'Warehouse'
+	String get appName => 'Warehouse';
 
 	late final Translations$nav$es nav = Translations$nav$es.internal(_root);
 	late final Translations$actions$es actions = Translations$actions$es.internal(_root);
@@ -651,7 +651,7 @@ class Translations$settings$es {
 extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'appName' => 'WareHouse',
+			'appName' => 'Warehouse',
 			'nav.summary' => 'Resumen',
 			'nav.products' => 'Productos',
 			'nav.settings' => 'Ajustes',

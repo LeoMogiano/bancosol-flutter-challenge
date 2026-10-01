@@ -1,5 +1,5 @@
 name: warehouse
-description: "WareHouse — gestor de catálogo de productos."
+description: "Warehouse — gestor de catálogo de productos."
 publish_to: 'none'
 version: 1.0.0+1
 

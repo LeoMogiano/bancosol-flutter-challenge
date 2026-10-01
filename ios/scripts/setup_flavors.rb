@@ -6,9 +6,9 @@ FLAVORS = ['dev', 'qa', 'prod'].freeze
 BASE_CONFIGS = ['Debug', 'Release', 'Profile'].freeze
 BUNDLE_ID = 'com.bancosol.warehouse'.freeze
 DISPLAY_NAMES = {
-  'dev' => 'WareHouse Dev',
-  'qa' => 'WareHouse QA',
-  'prod' => 'WareHouse'
+  'dev' => 'Warehouse Dev',
+  'qa' => 'Warehouse QA',
+  'prod' => 'Warehouse'
 }.freeze
 
 project_path = File.join(__dir__, '..', 'Runner.xcodeproj')
@@ -73,7 +73,7 @@ end
 BASE_CONFIGS.each do |base|
   base_config = runner_target.build_configuration_list.build_configurations.find { |c| c.name == base }
   if base_config && !base_config.build_settings['FLUTTER_APP_NAME']
-    base_config.build_settings['FLUTTER_APP_NAME'] = 'WareHouse'
+    base_config.build_settings['FLUTTER_APP_NAME'] = 'Warehouse'
     puts "Added FLUTTER_APP_NAME to Runner base config: #{base}"
   end
 end

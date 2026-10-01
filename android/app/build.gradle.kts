@@ -31,16 +31,16 @@ android {
         create("dev") {
             dimension = "env"
             applicationIdSuffix = ".dev"
-            resValue("string", "app_name", "WareHouse Dev")
+            resValue("string", "app_name", "Warehouse Dev")
         }
         create("qa") {
             dimension = "env"
             applicationIdSuffix = ".qa"
-            resValue("string", "app_name", "WareHouse QA")
+            resValue("string", "app_name", "Warehouse QA")
         }
         create("prod") {
             dimension = "env"
-            resValue("string", "app_name", "WareHouse")
+            resValue("string", "app_name", "Warehouse")
         }
     }
 

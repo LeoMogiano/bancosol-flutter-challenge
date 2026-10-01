@@ -1,4 +1,4 @@
-# WareHouse
+# Warehouse
 
 App Flutter (Android + iOS) para gestionar un catálogo de productos sobre la API de [CrudCrud](https://crudcrud.com).
 
@@ -42,9 +42,9 @@ El ambiente **no** está en el `.env`: sale del flavor (`appFlavor`), así no pu
 
 | Flavor | Nombre | Android `applicationId` / iOS bundle id |
 |---|---|---|
-| dev | WareHouse Dev | `com.bancosol.warehouse.dev` |
-| qa | WareHouse QA | `com.bancosol.warehouse.qa` |
-| prod | WareHouse | `com.bancosol.warehouse` |
+| dev | Warehouse Dev | `com.bancosol.warehouse.dev` |
+| qa | Warehouse QA | `com.bancosol.warehouse.qa` |
+| prod | Warehouse | `com.bancosol.warehouse` |
 
 ### iOS: Archive desde Xcode
 

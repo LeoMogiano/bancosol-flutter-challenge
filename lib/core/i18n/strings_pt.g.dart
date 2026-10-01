@@ -39,7 +39,7 @@ class TranslationsPt extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsPt $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsPt(meta: meta ?? this.$meta);
 
 	// Translations
-	@override String get appName => 'WareHouse';
+	@override String get appName => 'Warehouse';
 	@override late final _Translations$nav$pt nav = _Translations$nav$pt._(_root);
 	@override late final _Translations$actions$pt actions = _Translations$actions$pt._(_root);
 	@override late final _Translations$theme$pt theme = _Translations$theme$pt._(_root);
@@ -359,7 +359,7 @@ class _Translations$settings$pt extends Translations$settings$es {
 extension on TranslationsPt {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'appName' => 'WareHouse',
+			'appName' => 'Warehouse',
 			'nav.summary' => 'Resumo',
 			'nav.products' => 'Produtos',
 			'nav.settings' => 'Configurações',
