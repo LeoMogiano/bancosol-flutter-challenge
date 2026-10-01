@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/theme/app_dimens.dart';
+import 'package:warehouse/core/theme/app_fonts.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 
 class CustomBottomSheet extends StatefulWidget {
@@ -114,7 +115,7 @@ class SheetHeader extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 19.65.sp,
                   fontWeight: FontWeight.w400,
-                  fontFamily: 'PlayfairDisplay',
+                  fontFamily: AppFont.playfairDisplay.family,
                   color: colors.ink,
                 ),
               ),

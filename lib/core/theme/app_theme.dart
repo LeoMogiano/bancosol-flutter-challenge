@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:warehouse/core/theme/app_colors.dart';
+import 'package:warehouse/core/theme/app_fonts.dart';
 
 abstract final class AppTheme {
   static ThemeData get light => ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
-    fontFamily: 'Outfit',
+    fontFamily: AppFont.outfit.family,
     scaffoldBackgroundColor: AppColors.light.bg,
     splashFactory: InkRipple.splashFactory,
     textSelectionTheme: TextSelectionThemeData(
@@ -46,7 +47,7 @@ abstract final class AppTheme {
   static ThemeData get dark => ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
-    fontFamily: 'Outfit',
+    fontFamily: AppFont.outfit.family,
     scaffoldBackgroundColor: AppColors.dark.bg,
     splashFactory: InkRipple.splashFactory,
     textSelectionTheme: TextSelectionThemeData(
