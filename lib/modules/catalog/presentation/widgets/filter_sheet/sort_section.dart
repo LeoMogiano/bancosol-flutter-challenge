@@ -35,6 +35,7 @@ class SortSection extends StatelessWidget {
             SizedBox(
               height: _chipHeight,
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 spacing: _gridGap,
                 children: [
                   for (final option in options.skip(row).take(_columns))
