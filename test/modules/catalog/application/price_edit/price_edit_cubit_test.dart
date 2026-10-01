@@ -4,10 +4,10 @@ import 'package:mocktail/mocktail.dart';
 import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/modules/catalog/application/price_edit/price_edit_cubit.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/update_product_price.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/update_product_price_use_case.dart';
 import 'package:warehouse/modules/catalog/domain/validators/price_validator.dart';
 
-class MockUpdateProductPrice extends Mock implements UpdateProductPrice;
+class MockUpdateProductPrice extends Mock implements UpdateProductPriceUseCase;
 
 void main() {
   group('PriceEditCubit', () {

@@ -2,17 +2,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/repositories/product_repository.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/invalid_price_exception.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/update_product_price.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/update_product_price_use_case.dart';
+import 'package:warehouse/modules/catalog/domain/validators/price_validator.dart';
 
 class _MockProductRepository extends Mock implements ProductRepository;
 
 class _FakeProduct extends Fake implements Product;
 
 void main() {
-  group('UpdateProductPrice', () {
+  group('UpdateProductPriceUseCase', () {
     late ProductRepository repository;
-    late UpdateProductPrice useCase;
+    late UpdateProductPriceUseCase useCase;
     late Product product;
 
     setUpAll(() {
@@ -21,7 +21,7 @@ void main() {
 
     setUp(() {
       repository = _MockProductRepository();
-      useCase = UpdateProductPrice(repository);
+      useCase = UpdateProductPriceUseCase(repository);
       product = const Product(
         remoteId: 'id1',
         id: 1,

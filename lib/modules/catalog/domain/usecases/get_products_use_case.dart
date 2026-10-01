@@ -1,8 +1,8 @@
 import 'package:warehouse/modules/catalog/domain/entities/products_snapshot.dart';
 import 'package:warehouse/modules/catalog/domain/repositories/product_repository.dart';
 
-class GetProducts {
-  const GetProducts(this._repository);
+class GetProductsUseCase {
+  const GetProductsUseCase(this._repository);
 
   final ProductRepository _repository;
 

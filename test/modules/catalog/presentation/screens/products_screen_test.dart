@@ -8,10 +8,10 @@ import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/app_theme.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 import 'package:warehouse/modules/catalog/application/search_focus/search_focus_cubit.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/get_products.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/get_products_use_case.dart';
 import 'package:warehouse/modules/catalog/presentation/screens/products_screen.dart';
 
-class _MockGetProducts extends Mock implements GetProducts;
+class _MockGetProducts extends Mock implements GetProductsUseCase;
 
 Future<void> _pumpScreen(WidgetTester tester, {required ProductsBloc bloc, required SearchFocusCubit focus}) async {
   tester.view

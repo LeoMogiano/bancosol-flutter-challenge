@@ -8,9 +8,9 @@ import 'package:warehouse/core/utils/app_clock.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/entities/products_snapshot.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/get_products.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/get_products_use_case.dart';
 
-class _MockGetProducts extends Mock implements GetProducts;
+class _MockGetProducts extends Mock implements GetProductsUseCase;
 
 // Dispara los timers a mano: probar una ventana de 2.2 s no debe tardar 2.2 s.
 class _ManualClock extends AppClock {

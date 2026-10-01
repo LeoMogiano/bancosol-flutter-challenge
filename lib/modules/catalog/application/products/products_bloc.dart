@@ -7,17 +7,20 @@ import 'package:warehouse/core/theme/app_dimens.dart';
 import 'package:warehouse/core/utils/app_clock.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/services/product_query.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/get_products.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/get_products_use_case.dart';
 
 part 'products_event.dart';
 part 'products_state.dart';
 
 class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
-  ProductsBloc({required GetProducts getProducts, required bool Function() useCache, AppClock clock = const AppClock()})
-    : _getProducts = getProducts,
-      _useCache = useCache,
-      _clock = clock,
-      super(const ProductsState()) {
+  ProductsBloc({
+    required GetProductsUseCase getProducts,
+    required bool Function() useCache,
+    AppClock clock = const AppClock(),
+  }) : _getProducts = getProducts,
+       _useCache = useCache,
+       _clock = clock,
+       super(const ProductsState()) {
     on<ProductsRequested>(_onRequested);
     on<ProductsRefreshed>(_onRefreshed);
     on<ProductsQueryChanged>(_onQueryChanged);
@@ -29,7 +32,7 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
     on<_HighlightExpired>(_onHighlightExpired);
   }
 
-  final GetProducts _getProducts;
+  final GetProductsUseCase _getProducts;
   final bool Function() _useCache;
   final AppClock _clock;
   Timer? _highlightTimer;

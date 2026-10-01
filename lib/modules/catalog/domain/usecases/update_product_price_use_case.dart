@@ -1,10 +1,9 @@
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/repositories/product_repository.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/invalid_price_exception.dart';
 import 'package:warehouse/modules/catalog/domain/validators/price_validator.dart';
 
-class UpdateProductPrice {
-  const UpdateProductPrice(this._repository);
+class UpdateProductPriceUseCase {
+  const UpdateProductPriceUseCase(this._repository);
 
   final ProductRepository _repository;
 
