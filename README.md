@@ -1,6 +1,10 @@
-# Warehouse
+<p align="center">
+  <img src="docs/logo.webp" width="128" alt="Warehouse">
+</p>
 
-App Flutter (Android + iOS) para gestionar un catálogo de productos sobre [CrudCrud](https://crudcrud.com).
+<h1 align="center">Warehouse</h1>
+
+<p align="center">App Flutter (Android + iOS) para gestionar un catálogo de productos sobre <a href="https://crudcrud.com">CrudCrud</a>.</p>
 
 ## Capturas
 
