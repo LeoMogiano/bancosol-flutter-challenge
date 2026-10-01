@@ -21,7 +21,7 @@ class AppNavBar extends StatelessWidget {
   final List<AppNavItem> items;
   final int currentIndex;
   final ValueChanged<int> onTap;
-  final VoidCallback onSearch;  
+  final VoidCallback onSearch;
 
   static const double _margin = 24;
   static const double _minBottom = 16;
