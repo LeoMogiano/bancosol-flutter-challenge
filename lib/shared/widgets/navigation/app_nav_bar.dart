@@ -30,6 +30,8 @@ class AppNavBar extends StatelessWidget {
   final VoidCallback onSearch;
 
   static const double _margin = 24;
+  static const Duration _duration = Duration(milliseconds: 320);
+  static const Curve _curve = Curves.easeOutCubic;
   static const double _minBottom = 16;
 
   static final _shadow = BoxShadow(
@@ -66,55 +68,7 @@ class AppNavBar extends StatelessWidget {
                         borderRadius: BorderRadius.circular(33),
                         border: Border.all(color: colors.line),
                       ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: List.generate(items.length, (index) {
-                          final item = items[index];
-                          final isActive = index == currentIndex;
-
-                          return Expanded(
-                            flex: isActive ? 5 : 3,
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                onTap: () => onTap(index),
-                                borderRadius: BorderRadius.circular(26),
-                                child: Container(
-                                  decoration: isActive
-                                      ? BoxDecoration(color: colors.navActive, borderRadius: BorderRadius.circular(26))
-                                      : null,
-                                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        isActive ? item.activeIcon : item.icon,
-                                        size: 23,
-                                        color: isActive ? colors.ink : colors.ink2,
-                                      ),
-                                      if (isActive) ...[
-                                        const SizedBox(width: 7),
-                                        Flexible(
-                                          child: Text(
-                                            item.label,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              fontSize: 13.sp,
-                                              fontWeight: FontWeight.w600,
-                                              color: colors.ink,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                      ),
+                      child: _Tabs(items: items, currentIndex: currentIndex, onTap: onTap),
                     ),
                   ),
                 ),
@@ -134,6 +88,124 @@ class AppNavBar extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _Tabs extends StatelessWidget {
+  const _Tabs({required this.items, required this.currentIndex, required this.onTap});
+
+  static const int _activeFlex = 5;
+  static const int _idleFlex = 3;
+
+  final List<AppNavItem> items;
+  final int currentIndex;
+  final ValueChanged<int> onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final duration = MediaQuery.disableAnimationsOf(context) ? Duration.zero : AppNavBar._duration;
+
+    return LayoutBuilder(
+      builder: (_, constraints) {
+        final unit = constraints.maxWidth / (items.length * _idleFlex + _activeFlex - _idleFlex);
+        return Stack(
+          children: [
+            AnimatedPositioned(
+              duration: duration,
+              curve: AppNavBar._curve,
+              left: unit * _idleFlex * currentIndex,
+              top: 0,
+              bottom: 0,
+              width: unit * _activeFlex,
+              child: DecoratedBox(
+                decoration: BoxDecoration(color: colors.navActive, borderRadius: BorderRadius.circular(26)),
+              ),
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (var index = 0; index < items.length; index++)
+                  AnimatedContainer(
+                    duration: duration,
+                    curve: AppNavBar._curve,
+                    width: unit * (index == currentIndex ? _activeFlex : _idleFlex),
+                    child: _Tab(
+                      item: items[index],
+                      isActive: index == currentIndex,
+                      duration: duration,
+                      onTap: () => onTap(index),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _Tab extends StatelessWidget {
+  const _Tab({required this.item, required this.isActive, required this.duration, required this.onTap});
+
+  final AppNavItem item;
+  final bool isActive;
+  final Duration duration;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(26),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedSwitcher(
+                duration: duration,
+                child: Icon(
+                  isActive ? item.activeIcon : item.icon,
+                  key: ValueKey(isActive),
+                  size: 23,
+                  color: isActive ? colors.ink : colors.ink2,
+                ),
+              ),
+              Flexible(
+                child: AnimatedSwitcher(
+                  duration: duration,
+                  switchInCurve: AppNavBar._curve,
+                  switchOutCurve: AppNavBar._curve,
+                  transitionBuilder: (child, animation) => FadeTransition(
+                    opacity: animation,
+                    child: SizeTransition(sizeFactor: animation, axis: Axis.horizontal, child: child),
+                  ),
+                  child: isActive
+                      ? Padding(
+                          key: const ValueKey(true),
+                          padding: const EdgeInsets.only(left: 7),
+                          child: Text(
+                            item.label,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: false,
+                            style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w600, color: colors.ink),
+                          ),
+                        )
+                      : const SizedBox.shrink(key: ValueKey(false)),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
