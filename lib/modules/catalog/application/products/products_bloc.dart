@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/core/error/failure.dart';
-import 'package:warehouse/core/theme/app_dimens.dart';
 import 'package:warehouse/core/utils/app_clock.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/services/product_query.dart';
@@ -31,6 +30,8 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
     on<ProductRemoved>(_onRemoved);
     on<_HighlightExpired>(_onHighlightExpired);
   }
+
+  static const Duration highlightDuration = Duration(milliseconds: 2200);
 
   final GetProductsUseCase _getProducts;
   final bool Function() _useCache;
@@ -102,7 +103,7 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
     emit(_withView(state.copyWith(status: ProductsStatus.success, all: all, highlightId: () => product.remoteId)));
 
     _highlightTimer?.cancel();
-    _highlightTimer = _clock.timer(AppMotion.highlight, () {
+    _highlightTimer = _clock.timer(highlightDuration, () {
       if (!isClosed) add(const _HighlightExpired());
     });
   }
