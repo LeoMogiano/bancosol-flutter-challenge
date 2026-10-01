@@ -25,6 +25,7 @@ dependencies:
   slang_flutter: ^4.19.0
   package_info_plus: ^10.2.1
   shimmer: ^4.0.0
+  bloc_concurrency: ^0.3.0
 
 dev_dependencies:
   flutter_test:
