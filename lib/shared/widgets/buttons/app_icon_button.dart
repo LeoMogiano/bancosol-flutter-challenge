@@ -6,9 +6,9 @@ class AppIconButton extends StatelessWidget {
   const AppIconButton({
     required this.icon,
     required this.onPressed,
+    required this.tooltip,
     this.color,
     this.background,
-    this.tooltip,
     this.badge = 0,
     this.size = 44,
     super.key,
@@ -21,7 +21,7 @@ class AppIconButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final Color? color;
   final Color? background;
-  final String? tooltip;
+  final String tooltip;
   final int badge;
   final double size;
 
@@ -70,7 +70,6 @@ class AppIconButton extends StatelessWidget {
         ],
       );
     }
-    final label = tooltip;
-    return label == null ? button : Tooltip(message: label, child: button);
+    return Tooltip(message: tooltip, child: button);
   }
 }

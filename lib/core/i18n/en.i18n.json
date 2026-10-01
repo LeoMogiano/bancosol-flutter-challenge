@@ -181,5 +181,8 @@
     "diagnostics": "Diagnostics",
     "sentryTest": "Test Sentry",
     "sentryTestHint": "Sends a test error to the dashboard"
+  },
+  "a11y": {
+    "page": "Page {n}"
   }
 }

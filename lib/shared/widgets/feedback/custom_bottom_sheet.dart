@@ -109,16 +109,19 @@ class SheetHeader extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(
-          width: 36,
-          height: 36,
-          child: Material(
-            color: colors.bg,
-            borderRadius: BorderRadius.circular(50),
-            child: InkWell(
-              onTap: () => Navigator.of(context).maybePop(),
+        Tooltip(
+          message: MaterialLocalizations.of(context).closeButtonTooltip,
+          child: SizedBox(
+            width: 36,
+            height: 36,
+            child: Material(
+              color: colors.bg,
               borderRadius: BorderRadius.circular(50),
-              child: Icon(Icons.close_rounded, size: 18, color: colors.ink),
+              child: InkWell(
+                onTap: () => Navigator.of(context).maybePop(),
+                borderRadius: BorderRadius.circular(50),
+                child: Icon(Icons.close_rounded, size: 18, color: colors.ink),
+              ),
             ),
           ),
         ),

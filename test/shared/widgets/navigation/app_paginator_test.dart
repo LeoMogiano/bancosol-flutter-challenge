@@ -25,6 +25,7 @@ void main() {
                   onChanged: (page) {
                     selectedPage = page;
                   },
+                  pageLabel: (n) => 'Página $n',
                 ),
               ),
             ),
