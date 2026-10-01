@@ -97,7 +97,7 @@ flowchart LR
 | Cache Hive sin adapters | Se guardan mapas JSON: sin `build_runner`. El cache es descartable: si está corrupto se ignora y la app igual arranca |
 | Fuentes variables | Outfit (sustituye a Poppins) y Playfair Display (sustituye a DM Serif Display), ambas variables, recortadas a latín y al eje 400–700: 140 KB en total |
 | Tamaños de texto con `sizer` | Solo valores de una tabla px → sp calibrada en 411 × 891; paddings, radios y alturas son fijos para no descuadrar en tablet |
-| Imágenes | Logo en WebP 1x / 2x / 3x, íconos de Android en WebP y PNG de iOS comprimidos; el logo se precarga |
+| Imágenes | Íconos de Android en WebP y PNG de iOS comprimidos; las banderas se precargan |
 | Splash nativo a mano | `core-splashscreen` en Android y `LaunchScreen.storyboard` en iOS; sin paquetes |
 | Dependencias evitadas | `share_plus` (MethodChannel propio), `flutter_native_splash`, `shared_preferences` (Hive cubre), `connectivity_plus`, `logger`, `build_runner` |
 
