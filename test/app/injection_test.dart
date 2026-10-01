@@ -15,6 +15,7 @@ import 'package:warehouse/modules/catalog/domain/usecases/create_product.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/delete_product.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/get_product.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/get_products.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/share_product.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/update_product_price.dart';
 
 // get_it registra fábricas perezosas: un cableado roto solo explota al resolver.
@@ -36,6 +37,7 @@ void main() {
     expect(sl.get<UpdateProductPrice>, returnsNormally);
     expect(sl.get<CreateProduct>, returnsNormally);
     expect(sl.get<DeleteProduct>, returnsNormally);
+    expect(sl.get<ShareProduct>, returnsNormally);
   });
 
   test('los interceptores van en orden: api key → retry → log', () {
