@@ -10,6 +10,7 @@ import 'package:warehouse/modules/catalog/presentation/widgets/filter_sheet/filt
 class SortSection extends StatelessWidget {
   const SortSection({super.key});
 
+  static const int _columns = 2;
   static const double _gridGap = 8;
   static const double _chipHeight = 44;
 
@@ -27,22 +28,26 @@ class SortSection extends StatelessWidget {
 
     return FilterSection(
       title: t.filters.sortBy,
-      child: GridView(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: _gridGap,
-          mainAxisSpacing: _gridGap,
-          mainAxisExtent: _chipHeight,
-        ),
+      child: Column(
+        spacing: _gridGap,
         children: [
-          for (final option in options)
-            _SortChip(
-              label: option.label,
-              icon: option.icon,
-              isSelected: selected == option.sort,
-              onTap: () => cubit.sortChanged(option.sort),
+          for (var row = 0; row < options.length; row += _columns)
+            SizedBox(
+              height: _chipHeight,
+              child: Row(
+                spacing: _gridGap,
+                children: [
+                  for (final option in options.skip(row).take(_columns))
+                    Expanded(
+                      child: _SortChip(
+                        label: option.label,
+                        icon: option.icon,
+                        isSelected: selected == option.sort,
+                        onTap: () => cubit.sortChanged(option.sort),
+                      ),
+                    ),
+                ],
+              ),
             ),
         ],
       ),

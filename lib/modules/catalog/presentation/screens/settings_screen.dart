@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sizer/sizer.dart';
+import 'package:warehouse/core/constants/app_assets.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/preferences/preferences_cubit.dart';
@@ -99,11 +100,24 @@ class _LanguageSelector extends StatelessWidget {
       onChanged: context.read<PreferencesCubit>().setLanguageCode,
       segments: [
         AppSegment(value: null, label: t.settings.deviceLanguage),
-        const AppSegment(value: 'es', label: 'ES'),
-        const AppSegment(value: 'en', label: 'EN'),
-        const AppSegment(value: 'pt', label: 'PT'),
+        const AppSegment(value: 'es', label: 'ES', leading: _Flag(AppAssets.flagBolivia)),
+        const AppSegment(value: 'en', label: 'EN', leading: _Flag(AppAssets.flagUnitedStates)),
+        const AppSegment(value: 'pt', label: 'PT', leading: _Flag(AppAssets.flagBrazil)),
       ],
     );
+  }
+}
+
+class _Flag extends StatelessWidget {
+  const _Flag(this.asset);
+
+  static const double _size = 18;
+
+  final String asset;
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset(asset, width: _size, height: _size, excludeFromSemantics: true);
   }
 }
 

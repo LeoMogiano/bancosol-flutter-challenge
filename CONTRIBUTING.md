@@ -52,6 +52,16 @@ flutter test --dart-define-from-file=.env.dev
 - Un `switch` de error a texto va en una extensión `*_i18n.dart`, no dentro del widget.
 - Al extraer una sección, que lea su propio dato con `context.select` (ver [Reconstrucciones](#reconstrucciones)) en vez de recibirlo de una pantalla que lo seleccione completo.
 
+## Widgets costosos
+
+| Evitar | Usar |
+|---|---|
+| `IntrinsicHeight` / `IntrinsicWidth` (miden dos veces cada layout) | Alturas fijas o `minHeight`; hijos con el mismo contenido ya miden lo mismo |
+| `ListView` / `GridView` con `shrinkWrap: true` para pocos ítems fijos | `Column` / `Row` con `Expanded` |
+| `Opacity` animado (`TweenAnimationBuilder`, `setState`) | `FadeTransition` / `AnimatedOpacity`: animan la capa sin repintar al hijo |
+| `MediaQuery.of(context).x` | `MediaQuery.xOf(context)` (`sizeOf`, `paddingOf`, `viewInsetsOf`): reconstruye solo si cambia ese dato |
+| `ClipPath`, `ShaderMask`, `BackdropFilter` sin necesidad | Solo si el diseño lo exige, dentro de un `RepaintBoundary` |
+
 ## Reconstrucciones
 
 Objetivo: que un cambio de estado reconstruya solo lo que muestra ese dato.

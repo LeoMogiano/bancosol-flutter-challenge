@@ -20,10 +20,7 @@ abstract final class AppToast {
         right: 16,
         child: IgnorePointer(
           child: Center(
-            child: TweenAnimationBuilder<double>(
-              tween: Tween(begin: 0, end: 1),
-              duration: const Duration(milliseconds: 200),
-              builder: (_, opacity, child) => Opacity(opacity: opacity, child: child),
+            child: _FadeIn(
               child: Material(
                 color: colors.ink,
                 elevation: 6,
@@ -62,4 +59,30 @@ abstract final class AppToast {
     _current?.remove();
     _current = null;
   }
+}
+
+// FadeTransition anima la opacidad en la capa sin repintar el toast en cada frame.
+class _FadeIn extends StatefulWidget {
+  const _FadeIn({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_FadeIn> createState() => _FadeInState();
+}
+
+class _FadeInState extends State<_FadeIn> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 200),
+  )..forward();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => FadeTransition(opacity: _controller, child: widget.child);
 }
