@@ -40,7 +40,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
       scrollable: true,
       padding: EdgeInsets.zero,
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 130),
+        padding: const EdgeInsets.only(bottom: 130),
         child: Column(
           children: [
             AppTopBar.large(
@@ -68,104 +68,111 @@ class _SummaryScreenState extends State<SummaryScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 4),
-            _FakeSearchButton(label: t.summary.searchHint),
-            const SizedBox(height: 20),
-            BlocListener<ProductsBloc, ProductsState>(
-              listenWhen: (prev, curr) => _refreshStartedLocally && prev.isRefreshing && !curr.isRefreshing,
-              listener: (context, state) {
-                _refreshStartedLocally = false;
-                if (state.failure == null) {
-                  AppToast.show(context, t.toasts.synced);
-                } else {
-                  AppToast.show(context, state.failure!.message, icon: Icons.error_rounded);
-                }
-              },
-              child: BlocSelector<ProductsBloc, ProductsState, ProductsStatus>(
-                selector: (state) => state.status,
-                builder: (context, status) {
-                  if (status == ProductsStatus.loading || status == ProductsStatus.initial) {
-                    return _LoadingState();
-                  } else if (status == ProductsStatus.failure) {
-                    return AppStateView(
-                      type: AppStateType.error,
-                      title: t.summary.errorTitle,
-                      message: t.summary.errorMessage,
-                      actions: [
-                        AppButton(
-                          label: t.actions.retry,
-                          onPressed: () => context.read<ProductsBloc>().add(const ProductsRequested()),
-                        ),
-                      ],
-                    );
-                  }
-                  return BlocSelector<ProductsBloc, ProductsState, ({List<Product> all, DateTime? syncedAt})>(
-                    selector: (state) => (all: state.all, syncedAt: state.syncedAt),
-                    builder: (context, data) {
-                      if (data.all.isEmpty) {
-                        return AppStateView(
-                          type: AppStateType.empty,
-                          title: t.summary.emptyTitle,
-                          message: t.summary.emptyMessage,
-                          actions: [
-                            AppButton(
-                              label: t.actions.newProduct,
-                              icon: Icons.add_rounded,
-                              onPressed: () => _createProduct(context),
-                            ),
-                            AppButton(
-                              label: t.actions.refresh,
-                              variant: AppButtonVariant.outline,
-                              onPressed: () => context.read<ProductsBloc>().add(const ProductsRefreshed()),
-                            ),
-                          ],
-                        );
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  const SizedBox(height: 4),
+                  _FakeSearchButton(label: t.summary.searchHint),
+                  const SizedBox(height: 20),
+                  BlocListener<ProductsBloc, ProductsState>(
+                    listenWhen: (prev, curr) => _refreshStartedLocally && prev.isRefreshing && !curr.isRefreshing,
+                    listener: (context, state) {
+                      _refreshStartedLocally = false;
+                      if (state.failure == null) {
+                        AppToast.show(context, t.toasts.synced);
+                      } else {
+                        AppToast.show(context, state.failure!.message, icon: Icons.error_rounded);
                       }
-                      final totalBob = data.all.fold<double>(
-                        0,
-                        (sum, p) => sum + (ProductQuery.priceInBob(p) * p.stock),
-                      );
-                      final outOfStock = data.all.where((p) => p.stock == 0).length;
-                      final lowStock = data.all.where((p) => p.stock > 0 && p.stock <= 5).length;
-                      return Column(
-                        children: [
-                          InventoryCard(totalBob: totalBob, syncedAt: data.syncedAt),
-                          const SizedBox(height: 20),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: StatTile(
-                                  label: t.summary.statProducts,
-                                  value: data.all.length.toString(),
-                                  color: context.colors.accent,
-                                  onTap: () => StatefulNavigationShell.of(context).goBranch(1),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: StatTile(
-                                  label: t.summary.statLowStock,
-                                  value: lowStock.toString(),
-                                  color: context.colors.warn,
-                                  onTap: () => StatefulNavigationShell.of(context).goBranch(1),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: StatTile(
-                                  label: t.summary.statOutOfStock,
-                                  value: outOfStock.toString(),
-                                  color: context.colors.bad,
-                                  onTap: () => StatefulNavigationShell.of(context).goBranch(1),
-                                ),
+                    },
+                    child: BlocSelector<ProductsBloc, ProductsState, ProductsStatus>(
+                      selector: (state) => state.status,
+                      builder: (context, status) {
+                        if (status == ProductsStatus.loading || status == ProductsStatus.initial) {
+                          return _LoadingState();
+                        } else if (status == ProductsStatus.failure) {
+                          return AppStateView(
+                            type: AppStateType.error,
+                            title: t.summary.errorTitle,
+                            message: t.summary.errorMessage,
+                            actions: [
+                              AppButton(
+                                label: t.actions.retry,
+                                onPressed: () => context.read<ProductsBloc>().add(const ProductsRequested()),
                               ),
                             ],
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
+                          );
+                        }
+                        return BlocSelector<ProductsBloc, ProductsState, ({List<Product> all, DateTime? syncedAt})>(
+                          selector: (state) => (all: state.all, syncedAt: state.syncedAt),
+                          builder: (context, data) {
+                            if (data.all.isEmpty) {
+                              return AppStateView(
+                                type: AppStateType.empty,
+                                title: t.summary.emptyTitle,
+                                message: t.summary.emptyMessage,
+                                actions: [
+                                  AppButton(
+                                    label: t.actions.newProduct,
+                                    icon: Icons.add_rounded,
+                                    onPressed: () => _createProduct(context),
+                                  ),
+                                  AppButton(
+                                    label: t.actions.refresh,
+                                    variant: AppButtonVariant.outline,
+                                    onPressed: () => context.read<ProductsBloc>().add(const ProductsRefreshed()),
+                                  ),
+                                ],
+                              );
+                            }
+                            final totalBob = data.all.fold<double>(
+                              0,
+                              (sum, p) => sum + (ProductQuery.priceInBob(p) * p.stock),
+                            );
+                            final outOfStock = data.all.where((p) => p.stock == 0).length;
+                            final lowStock = data.all.where((p) => p.stock > 0 && p.stock <= 5).length;
+                            return Column(
+                              children: [
+                                InventoryCard(totalBob: totalBob, syncedAt: data.syncedAt),
+                                const SizedBox(height: 20),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: StatTile(
+                                        label: t.summary.statProducts,
+                                        value: data.all.length.toString(),
+                                        color: context.colors.accent,
+                                        onTap: () => StatefulNavigationShell.of(context).goBranch(1),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: StatTile(
+                                        label: t.summary.statLowStock,
+                                        value: lowStock.toString(),
+                                        color: context.colors.warn,
+                                        onTap: () => StatefulNavigationShell.of(context).goBranch(1),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: StatTile(
+                                        label: t.summary.statOutOfStock,
+                                        value: outOfStock.toString(),
+                                        color: context.colors.bad,
+                                        onTap: () => StatefulNavigationShell.of(context).goBranch(1),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
