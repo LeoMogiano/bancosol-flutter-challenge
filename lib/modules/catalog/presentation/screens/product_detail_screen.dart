@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sizer/sizer.dart';
+import 'package:warehouse/app/router/app_routes.dart';
 import 'package:warehouse/core/di/service_locator.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
@@ -18,6 +20,9 @@ import 'package:warehouse/shared/widgets/buttons/app_icon_button.dart';
 import 'package:warehouse/shared/widgets/feedback/app_toast.dart';
 import 'package:warehouse/shared/widgets/layout/app_top_bar.dart';
 import 'package:warehouse/shared/widgets/layout/custom_scaffold.dart';
+
+// Abierto por deep link no hay ruta debajo: se vuelve al listado en vez de dejar el stack vacío.
+void _closeDetail(BuildContext context) => context.canPop() ? context.pop() : context.go(AppRoutes.products);
 
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({required this.remoteId, super.key});
@@ -37,7 +42,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     if (_closing) return;
     _closing = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) Navigator.of(context).pop();
+      if (mounted) _closeDetail(context);
     });
   }
 
@@ -103,7 +108,7 @@ class _ProductDetailContent extends StatelessWidget {
           children: [
             AppTopBar.compact(
               title: t.detail.title,
-              onBack: () => Navigator.of(context).pop(),
+              onBack: () => _closeDetail(context),
               action: AppIconButton(
                 icon: Icons.delete_outline_rounded,
                 color: context.colors.bad,

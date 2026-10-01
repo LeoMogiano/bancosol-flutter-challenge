@@ -29,6 +29,7 @@ flutter test --dart-define-from-file=.env.dev
 ## Reglas de código
 
 - Toda pantalla usa `CustomScaffold`, nunca `Scaffold` directo.
+- Cerrar una ruta de go_router: `context.canPop() ? context.pop() : context.go(<ruta base>)`, así un deep link sin historial no deja el stack vacío. Hojas y dialogs (rutas imperativas que el router no conoce) se cierran con `Navigator.of(context).pop(result)`: con `StatefulShellRoute`, `context.pop()` puede cerrar la pantalla de la rama en vez de la hoja.
 - Textos visibles solo desde slang (`context.t`); nada escrito a mano.
 - Colores solo desde `context.colors`.
 - `fontSize` solo con valores `.sp` de la tabla px → sp; paddings, radios y alturas son fijos.
