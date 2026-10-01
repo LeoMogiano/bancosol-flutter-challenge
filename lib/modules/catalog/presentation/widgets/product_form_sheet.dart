@@ -69,12 +69,12 @@ class _ProductFormContent extends StatelessWidget {
               // Lado a lado no deja espacio para el monto en pantallas de 320–360 dp.
               LayoutBuilder(
                 builder: (_, constraints) => constraints.maxWidth < _sideBySideMinWidth
-                    ? const Column(children: [_PriceField(), SizedBox(height: 12), _StockField()])
+                    ? const Column(spacing: 12, children: [_PriceField(), _StockField()])
                     : const Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 10,
                         children: [
                           Expanded(flex: 5, child: _PriceField()),
-                          SizedBox(width: 10),
                           Expanded(flex: 4, child: _StockField()),
                         ],
                       ),
@@ -97,6 +97,7 @@ class _SkuField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final cubit = context.read<ProductFormCubit>();
 
     return BlocSelector<ProductFormCubit, ProductFormState, (String, SkuError?)>(
@@ -104,16 +105,16 @@ class _SkuField extends StatelessWidget {
       builder: (context, data) {
         final errorText = data.$2 != null
             ? switch (data.$2) {
-                SkuError.empty => context.t.validation.skuEmpty,
-                SkuError.tooShort => context.t.validation.skuTooShort,
-                SkuError.invalidFormat => context.t.validation.skuFormat,
-                SkuError.duplicate => context.t.validation.skuDuplicate,
+                SkuError.empty => t.validation.skuEmpty,
+                SkuError.tooShort => t.validation.skuTooShort,
+                SkuError.invalidFormat => t.validation.skuFormat,
+                SkuError.duplicate => t.validation.skuDuplicate,
                 null => null,
               }
             : null;
 
         return CustomInput(
-          label: context.t.form.sku,
+          label: t.form.sku,
           initialValue: data.$1,
           textCapitalization: TextCapitalization.characters,
           inputFormatters: [SkuInputFormatter()],
@@ -131,6 +132,7 @@ class _NameField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final cubit = context.read<ProductFormCubit>();
 
     return BlocSelector<ProductFormCubit, ProductFormState, (String, NameError?)>(
@@ -138,16 +140,16 @@ class _NameField extends StatelessWidget {
       builder: (context, data) {
         final errorText = data.$2 != null
             ? switch (data.$2) {
-                NameError.empty => context.t.validation.nameEmpty,
-                NameError.tooShort => context.t.validation.nameTooShort,
-                NameError.onlyDigits => context.t.validation.nameOnlyDigits,
-                NameError.duplicate => context.t.validation.nameDuplicate,
+                NameError.empty => t.validation.nameEmpty,
+                NameError.tooShort => t.validation.nameTooShort,
+                NameError.onlyDigits => t.validation.nameOnlyDigits,
+                NameError.duplicate => t.validation.nameDuplicate,
                 null => null,
               }
             : null;
 
         return CustomInput(
-          label: context.t.form.name,
+          label: t.form.name,
           initialValue: data.$1,
           inputFormatters: [NameInputFormatter()],
           onChanged: cubit.nameChanged,
@@ -164,6 +166,7 @@ class _PriceField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final cubit = context.read<ProductFormCubit>();
 
     return BlocSelector<ProductFormCubit, ProductFormState, (String, String, PriceError?)>(
@@ -171,18 +174,18 @@ class _PriceField extends StatelessWidget {
       builder: (context, data) {
         final errorText = data.$3 != null
             ? switch (data.$3) {
-                PriceError.empty => context.t.validation.priceEmpty,
-                PriceError.incompleteDecimals => context.t.validation.priceIncomplete,
-                PriceError.notPositive => context.t.validation.priceNotPositive,
-                PriceError.tooHigh => context.t.validation.priceTooHigh,
-                PriceError.currencyEmpty => context.t.validation.currencyEmpty,
+                PriceError.empty => t.validation.priceEmpty,
+                PriceError.incompleteDecimals => t.validation.priceIncomplete,
+                PriceError.notPositive => t.validation.priceNotPositive,
+                PriceError.tooHigh => t.validation.priceTooHigh,
+                PriceError.currencyEmpty => t.validation.currencyEmpty,
                 PriceError.unchanged => null,
                 null => null,
               }
             : null;
 
         return PriceField(
-          label: context.t.form.price,
+          label: t.form.price,
           currency: data.$2,
           initialValue: data.$1,
           onChanged: cubit.priceChanged,
@@ -199,6 +202,7 @@ class _StockField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final cubit = context.read<ProductFormCubit>();
 
     return BlocSelector<ProductFormCubit, ProductFormState, (String, StockError?)>(
@@ -206,14 +210,14 @@ class _StockField extends StatelessWidget {
       builder: (context, data) {
         final errorText = data.$2 != null
             ? switch (data.$2) {
-                StockError.empty => context.t.validation.stockEmpty,
-                StockError.tooHigh => context.t.validation.stockTooHigh,
+                StockError.empty => t.validation.stockEmpty,
+                StockError.tooHigh => t.validation.stockTooHigh,
                 null => null,
               }
             : null;
 
         return CustomInput(
-          label: context.t.form.stock,
+          label: t.form.stock,
           initialValue: data.$1,
           keyboardType: TextInputType.number,
           inputFormatters: [StockInputFormatter()],
@@ -231,16 +235,17 @@ class _CurrencyField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final cubit = context.read<ProductFormCubit>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 8,
       children: [
         Text(
-          context.t.form.currency,
+          t.form.currency,
           style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600, color: context.colors.ink2),
         ),
-        const SizedBox(height: 8),
         BlocSelector<ProductFormCubit, ProductFormState, String>(
           selector: (state) => state.currency,
           builder: (context, currency) {
@@ -264,14 +269,15 @@ class _ErrorBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     return BlocSelector<ProductFormCubit, ProductFormState, bool>(
       selector: (state) => state.submitError != null,
       builder: (context, hasError) {
         if (!hasError) return const SizedBox.shrink();
         final failure = context.read<ProductFormCubit>().state.submitError!;
         final message = switch (failure.type) {
-          FailureType.network || FailureType.timeout => context.t.form.offlineError,
-          _ => context.t.form.serverError,
+          FailureType.network || FailureType.timeout => t.form.offlineError,
+          _ => t.form.serverError,
         };
         return Padding(
           padding: const EdgeInsets.only(bottom: 18),
@@ -287,6 +293,7 @@ class _ActionsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final cubit = context.read<ProductFormCubit>();
 
     return BlocSelector<ProductFormCubit, ProductFormState, ({bool submitting, bool hasError})>(
@@ -294,14 +301,14 @@ class _ActionsSection extends StatelessWidget {
       builder: (context, data) {
         return SheetActions(
           secondary: AppButton(
-            label: context.t.actions.cancel,
+            label: t.actions.cancel,
             variant: AppButtonVariant.outline,
             onPressed: data.submitting ? null : () => Navigator.of(context).maybePop(),
           ),
           primary: AppButton(
-            label: data.hasError ? context.t.actions.retry : context.t.form.create,
+            label: data.hasError ? t.actions.retry : t.form.create,
             loading: data.submitting,
-            loadingLabel: context.t.form.creating,
+            loadingLabel: t.form.creating,
             onPressed: data.submitting ? null : cubit.submit,
           ),
         );

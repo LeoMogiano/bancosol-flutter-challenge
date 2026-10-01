@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/theme/app_colors.dart';
+import 'package:warehouse/core/theme/app_fonts.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 
 enum AppStateType { error, empty, noResults }
@@ -27,55 +28,62 @@ class AppStateView extends StatelessWidget {
     final iconColor = _getIconColor(type, colors);
     final iconData = _getIcon(type);
 
-    // Scroll: con el teclado abierto (sin resultados mientras se escribe) queda muy poco alto.
-    return LayoutBuilder(
-      builder: (context, constraints) => SingleChildScrollView(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: constraints.hasBoundedHeight ? constraints.maxHeight : 0),
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 76,
-                    height: 76,
-                    decoration: BoxDecoration(color: colors.surface, shape: BoxShape.circle),
-                    child: Icon(iconData, size: 34, color: iconColor),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 18.75.sp,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'PlayfairDisplay',
-                      color: colors.ink,
-                      height: 1.2,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 10),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: _messageMaxWidth),
-                    child: Text(
-                      message,
-                      style: TextStyle(fontSize: 14.5.sp, fontWeight: FontWeight.w400, color: colors.ink2, height: 1.5),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  if (actions.isNotEmpty) ...[
-                    const SizedBox(height: 20),
-                    Wrap(spacing: 10, runSpacing: 10, alignment: WrapAlignment.center, children: actions),
-                  ],
-                ],
+    final content = Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 76,
+              height: 76,
+              decoration: BoxDecoration(color: colors.surface, shape: BoxShape.circle),
+              child: Icon(iconData, size: 34, color: iconColor),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 18.75.sp,
+                fontWeight: FontWeight.w400,
+                fontFamily: AppFont.playfairDisplay.family,
+                color: colors.ink,
+                height: 1.2,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: _messageMaxWidth),
+              child: Text(
+                message,
+                style: TextStyle(fontSize: 14.5.sp, fontWeight: FontWeight.w400, color: colors.ink2, height: 1.5),
+                textAlign: TextAlign.center,
               ),
             ),
-          ),
+            if (actions.isNotEmpty) ...[
+              const SizedBox(height: 20),
+              Wrap(spacing: 10, runSpacing: 10, alignment: WrapAlignment.center, children: actions),
+            ],
+          ],
         ),
       ),
+    );
+
+    // Dentro de un scroll padre se deja al padre: un scroll anidado se queda el gesto de pull-to-refresh.
+    // Con alto acotado se scrollea solo: con el teclado abierto queda muy poco alto.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (!constraints.hasBoundedHeight) return content;
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: content,
+          ),
+        );
+      },
     );
   }
 

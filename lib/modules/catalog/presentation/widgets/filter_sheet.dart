@@ -51,20 +51,20 @@ class _FilterSheetContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 18,
       children: [
-        SheetHeader(title: context.t.filters.title),
-        const SizedBox(height: 18),
+        SheetHeader(title: t.filters.title),
         const _SortSection(),
-        const SizedBox(height: 18),
         const _PriceRangeSection(),
-        const SizedBox(height: 18),
-        const _CurrencySection(),
-        const SizedBox(height: 10),
-        const _InStockSection(),
-        const SizedBox(height: 18),
+        const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 10,
+          children: [_CurrencySection(), _InStockSection()],
+        ),
         const _ActionsSection(),
       ],
     );
@@ -76,6 +76,7 @@ class _SortSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final cubit = context.read<FilterDraftCubit>();
     final colors = context.colors;
 
@@ -83,7 +84,7 @@ class _SortSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          context.t.filters.sortBy,
+          t.filters.sortBy,
           style: TextStyle(fontSize: 14.5.sp, fontWeight: FontWeight.w600, color: colors.ink),
         ),
         const SizedBox(height: FilterSheet._gap),
@@ -101,25 +102,25 @@ class _SortSection extends StatelessWidget {
               ),
               children: [
                 _SortChip(
-                  label: context.t.filters.priceDesc,
+                  label: t.filters.priceDesc,
                   icon: Icons.arrow_downward_rounded,
                   isSelected: selectedSort == ProductSort.priceDesc,
                   onTap: () => cubit.sortChanged(ProductSort.priceDesc),
                 ),
                 _SortChip(
-                  label: context.t.filters.priceAsc,
+                  label: t.filters.priceAsc,
                   icon: Icons.arrow_upward_rounded,
                   isSelected: selectedSort == ProductSort.priceAsc,
                   onTap: () => cubit.sortChanged(ProductSort.priceAsc),
                 ),
                 _SortChip(
-                  label: context.t.filters.nameAsc,
+                  label: t.filters.nameAsc,
                   icon: Icons.sort_by_alpha_rounded,
                   isSelected: selectedSort == ProductSort.nameAsc,
                   onTap: () => cubit.sortChanged(ProductSort.nameAsc),
                 ),
                 _SortChip(
-                  label: context.t.filters.sku,
+                  label: t.filters.sku,
                   icon: Icons.tag_rounded,
                   isSelected: selectedSort == ProductSort.sku,
                   onTap: () => cubit.sortChanged(ProductSort.sku),
@@ -158,9 +159,9 @@ class _SortChip extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 6,
             children: [
               Icon(icon, size: 17, color: isSelected ? colors.onAccent : colors.ink),
-              const SizedBox(width: 6),
               Flexible(
                 child: Text(
                   label,
@@ -188,6 +189,7 @@ class _PriceRangeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final cubit = context.read<FilterDraftCubit>();
     final colors = context.colors;
 
@@ -195,7 +197,7 @@ class _PriceRangeSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          context.t.filters.priceRange,
+          t.filters.priceRange,
           style: TextStyle(fontSize: 14.5.sp, fontWeight: FontWeight.w600, color: colors.ink),
         ),
         const SizedBox(height: FilterSheet._gap),
@@ -207,14 +209,14 @@ class _PriceRangeSection extends StatelessWidget {
 
             final min = PriceField(
               currency: 'BOB',
-              label: context.t.filters.min,
+              label: t.filters.min,
               initialValue: cubitState.minText,
               onChanged: cubit.minChanged,
               errorText: isValid ? null : '',
             );
             final max = PriceField(
               currency: 'BOB',
-              label: context.t.filters.max,
+              label: t.filters.max,
               initialValue: cubitState.maxText,
               onChanged: cubit.maxChanged,
               errorText: isValid ? null : '',
@@ -225,12 +227,12 @@ class _PriceRangeSection extends StatelessWidget {
                 // En pantallas angostas lado a lado no deja espacio para escribir el monto.
                 LayoutBuilder(
                   builder: (_, constraints) => constraints.maxWidth < _sideBySideMinWidth
-                      ? Column(children: [min, const SizedBox(height: 10), max])
+                      ? Column(spacing: 10, children: [min, max])
                       : Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 10,
                           children: [
                             Expanded(child: min),
-                            const SizedBox(width: 10),
                             Expanded(child: max),
                           ],
                         ),
@@ -239,7 +241,7 @@ class _PriceRangeSection extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Text(
-                      context.t.filters.rangeError,
+                      t.filters.rangeError,
                       style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500, color: colors.bad),
                     ),
                   ),
@@ -257,13 +259,14 @@ class _CurrencySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final cubit = context.read<FilterDraftCubit>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          context.t.filters.currency,
+          t.filters.currency,
           style: TextStyle(fontSize: 14.5.sp, fontWeight: FontWeight.w600, color: context.colors.ink),
         ),
         const SizedBox(height: FilterSheet._gap),
@@ -271,7 +274,7 @@ class _CurrencySection extends StatelessWidget {
           selector: (state) => state.currency,
           builder: (context, selectedCurrency) {
             final segments = [
-              AppSegment(value: null, label: context.t.filters.all),
+              AppSegment(value: null, label: t.filters.all),
               const AppSegment(value: 'BOB', label: 'BOB'),
               const AppSegment(value: 'USD', label: 'USD'),
             ];
@@ -293,14 +296,15 @@ class _InStockSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final cubit = context.read<FilterDraftCubit>();
 
     return BlocSelector<FilterDraftCubit, FilterDraftState, bool>(
       selector: (state) => state.inStockOnly,
       builder: (context, inStockOnly) {
         return AppSwitchTile(
-          title: context.t.filters.inStockOnly,
-          subtitle: context.t.filters.inStockOnlyHint,
+          title: t.filters.inStockOnly,
+          subtitle: t.filters.inStockOnlyHint,
           value: inStockOnly,
           onChanged: cubit.inStockChanged,
         );
@@ -314,6 +318,7 @@ class _ActionsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final cubit = context.read<FilterDraftCubit>();
 
     return BlocBuilder<FilterDraftCubit, FilterDraftState>(
@@ -322,13 +327,9 @@ class _ActionsSection extends StatelessWidget {
         final resultCount = cubit.resultCount;
 
         return SheetActions(
-          secondary: AppButton(
-            label: context.t.filters.reset,
-            onPressed: cubit.reset,
-            variant: AppButtonVariant.outline,
-          ),
+          secondary: AppButton(label: t.filters.reset, onPressed: cubit.reset, variant: AppButtonVariant.outline),
           primary: AppButton(
-            label: context.t.filters.apply(n: resultCount),
+            label: t.filters.apply(n: resultCount),
             onPressed: isRangeValid
                 ? () => Navigator.of(context).pop((sort: state.sort, filters: cubit.filters))
                 : null,

@@ -28,6 +28,7 @@ class SearchField extends StatefulWidget {
 
 class _SearchFieldState extends State<SearchField> {
   static const double _spinnerSize = 16;
+  static const double _dividerHeight = 24;
 
   late final TextEditingController _controller = widget.controller ?? TextEditingController(text: widget.initialValue);
   final _debouncer = Debouncer(delay: AppMotion.debounce);
@@ -76,40 +77,49 @@ class _SearchFieldState extends State<SearchField> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    return Row(
-      children: [
-        Expanded(
-          child: CustomInput(
-            controller: _controller,
-            focusNode: widget.focusNode,
-            hintText: widget.hintText,
-            textInputAction: TextInputAction.search,
-            onChanged: _onChanged,
-            prefixIcon: Icon(Icons.search_rounded, size: 22, color: colors.ink2),
-            suffixIcon: ListenableBuilder(
-              listenable: Listenable.merge([_pending, _controller]),
-              builder: (context, _) {
-                if (_pending.value) {
-                  return Center(
-                    widthFactor: 1,
-                    child: SizedBox.square(
-                      dimension: _spinnerSize,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: colors.accent),
-                    ),
-                  );
-                }
-                if (_controller.text.isEmpty) return const SizedBox.shrink();
-                return IconButton(
-                  onPressed: _clear,
-                  tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
-                  icon: Icon(Icons.close_rounded, size: 18, color: colors.ink3),
+    final trailing = widget.trailing;
+    return CustomInput(
+      controller: _controller,
+      focusNode: widget.focusNode,
+      hintText: widget.hintText,
+      textInputAction: TextInputAction.search,
+      onChanged: _onChanged,
+      pill: true,
+      prefixIcon: Icon(Icons.search_rounded, size: 22, color: colors.ink2),
+      suffixIcon: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListenableBuilder(
+            listenable: Listenable.merge([_pending, _controller]),
+            builder: (context, _) {
+              if (_pending.value) {
+                return Center(
+                  widthFactor: 1,
+                  child: SizedBox.square(
+                    dimension: _spinnerSize,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: colors.accent),
+                  ),
                 );
-              },
-            ),
+              }
+              if (_controller.text.isEmpty) return const SizedBox.shrink();
+              return IconButton(
+                onPressed: _clear,
+                tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
+                icon: Icon(Icons.close_rounded, size: 18, color: colors.ink3),
+              );
+            },
           ),
-        ),
-        if (widget.trailing != null) ...[const SizedBox(width: 8), widget.trailing!],
-      ],
+          if (trailing != null) ...[
+            Container(
+              width: 1,
+              height: _dividerHeight,
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              color: colors.line,
+            ),
+            trailing,
+          ],
+        ],
+      ),
     );
   }
 }

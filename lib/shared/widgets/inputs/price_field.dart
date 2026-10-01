@@ -49,6 +49,7 @@ class PriceField extends StatelessWidget {
       helperText: helperText,
       helperIsWarning: helperIsWarning,
       large: large,
+      tightSuffix: true,
       suffixIcon: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         height: 40,

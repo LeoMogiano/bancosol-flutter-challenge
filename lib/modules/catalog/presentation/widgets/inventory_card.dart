@@ -16,6 +16,7 @@ class InventoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final colors = context.colors;
     final timeStr = syncedAt != null ? DateFormat.Hm().format(syncedAt!) : '';
 
@@ -25,13 +26,14 @@ class InventoryCard extends StatelessWidget {
       padding: const EdgeInsets.all(_padding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 4,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Flexible(
                 child: Text(
-                  context.t.summary.inventoryValue,
+                  t.summary.inventoryValue,
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
@@ -41,16 +43,15 @@ class InventoryCard extends StatelessWidget {
               ),
               if (syncedAt != null)
                 Text(
-                  context.t.summary.syncedAt(time: timeStr),
+                  t.summary.syncedAt(time: timeStr),
                   style: TextStyle(
-                    fontSize: 12.5.sp,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w400,
                     color: colors.onAccent.withValues(alpha: 0.75),
                   ),
                 ),
             ],
           ),
-          const SizedBox(height: 4),
           // FittedBox: un inventario de 7 cifras no entra en 320 dp con el tamaño del diseño.
           FittedBox(
             fit: BoxFit.scaleDown,
@@ -58,6 +59,7 @@ class InventoryCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.baseline,
               textBaseline: TextBaseline.alphabetic,
+              spacing: 6,
               children: [
                 Text(
                   PriceFormatter.format(totalBob),
@@ -68,7 +70,6 @@ class InventoryCard extends StatelessWidget {
                     letterSpacing: -0.02 * valueSize,
                   ),
                 ),
-                const SizedBox(width: 6),
                 Text(
                   'BOB',
                   style: TextStyle(
@@ -80,9 +81,8 @@ class InventoryCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 4),
           Text(
-            context.t.summary.formula,
+            t.summary.formula,
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w400,

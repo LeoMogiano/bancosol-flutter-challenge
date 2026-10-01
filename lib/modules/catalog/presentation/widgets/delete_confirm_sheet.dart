@@ -5,6 +5,7 @@ import 'package:warehouse/core/di/service_locator.dart';
 import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/core/i18n/failure_i18n.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
+import 'package:warehouse/core/theme/app_fonts.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/delete_product/delete_product_cubit.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
@@ -55,7 +56,7 @@ class DeleteConfirmSheet extends StatelessWidget {
         Text(
           t.delete.title,
           textAlign: TextAlign.center,
-          style: TextStyle(fontFamily: 'PlayfairDisplay', fontSize: 19.65.sp, color: colors.ink),
+          style: TextStyle(fontFamily: AppFont.playfairDisplay.family, fontSize: 19.65.sp, color: colors.ink),
         ),
         const SizedBox(height: 10),
         Text(

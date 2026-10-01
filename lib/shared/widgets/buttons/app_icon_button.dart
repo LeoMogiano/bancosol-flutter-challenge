@@ -7,6 +7,7 @@ class AppIconButton extends StatelessWidget {
     required this.icon,
     required this.onPressed,
     this.color,
+    this.background,
     this.tooltip,
     this.badge = 0,
     this.size = 44,
@@ -19,6 +20,7 @@ class AppIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback? onPressed;
   final Color? color;
+  final Color? background;
   final String? tooltip;
   final int badge;
   final double size;
@@ -28,8 +30,8 @@ class AppIconButton extends StatelessWidget {
     final colors = context.colors;
     final enabled = onPressed != null;
     Widget button = Material(
-      color: colors.surface,
-      shape: CircleBorder(side: BorderSide(color: colors.line)),
+      color: background ?? colors.surface,
+      shape: CircleBorder(side: background == null ? BorderSide(color: colors.line) : BorderSide.none),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onPressed,

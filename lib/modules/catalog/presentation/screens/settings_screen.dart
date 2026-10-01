@@ -14,6 +14,7 @@ import 'package:warehouse/shared/widgets/inputs/app_segmented.dart';
 import 'package:warehouse/shared/widgets/layout/app_top_bar.dart';
 import 'package:warehouse/shared/widgets/layout/custom_scaffold.dart';
 import 'package:warehouse/shared/widgets/lists/app_switch_tile.dart';
+import 'package:warehouse/shared/widgets/lists/app_tile.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -55,22 +56,16 @@ class _Section extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = 12.sp;
     return Padding(
       padding: const EdgeInsets.only(top: 22),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 10,
         children: [
           Text(
-            title.toUpperCase(),
-            style: TextStyle(
-              fontSize: size,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.12 * size,
-              color: context.colors.ink3,
-            ),
+            title,
+            style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600, color: context.colors.ink2),
           ),
-          const SizedBox(height: 10),
           child,
         ],
       ),
@@ -104,13 +99,14 @@ class _LanguageSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     return BlocSelector<PreferencesCubit, PreferencesState, String?>(
       selector: (state) => state.languageCode,
       builder: (context, languageCode) => AppSegmented<String?>(
         selected: languageCode,
         onChanged: context.read<PreferencesCubit>().setLanguageCode,
         segments: [
-          AppSegment(value: null, label: context.t.settings.deviceLanguage),
+          AppSegment(value: null, label: t.settings.deviceLanguage),
           const AppSegment(value: 'es', label: 'ES'),
           const AppSegment(value: 'en', label: 'EN'),
           const AppSegment(value: 'pt', label: 'PT'),
@@ -128,12 +124,13 @@ class _DataCard extends StatelessWidget {
     final t = context.t;
     final colors = context.colors;
     return AppCard(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
           BlocSelector<PreferencesCubit, PreferencesState, bool>(
             selector: (state) => state.cacheEnabled,
             builder: (context, enabled) => AppSwitchTile(
+              icon: Icons.offline_bolt_outlined,
               title: t.settings.cache,
               subtitle: t.settings.cacheHint,
               value: enabled,
@@ -143,25 +140,19 @@ class _DataCard extends StatelessWidget {
           Divider(height: 1, color: colors.line),
           BlocSelector<ProductsBloc, ProductsState, ({DateTime? syncedAt, bool refreshing})>(
             selector: (state) => (syncedAt: state.syncedAt, refreshing: state.isRefreshing),
-            builder: (context, data) => ListTile(
-              contentPadding: EdgeInsets.zero,
+            builder: (context, data) => AppTile(
+              icon: Icons.sync_rounded,
+              title: t.settings.syncNow,
+              subtitle: data.syncedAt == null
+                  ? t.settings.neverSynced
+                  : t.settings.syncedAt(time: DateFormat.Hm().format(data.syncedAt!)),
               onTap: data.refreshing ? null : () => _sync(context),
-              title: Text(
-                t.settings.syncNow,
-                style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w500, color: colors.ink),
-              ),
-              subtitle: Text(
-                data.syncedAt == null
-                    ? t.settings.neverSynced
-                    : t.settings.syncedAt(time: DateFormat.Hm().format(data.syncedAt!)),
-                style: TextStyle(fontSize: 14.sp, color: colors.ink2),
-              ),
               trailing: data.refreshing
                   ? SizedBox.square(
                       dimension: 20,
                       child: CircularProgressIndicator(strokeWidth: 2, color: colors.accent),
                     )
-                  : Icon(Icons.sync_rounded, color: colors.ink2),
+                  : Icon(Icons.chevron_right_rounded, color: colors.ink3),
             ),
           ),
         ],
@@ -170,12 +161,13 @@ class _DataCard extends StatelessWidget {
   }
 
   Future<void> _sync(BuildContext context) async {
+    final t = context.t;
     final bloc = context.read<ProductsBloc>()..add(const ProductsRefreshed());
     final state = await bloc.stream.firstWhere((s) => !s.isRefreshing);
     if (!context.mounted) return;
     final failure = state.failure;
     failure == null
-        ? AppToast.show(context, context.t.toasts.synced)
+        ? AppToast.show(context, t.toasts.synced)
         : AppToast.show(context, failure.message, icon: Icons.error_rounded);
   }
 }
@@ -185,13 +177,14 @@ class _VersionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final colors = context.colors;
     return AppCard(
       child: Row(
         children: [
           Expanded(
             child: Text(
-              context.t.settings.version,
+              t.settings.version,
               style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w500, color: colors.ink),
             ),
           ),

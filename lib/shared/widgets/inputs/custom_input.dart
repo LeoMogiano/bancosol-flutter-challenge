@@ -24,6 +24,8 @@ class CustomInput extends StatefulWidget {
     this.helperText,
     this.helperIsWarning = false,
     this.large = false,
+    this.pill = false,
+    this.tightSuffix = false,
     this.readOnly = false,
     this.onTap,
     super.key,
@@ -48,6 +50,8 @@ class CustomInput extends StatefulWidget {
   final String? helperText;
   final bool helperIsWarning;
   final bool large;
+  final bool pill;
+  final bool tightSuffix;
   final bool readOnly;
   final VoidCallback? onTap;
 
@@ -119,10 +123,10 @@ class _CustomInputState extends State<CustomInput> {
               constraints: BoxConstraints(minHeight: height),
               decoration: BoxDecoration(
                 color: colors.surface,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(widget.pill ? height / 2 : 16),
                 border: Border.all(color: borderColor, width: 1.5),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.only(left: widget.pill ? 18 : 16, right: widget.pill || widget.tightSuffix ? 6 : 16),
               child: Row(
                 children: [
                   if (widget.prefixIcon != null) ...[widget.prefixIcon!, const SizedBox(width: 8)],
