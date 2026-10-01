@@ -7,13 +7,14 @@
   },
   "actions": {
     "retry": "Reintentar",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "refresh": "Actualizar",
+    "newProduct": "Nuevo producto"
   },
   "theme": {
     "light": "Claro",
     "dark": "Oscuro"
   },
-  "languageLabel": "Idioma",
   "failures": {
     "network": "Sin conexión. Revisa tu conexión e inténtalo nuevamente.",
     "timeout": "El servidor tardó demasiado en responder. Inténtalo nuevamente.",
@@ -23,5 +24,153 @@
     "cache": "No pudimos leer los datos guardados en el dispositivo.",
     "unexpected": "Ocurrió un problema inesperado. Inténtalo nuevamente."
   },
-  "environmentLabel": "Ambiente: {env}"
+  "environmentLabel": "Ambiente: {env}",
+  "summary": {
+    "eyebrow": "GESTIÓN DE CATÁLOGO",
+    "title": "Resumen",
+    "searchHint": "Buscar por nombre o SKU",
+    "inventoryValue": "Valor del inventario",
+    "syncedAt": "Sincronizado {time}",
+    "formula": "Precio × stock",
+    "statProducts": "Productos",
+    "statLowStock": "Stock bajo",
+    "statOutOfStock": "Sin stock",
+    "errorTitle": "No pudimos cargar el catálogo",
+    "errorMessage": "Revisa tu conexión e inténtalo nuevamente.",
+    "emptyTitle": "Lo sentimos, aún no hay productos",
+    "emptyMessage": "Crea tu primer producto o actualiza para revisar si ya hay registros."
+  },
+  "products": {
+    "eyebrow": "CATÁLOGO",
+    "title": "Productos",
+    "newShort": "Nuevo",
+    "searchHint": "Nombre o SKU",
+    "results": {
+      "one": "{n} resultado",
+      "other": "{n} resultados"
+    },
+    "clearFilters": "Quitar filtros",
+    "showing": "Mostrando {from}–{to} de {total}",
+    "pullToRefresh": "Desliza para actualizar",
+    "releaseToRefresh": "Suelta para actualizar",
+    "errorTitle": "No pudimos obtener los productos",
+    "errorMessage": "Inténtalo nuevamente en unos segundos.",
+    "emptyTitle": "Lo sentimos, no hay productos",
+    "emptyMessage": "Todavía no hay registros en el catálogo. Crea uno nuevo para empezar.",
+    "noResultsTitle": "Sin resultados para “{query}”",
+    "noResultsNoQuery": "Ningún producto coincide",
+    "noResultsMessage": "Revisa el nombre o el SKU, o quita algunos filtros.",
+    "clearSearch": "Limpiar búsqueda",
+    "offline": "Datos offline",
+    "lastSync": "Última sincronización {time}"
+  },
+  "stock": {
+    "out": "Sin stock",
+    "units": "{n} en stock"
+  },
+  "filters": {
+    "title": "Ordenar y filtrar",
+    "sortBy": "Ordenar por",
+    "priceDesc": "Mayor precio",
+    "priceAsc": "Menor precio",
+    "nameAsc": "Nombre A–Z",
+    "sku": "SKU",
+    "priceRange": "Rango de precio (BOB)",
+    "min": "Mínimo",
+    "max": "Máximo",
+    "currency": "Moneda",
+    "all": "Todas",
+    "inStockOnly": "Solo con stock",
+    "inStockOnlyHint": "Oculta productos con stock 0",
+    "reset": "Restablecer",
+    "apply": "Ver {n} productos",
+    "rangeError": "El mínimo no puede ser mayor que el máximo"
+  },
+  "detail": {
+    "title": "Detalle del producto",
+    "price": "Precio",
+    "updated": "Actualizado",
+    "sku": "SKU",
+    "stock": "Stock",
+    "currency": "Moneda",
+    "id": "ID",
+    "note": "Solo el precio es editable. El stock y la moneda se gestionan desde el sistema de origen.",
+    "share": "Compartir",
+    "editPrice": "Editar precio"
+  },
+  "priceEdit": {
+    "title": "Editar precio",
+    "currentPrice": "Precio actual",
+    "save": "Guardar precio",
+    "saving": "Guardando…",
+    "errorTitle": "No se actualizó el precio",
+    "serverError": "Ocurrió un problema con el servidor. Inténtalo nuevamente.",
+    "offlineError": "Sin conexión. Podrás guardar cuando vuelvas a estar en línea.",
+    "help": "Ej.: 1,500.50 · los miles se separan solos",
+    "bigChange": "Cambio de {percent}% respecto al actual. Verifica el monto."
+  },
+  "validation": {
+    "priceEmpty": "Ingresa un precio",
+    "priceIncomplete": "Completa los centavos",
+    "priceNotPositive": "El precio debe ser mayor a 0",
+    "priceTooHigh": "El precio máximo es 999,999.99",
+    "currencyEmpty": "La moneda no puede estar vacía",
+    "priceUnchanged": "Es el mismo precio actual",
+    "skuEmpty": "El SKU es obligatorio",
+    "skuTooShort": "Mínimo 4 caracteres",
+    "skuFormat": "Solo letras, números y guiones (ej. SKU-1029)",
+    "skuDuplicate": "Ya existe un producto con este SKU",
+    "nameEmpty": "El nombre es obligatorio",
+    "nameTooShort": "Mínimo 3 caracteres",
+    "nameOnlyDigits": "El nombre no puede ser solo números",
+    "nameDuplicate": "Ya existe un producto con este nombre",
+    "stockEmpty": "Ingresa el stock",
+    "stockTooHigh": "Máximo 99,999"
+  },
+  "form": {
+    "title": "Nuevo producto",
+    "sku": "SKU",
+    "name": "Nombre",
+    "price": "Precio",
+    "stock": "Stock",
+    "currency": "Moneda",
+    "create": "Crear producto",
+    "creating": "Creando…",
+    "serverError": "No se creó el producto. Inténtalo nuevamente.",
+    "offlineError": "Sin conexión. No se creó el producto."
+  },
+  "delete": {
+    "title": "¿Eliminar producto?",
+    "message": "Se eliminará {name} ({sku}) del catálogo. Esta acción no se puede deshacer.",
+    "confirm": "Eliminar",
+    "deleting": "Eliminando…",
+    "serverError": "No se eliminó el producto. Inténtalo nuevamente.",
+    "offlineError": "Sin conexión. No se eliminó el producto."
+  },
+  "toasts": {
+    "priceUpdated": "Precio actualizado",
+    "created": "Producto creado",
+    "deleted": "Producto eliminado",
+    "listUpdated": "Lista actualizada",
+    "synced": "Catálogo sincronizado",
+    "shared": "Compartido"
+  },
+  "share": {
+    "text": "Nombre: {name}\nPrecio: {price} {currency}\nSKU: {sku}"
+  },
+  "settings": {
+    "eyebrow": "PREFERENCIAS",
+    "title": "Ajustes",
+    "appearance": "Apariencia",
+    "language": "Idioma",
+    "deviceLanguage": "Del dispositivo",
+    "data": "Datos",
+    "cache": "Cache local",
+    "cacheHint": "Muestra el último listado sin conexión",
+    "syncNow": "Sincronizar ahora",
+    "syncedAt": "Sincronizado {time}",
+    "neverSynced": "Sin sincronizar",
+    "about": "Acerca de",
+    "version": "Versión"
+  }
 }
