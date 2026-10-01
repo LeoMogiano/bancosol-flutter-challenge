@@ -35,7 +35,9 @@ abstract final class CatalogModule {
       ..registerLazySingleton<ProductRepository>(
         () => ProductRepositoryImpl(remote: di<ProductRemoteDataSource>(), local: di<ProductLocalDataSource>()),
       )
-      ..registerLazySingleton<GetProductsUseCase>(() => GetProductsUseCase(di<ProductRepository>()))
+      ..registerLazySingleton<GetProductsUseCase>(
+        () => GetProductsUseCase(di<ProductRepository>(), di<PreferencesRepository>()),
+      )
       ..registerLazySingleton<GetProductUseCase>(() => GetProductUseCase(di<ProductRepository>()))
       ..registerLazySingleton<UpdateProductPriceUseCase>(() => UpdateProductPriceUseCase(di<ProductRepository>()))
       ..registerLazySingleton<CreateProductUseCase>(() => CreateProductUseCase(di<ProductRepository>()))
@@ -44,11 +46,7 @@ abstract final class CatalogModule {
       ..registerLazySingleton<PreferencesBloc>(() => PreferencesBloc(di<PreferencesRepository>()))
       // Singleton: Resumen, Productos y Ajustes comparten el mismo catálogo en memoria.
       ..registerLazySingleton<ProductsBloc>(
-        () => ProductsBloc(
-          getProducts: di<GetProductsUseCase>(),
-          useCache: () => di<PreferencesBloc>().state.cacheEnabled,
-          clock: di<AppClock>(),
-        ),
+        () => ProductsBloc(getProducts: di<GetProductsUseCase>(), clock: di<AppClock>()),
       )
       ..registerFactory<ProductDetailBloc>(() => ProductDetailBloc(shareProduct: di<ShareProductUseCase>()))
       ..registerFactoryParam<ProductFormBloc, List<Product>, void>(

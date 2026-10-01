@@ -30,7 +30,7 @@ void main() {
   late _MockGetProducts getProducts;
   late _ManualClock clock;
 
-  ProductsBloc build() => ProductsBloc(getProducts: getProducts, useCache: () => true, clock: clock);
+  ProductsBloc build() => ProductsBloc(getProducts: getProducts, clock: clock);
 
   setUp(() {
     getProducts = _MockGetProducts();
@@ -39,7 +39,7 @@ void main() {
 
   blocTest<ProductsBloc, ProductsState>(
     'carga el catálogo y lo muestra ordenado por nombre',
-    setUp: () => when(() => getProducts(useCache: true)).thenAnswer(
+    setUp: () => when(() => getProducts()).thenAnswer(
       (_) async => ProductsSnapshot(
         products: [
           _product(2, name: 'Zapato'),
@@ -58,7 +58,7 @@ void main() {
 
   blocTest<ProductsBloc, ProductsState>(
     'un refresco fallido informa el error sin borrar la lista en pantalla',
-    setUp: () => when(() => getProducts(useCache: true)).thenThrow(const Failure(FailureType.server, statusCode: 500)),
+    setUp: () => when(() => getProducts()).thenThrow(const Failure(FailureType.server, statusCode: 500)),
     build: build,
     seed: () => ProductsState(status: ProductsStatus.success, all: [_product(1)], visible: [_product(1)]),
     act: (bloc) => bloc.add(const ProductsRefreshed()),

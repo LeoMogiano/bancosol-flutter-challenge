@@ -12,14 +12,10 @@ part 'products_event.dart';
 part 'products_state.dart';
 
 class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
-  ProductsBloc({
-    required GetProductsUseCase getProducts,
-    required bool Function() useCache,
-    AppClock clock = const AppClock(),
-  }) : _getProducts = getProducts,
-       _useCache = useCache,
-       _clock = clock,
-       super(const ProductsState()) {
+  ProductsBloc({required GetProductsUseCase getProducts, AppClock clock = const AppClock()})
+    : _getProducts = getProducts,
+      _clock = clock,
+      super(const ProductsState()) {
     on<ProductsRequested>(_onRequested);
     on<ProductsRefreshed>(_onRefreshed);
     on<ProductsQueryChanged>(_onQueryChanged);
@@ -34,7 +30,6 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
   static const Duration highlightDuration = Duration(milliseconds: 2200);
 
   final GetProductsUseCase _getProducts;
-  final bool Function() _useCache;
   final AppClock _clock;
   Timer? _highlightTimer;
 
@@ -50,7 +45,7 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
 
   Future<void> _load(Emitter<ProductsState> emit) async {
     try {
-      final snapshot = await _getProducts(useCache: _useCache());
+      final snapshot = await _getProducts();
       emit(
         _withView(
           state.copyWith(
