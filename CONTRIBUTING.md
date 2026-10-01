@@ -21,9 +21,7 @@ Tipos: `feat`, `fix`, `test`, `refactor`, `docs`, `chore`, `build`, `ci`.
 
 ```bash
 dart format -l 120 lib test
-flutter analyze                                   # 0 issues
-./tool/check_sizes.sh                             # ningún archivo de presentación > 200 líneas
-flutter test --dart-define-from-file=.env.dev
+./tool/setup.sh --check   # formato, 0 issues en analyze, pantallas ≤ 200 líneas y tests
 ```
 
 ## Reglas de código
