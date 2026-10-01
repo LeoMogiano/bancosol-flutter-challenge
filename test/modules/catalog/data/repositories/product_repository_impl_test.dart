@@ -1,0 +1,113 @@
+import 'package:dio/dio.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:warehouse/core/error/failure.dart';
+import 'package:warehouse/core/network/api_client.dart';
+import 'package:warehouse/core/storage/local_store.dart';
+import 'package:warehouse/modules/catalog/data/datasources/product_local_data_source.dart';
+import 'package:warehouse/modules/catalog/data/datasources/product_remote_data_source.dart';
+import 'package:warehouse/modules/catalog/data/repositories/product_repository_impl.dart';
+
+import '../../../../helpers/fake_adapter.dart';
+
+class _MemoryStore implements LocalStore {
+  final Map<String, Map<String, Object?>> _boxes = {};
+
+  @override
+  T? read<T>(String box, String key) {
+    final value = _boxes[box]?[key];
+    return value is T ? value : null;
+  }
+
+  @override
+  Future<void> write(String box, String key, Object? value) async {
+    _boxes.putIfAbsent(box, () => {});
+    _boxes[box]![key] = value;
+  }
+
+  @override
+  Future<void> delete(String box, String key) async {
+    _boxes[box]?.remove(key);
+  }
+}
+
+void main() {
+  test('sin conexión y con cache activo muestra el último listado como offline', () async {
+    final store = _MemoryStore();
+    final now = DateTime(2024);
+
+    final api1 = ApiClient(
+      baseUrl: 'https://api.test',
+      adapter: FakeAdapter.json([
+        {'_id': 'a', 'id': 1, 'sku': 'SKU-1', 'name': 'P1', 'price': 10, 'currency': 'BOB', 'stock': 5},
+      ]),
+    );
+    final remote1 = ProductRemoteDataSource(api1);
+    final repo1 = ProductRepositoryImpl(remote: remote1, local: ProductLocalDataSource(store), now: () => now);
+
+    final snapshot1 = await repo1.getProducts(useCache: true);
+    expect(snapshot1.isOffline, false);
+    expect(snapshot1.products.length, 1);
+    expect(snapshot1.syncedAt, now);
+
+    final dioError = DioException(
+      requestOptions: RequestOptions(path: '/products'),
+      type: DioExceptionType.connectionError,
+    );
+    final api2 = ApiClient(baseUrl: 'https://api.test', adapter: FakeAdapter([(_) => throw dioError]));
+    final remote2 = ProductRemoteDataSource(api2);
+    final repo2 = ProductRepositoryImpl(remote: remote2, local: ProductLocalDataSource(store), now: () => now);
+
+    final snapshot2 = await repo2.getProducts(useCache: true);
+    expect(snapshot2.isOffline, true);
+    expect(snapshot2.products.length, 1);
+    expect(snapshot2.products.first.name, 'P1');
+    expect(snapshot2.syncedAt, now);
+  });
+
+  test('un error 500 no se disfraza de offline', () async {
+    final store = _MemoryStore();
+    final now = DateTime(2024);
+
+    final api1 = ApiClient(
+      baseUrl: 'https://api.test',
+      adapter: FakeAdapter.json([
+        {'_id': 'a', 'id': 1, 'sku': 'SKU-1', 'name': 'P1', 'price': 10, 'currency': 'BOB', 'stock': 5},
+      ]),
+    );
+    final remote1 = ProductRemoteDataSource(api1);
+    final repo1 = ProductRepositoryImpl(remote: remote1, local: ProductLocalDataSource(store), now: () => now);
+
+    await repo1.getProducts(useCache: true);
+
+    final api2 = ApiClient(
+      baseUrl: 'https://api.test',
+      adapter: FakeAdapter([(o) => FakeAdapter.jsonBody(null, status: 500)]),
+    );
+    final remote2 = ProductRemoteDataSource(api2);
+    final repo2 = ProductRepositoryImpl(remote: remote2, local: ProductLocalDataSource(store), now: () => now);
+
+    expect(
+      () => repo2.getProducts(useCache: true),
+      throwsA(isA<Failure>().having((f) => f.type, 'type', FailureType.server)),
+    );
+  });
+
+  test('con cache desactivado no guarda nada', () async {
+    final store = _MemoryStore();
+    final now = DateTime(2024);
+
+    final api = ApiClient(
+      baseUrl: 'https://api.test',
+      adapter: FakeAdapter.json([
+        {'_id': 'a', 'id': 1, 'sku': 'SKU-1', 'name': 'P1', 'price': 10, 'currency': 'BOB', 'stock': 5},
+      ]),
+    );
+    final remote = ProductRemoteDataSource(api);
+    final repo = ProductRepositoryImpl(remote: remote, local: ProductLocalDataSource(store), now: () => now);
+
+    await repo.getProducts(useCache: false);
+
+    expect(store.read<Object?>('products_cache', 'items'), isNull);
+    expect(store.read<Object?>('products_cache', 'synced_at'), isNull);
+  });
+}

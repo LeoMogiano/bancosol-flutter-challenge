@@ -1,0 +1,179 @@
+{
+  "appName": "WareHouse",
+  "nav": {
+    "summary": "Summary",
+    "products": "Products",
+    "settings": "Settings"
+  },
+  "actions": {
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "refresh": "Refresh",
+    "newProduct": "New product"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "failures": {
+    "network": "No connection. Check your connection and try again.",
+    "timeout": "The server took too long to respond. Try again.",
+    "notFound": "This product no longer exists. Refresh the list.",
+    "rateLimit": "You made too many requests in a row. Wait a few seconds and try again.",
+    "server": "A server error occurred. Try again.",
+    "cache": "We couldn't read the data stored on your device.",
+    "unexpected": "An unexpected error occurred. Try again."
+  },
+  "environmentLabel": "Environment: {env}",
+  "summary": {
+    "eyebrow": "CATALOG MANAGEMENT",
+    "title": "Summary",
+    "searchHint": "Search by name or SKU",
+    "inventoryValue": "Inventory value",
+    "syncedAt": "Synced {time}",
+    "formula": "Price × stock",
+    "statProducts": "Products",
+    "statLowStock": "Low stock",
+    "statOutOfStock": "Out of stock",
+    "errorTitle": "We couldn't load the catalog",
+    "errorMessage": "Check your connection and try again.",
+    "emptyTitle": "Sorry, there are no products yet",
+    "emptyMessage": "Create your first product or refresh to check for records."
+  },
+  "products": {
+    "eyebrow": "CATALOG",
+    "title": "Products",
+    "newShort": "New",
+    "searchHint": "Name or SKU",
+    "results": {
+      "one": "{n} result",
+      "other": "{n} results"
+    },
+    "clearFilters": "Clear filters",
+    "showing": "Showing {from}–{to} of {total}",
+    "pullToRefresh": "Pull to refresh",
+    "releaseToRefresh": "Release to refresh",
+    "errorTitle": "We couldn't get the products",
+    "errorMessage": "Try again in a few seconds.",
+    "emptyTitle": "Sorry, there are no products",
+    "emptyMessage": "There are no records in the catalog yet. Create one to get started.",
+    "noResultsTitle": "No results for “{query}”",
+    "noResultsNoQuery": "No product matches",
+    "noResultsMessage": "Check the name or SKU, or remove some filters.",
+    "clearSearch": "Clear search",
+    "offline": "Offline data",
+    "lastSync": "Last sync {time}"
+  },
+  "stock": {
+    "out": "Out of stock",
+    "units": "{n} in stock"
+  },
+  "filters": {
+    "title": "Sort and filter",
+    "sortBy": "Sort by",
+    "priceDesc": "Highest price",
+    "priceAsc": "Lowest price",
+    "nameAsc": "Name A–Z",
+    "sku": "SKU",
+    "priceRange": "Price range (BOB)",
+    "min": "Minimum",
+    "max": "Maximum",
+    "currency": "Currency",
+    "all": "All",
+    "inStockOnly": "In stock only",
+    "inStockOnlyHint": "Hides products with stock 0",
+    "reset": "Reset",
+    "apply": {
+      "one": "Show {n} product",
+      "other": "Show {n} products"
+    },
+    "rangeError": "Minimum cannot be greater than maximum"
+  },
+  "detail": {
+    "title": "Product detail",
+    "price": "Price",
+    "updated": "Updated",
+    "sku": "SKU",
+    "stock": "Stock",
+    "currency": "Currency",
+    "id": "ID",
+    "note": "Only the price is editable. Stock and currency are managed in the source system.",
+    "share": "Share",
+    "editPrice": "Edit price"
+  },
+  "priceEdit": {
+    "title": "Edit price",
+    "currentPrice": "Current price",
+    "save": "Save price",
+    "saving": "Saving…",
+    "errorTitle": "The price was not updated",
+    "serverError": "A server error occurred. Try again.",
+    "offlineError": "No connection. You'll be able to save when you're back online.",
+    "help": "E.g. 1,500.50 · thousands are separated automatically",
+    "bigChange": "{percent}% change from current. Check the amount."
+  },
+  "validation": {
+    "priceEmpty": "Enter a price",
+    "priceIncomplete": "Complete the cents",
+    "priceNotPositive": "Price must be greater than 0",
+    "priceTooHigh": "Maximum price is 999,999.99",
+    "currencyEmpty": "Currency cannot be empty",
+    "priceUnchanged": "It's the same as the current price",
+    "skuEmpty": "SKU is required",
+    "skuTooShort": "At least 4 characters",
+    "skuFormat": "Only letters, numbers and hyphens (e.g. SKU-1029)",
+    "skuDuplicate": "A product with this SKU already exists",
+    "nameEmpty": "Name is required",
+    "nameTooShort": "At least 3 characters",
+    "nameOnlyDigits": "Name cannot be only numbers",
+    "nameDuplicate": "A product with this name already exists",
+    "stockEmpty": "Enter the stock",
+    "stockTooHigh": "Maximum 99,999"
+  },
+  "form": {
+    "title": "New product",
+    "sku": "SKU",
+    "name": "Name",
+    "price": "Price",
+    "stock": "Stock",
+    "currency": "Currency",
+    "create": "Create product",
+    "creating": "Creating…",
+    "serverError": "The product was not created. Try again.",
+    "offlineError": "No connection. The product was not created."
+  },
+  "delete": {
+    "title": "Delete product?",
+    "message": "{name} ({sku}) will be removed from the catalog. This action cannot be undone.",
+    "confirm": "Delete",
+    "deleting": "Deleting…",
+    "serverError": "The product was not deleted. Try again.",
+    "offlineError": "No connection. The product was not deleted."
+  },
+  "toasts": {
+    "priceUpdated": "Price updated",
+    "created": "Product created",
+    "deleted": "Product deleted",
+    "listUpdated": "List updated",
+    "synced": "Catalog synced",
+    "shared": "Shared"
+  },
+  "share": {
+    "text": "Name: {name}\nPrice: {price} {currency}\nSKU: {sku}"
+  },
+  "settings": {
+    "eyebrow": "PREFERENCES",
+    "title": "Settings",
+    "appearance": "Appearance",
+    "language": "Language",
+    "deviceLanguage": "Device",
+    "data": "Data",
+    "cache": "Local cache",
+    "cacheHint": "Shows the last list while offline",
+    "syncNow": "Sync now",
+    "syncedAt": "Synced {time}",
+    "neverSynced": "Not synced yet",
+    "about": "About",
+    "version": "Version"
+  }
+}

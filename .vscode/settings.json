@@ -1,0 +1,17 @@
+{
+    "dart.lineLength": 120,
+    "[dart]": {
+        "editor.rulers": [
+            120
+        ],
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit"
+        }
+    },
+    "search.exclude": {
+        "**/build": true,
+        "**/.dart_tool": true,
+        "lib/core/i18n/strings*.g.dart": true
+    }
+}

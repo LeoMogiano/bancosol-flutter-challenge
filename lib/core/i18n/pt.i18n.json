@@ -1,0 +1,179 @@
+{
+  "appName": "WareHouse",
+  "nav": {
+    "summary": "Resumo",
+    "products": "Produtos",
+    "settings": "Configurações"
+  },
+  "actions": {
+    "retry": "Tentar novamente",
+    "cancel": "Cancelar",
+    "refresh": "Atualizar",
+    "newProduct": "Novo produto"
+  },
+  "theme": {
+    "light": "Claro",
+    "dark": "Escuro"
+  },
+  "failures": {
+    "network": "Sem conexão. Verifique sua conexão e tente novamente.",
+    "timeout": "O servidor demorou muito para responder. Tente novamente.",
+    "notFound": "Este produto não existe mais. Atualize a lista.",
+    "rateLimit": "Você fez muitas solicitações seguidas. Aguarde alguns segundos e tente novamente.",
+    "server": "Um erro no servidor ocorreu. Tente novamente.",
+    "cache": "Não conseguimos ler os dados armazenados no seu dispositivo.",
+    "unexpected": "Um erro inesperado ocorreu. Tente novamente."
+  },
+  "environmentLabel": "Ambiente: {env}",
+  "summary": {
+    "eyebrow": "GESTÃO DE CATÁLOGO",
+    "title": "Resumo",
+    "searchHint": "Buscar por nome ou SKU",
+    "inventoryValue": "Valor do estoque",
+    "syncedAt": "Sincronizado {time}",
+    "formula": "Preço × estoque",
+    "statProducts": "Produtos",
+    "statLowStock": "Estoque baixo",
+    "statOutOfStock": "Sem estoque",
+    "errorTitle": "Não foi possível carregar o catálogo",
+    "errorMessage": "Verifique sua conexão e tente novamente.",
+    "emptyTitle": "Desculpe, ainda não há produtos",
+    "emptyMessage": "Crie seu primeiro produto ou atualize para verificar se já há registros."
+  },
+  "products": {
+    "eyebrow": "CATÁLOGO",
+    "title": "Produtos",
+    "newShort": "Novo",
+    "searchHint": "Nome ou SKU",
+    "results": {
+      "one": "{n} resultado",
+      "other": "{n} resultados"
+    },
+    "clearFilters": "Limpar filtros",
+    "showing": "Mostrando {from}–{to} de {total}",
+    "pullToRefresh": "Deslize para atualizar",
+    "releaseToRefresh": "Solte para atualizar",
+    "errorTitle": "Não foi possível obter os produtos",
+    "errorMessage": "Tente novamente em alguns segundos.",
+    "emptyTitle": "Desculpe, não há produtos",
+    "emptyMessage": "Ainda não há registros no catálogo. Crie um novo para começar.",
+    "noResultsTitle": "Sem resultados para “{query}”",
+    "noResultsNoQuery": "Nenhum produto corresponde",
+    "noResultsMessage": "Verifique o nome ou o SKU, ou remova alguns filtros.",
+    "clearSearch": "Limpar busca",
+    "offline": "Dados offline",
+    "lastSync": "Última sincronização {time}"
+  },
+  "stock": {
+    "out": "Sem estoque",
+    "units": "{n} em estoque"
+  },
+  "filters": {
+    "title": "Ordenar e filtrar",
+    "sortBy": "Ordenar por",
+    "priceDesc": "Maior preço",
+    "priceAsc": "Menor preço",
+    "nameAsc": "Nome A–Z",
+    "sku": "SKU",
+    "priceRange": "Faixa de preço (BOB)",
+    "min": "Mínimo",
+    "max": "Máximo",
+    "currency": "Moeda",
+    "all": "Todas",
+    "inStockOnly": "Somente com estoque",
+    "inStockOnlyHint": "Oculta produtos com estoque 0",
+    "reset": "Redefinir",
+    "apply": {
+      "one": "Ver {n} produto",
+      "other": "Ver {n} produtos"
+    },
+    "rangeError": "O mínimo não pode ser maior que o máximo"
+  },
+  "detail": {
+    "title": "Detalhe do produto",
+    "price": "Preço",
+    "updated": "Atualizado",
+    "sku": "SKU",
+    "stock": "Estoque",
+    "currency": "Moeda",
+    "id": "ID",
+    "note": "Somente o preço é editável. Estoque e moeda são gerenciados no sistema de origem.",
+    "share": "Compartilhar",
+    "editPrice": "Editar preço"
+  },
+  "priceEdit": {
+    "title": "Editar preço",
+    "currentPrice": "Preço atual",
+    "save": "Salvar preço",
+    "saving": "Salvando…",
+    "errorTitle": "O preço não foi atualizado",
+    "serverError": "Ocorreu um problema no servidor. Tente novamente.",
+    "offlineError": "Sem conexão. Você poderá salvar quando voltar a ficar online.",
+    "help": "Ex.: 1,500.50 · os milhares são separados automaticamente",
+    "bigChange": "Mudança de {percent}% em relação ao atual. Verifique o valor."
+  },
+  "validation": {
+    "priceEmpty": "Informe um preço",
+    "priceIncomplete": "Complete os centavos",
+    "priceNotPositive": "O preço deve ser maior que 0",
+    "priceTooHigh": "O preço máximo é 999,999.99",
+    "currencyEmpty": "A moeda não pode estar vazia",
+    "priceUnchanged": "É o mesmo preço atual",
+    "skuEmpty": "O SKU é obrigatório",
+    "skuTooShort": "Mínimo de 4 caracteres",
+    "skuFormat": "Somente letras, números e hífens (ex. SKU-1029)",
+    "skuDuplicate": "Já existe um produto com este SKU",
+    "nameEmpty": "O nome é obrigatório",
+    "nameTooShort": "Mínimo de 3 caracteres",
+    "nameOnlyDigits": "O nome não pode ser apenas números",
+    "nameDuplicate": "Já existe um produto com este nome",
+    "stockEmpty": "Informe o estoque",
+    "stockTooHigh": "Máximo 99,999"
+  },
+  "form": {
+    "title": "Novo produto",
+    "sku": "SKU",
+    "name": "Nome",
+    "price": "Preço",
+    "stock": "Estoque",
+    "currency": "Moeda",
+    "create": "Criar produto",
+    "creating": "Criando…",
+    "serverError": "O produto não foi criado. Tente novamente.",
+    "offlineError": "Sem conexão. O produto não foi criado."
+  },
+  "delete": {
+    "title": "Excluir produto?",
+    "message": "{name} ({sku}) será removido do catálogo. Esta ação não pode ser desfeita.",
+    "confirm": "Excluir",
+    "deleting": "Excluindo…",
+    "serverError": "O produto não foi excluído. Tente novamente.",
+    "offlineError": "Sem conexão. O produto não foi excluído."
+  },
+  "toasts": {
+    "priceUpdated": "Preço atualizado",
+    "created": "Produto criado",
+    "deleted": "Produto excluído",
+    "listUpdated": "Lista atualizada",
+    "synced": "Catálogo sincronizado",
+    "shared": "Compartilhado"
+  },
+  "share": {
+    "text": "Nome: {name}\nPreço: {price} {currency}\nSKU: {sku}"
+  },
+  "settings": {
+    "eyebrow": "PREFERÊNCIAS",
+    "title": "Ajustes",
+    "appearance": "Aparência",
+    "language": "Idioma",
+    "deviceLanguage": "Do dispositivo",
+    "data": "Dados",
+    "cache": "Cache local",
+    "cacheHint": "Mostra a última lista sem conexão",
+    "syncNow": "Sincronizar agora",
+    "syncedAt": "Sincronizado {time}",
+    "neverSynced": "Ainda não sincronizado",
+    "about": "Sobre",
+    "version": "Versão"
+  }
+}
