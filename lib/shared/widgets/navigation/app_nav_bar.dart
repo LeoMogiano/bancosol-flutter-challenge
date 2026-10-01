@@ -27,6 +27,13 @@ class AppNavBar extends StatelessWidget {
   final ValueChanged<int> onTap;
   final VoidCallback onSearch;
 
+  static final _shadow = BoxShadow(
+    color: const Color(0xFF1E281E).withValues(alpha: 0.28),
+    blurRadius: 30,
+    offset: const Offset(0, 12),
+    spreadRadius: -12,
+  );
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
@@ -38,17 +45,7 @@ class AppNavBar extends StatelessWidget {
         children: [
           Expanded(
             child: DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(33),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF1E281E).withValues(alpha: 0.28),
-                    blurRadius: 30,
-                    offset: const Offset(0, 12),
-                    spreadRadius: -12,
-                  ),
-                ],
-              ),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(33), boxShadow: [_shadow]),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(33),
                 child: RepaintBoundary(
@@ -63,6 +60,7 @@ class AppNavBar extends StatelessWidget {
                         border: Border.all(color: colors.line),
                       ),
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: List.generate(items.length, (index) {
                           final item = items[index];
                           final isActive = index == currentIndex;
@@ -73,6 +71,7 @@ class AppNavBar extends StatelessWidget {
                               color: Colors.transparent,
                               child: InkWell(
                                 onTap: () => onTap(index),
+                                borderRadius: BorderRadius.circular(26),
                                 child: Container(
                                   decoration: isActive
                                       ? BoxDecoration(color: colors.navActive, borderRadius: BorderRadius.circular(26))
@@ -116,12 +115,16 @@ class AppNavBar extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          AppIconButton(
-            icon: Icons.search_rounded,
-            onPressed: onSearch,
-            size: 66,
-            color: colors.ink,
-            tooltip: MaterialLocalizations.of(context).searchFieldLabel,
+          DecoratedBox(
+            decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: [_shadow]),
+            child: AppIconButton(
+              icon: Icons.search_rounded,
+              onPressed: onSearch,
+              size: 66,
+              color: colors.onAccent,
+              background: colors.accent,
+              tooltip: MaterialLocalizations.of(context).searchFieldLabel,
+            ),
           ),
         ],
       ),
