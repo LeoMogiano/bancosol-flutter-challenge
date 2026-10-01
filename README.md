@@ -177,6 +177,17 @@ flowchart LR
 
 iOS: Xcode no entiende `--dart-define-from-file`, así que cada scheme tiene una pre-action (`ios/scripts/generate_dart_defines_xcconfig.sh`) que genera `DartDefines.xcconfig` desde `.env.<flavor>`; un Archive arranca con su configuración. `ios/scripts/setup_flavors.rb` solo se vuelve a correr al agregar un flavor.
 
+## Tamaño del APK
+
+Release del flavor prod (`flutter build apk --release --flavor prod --dart-define-from-file=.env.prod`, con `--split-per-abi` para uno por arquitectura):
+
+| APK | Peso | Dispositivos |
+|---|---|---|
+| `arm64-v8a` | 21.6 MB | Casi todos los teléfonos actuales |
+| `armeabi-v7a` | 19.0 MB | Teléfonos antiguos de 32 bits |
+| `x86_64` | 23.2 MB | Emuladores y Chromebooks |
+| Universal (las 3) | 61.5 MB | Cualquier dispositivo |
+
 ## Tests
 
 ```bash
