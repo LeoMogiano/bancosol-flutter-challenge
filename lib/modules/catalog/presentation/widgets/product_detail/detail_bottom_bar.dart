@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/core/i18n/failure_i18n.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
-import 'package:warehouse/modules/catalog/application/product_detail/product_detail_cubit.dart';
+import 'package:warehouse/modules/catalog/application/product_detail/product_detail_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/shared/formatters/price_formatter.dart';
 import 'package:warehouse/shared/widgets/buttons/app_button.dart';
@@ -19,7 +19,7 @@ class DetailBottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.t;
 
-    return BlocListener<ProductDetailCubit, ProductDetailState>(
+    return BlocListener<ProductDetailBloc, ProductDetailState>(
       listenWhen: (prev, curr) =>
           prev.confirmedShares != curr.confirmedShares || (curr.shareError != null && prev.shareError == null),
       listener: (context, state) {
@@ -63,20 +63,22 @@ class _ShareButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final sharing = context.select<ProductDetailCubit, bool>((cubit) => cubit.state.sharing);
+    final sharing = context.select<ProductDetailBloc, bool>((bloc) => bloc.state.sharing);
 
     return AppButton(
       label: t.detail.share,
       variant: AppButtonVariant.outline,
       icon: Icons.ios_share_rounded,
       loading: sharing,
-      onPressed: () => context.read<ProductDetailCubit>().share(
-        product,
-        text: t.share.text(
-          name: product.name,
-          price: PriceFormatter.format(product.price),
-          currency: product.currency,
-          sku: product.sku,
+      onPressed: () => context.read<ProductDetailBloc>().add(
+        ProductDetailShareRequested(
+          product,
+          text: t.share.text(
+            name: product.name,
+            price: PriceFormatter.format(product.price),
+            currency: product.currency,
+            sku: product.sku,
+          ),
         ),
       ),
     );
