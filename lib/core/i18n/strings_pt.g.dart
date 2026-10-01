@@ -57,6 +57,7 @@ class TranslationsPt extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$toasts$pt toasts = _Translations$toasts$pt._(_root);
 	@override late final _Translations$share$pt share = _Translations$share$pt._(_root);
 	@override late final _Translations$settings$pt settings = _Translations$settings$pt._(_root);
+	@override late final _Translations$a11y$pt a11y = _Translations$a11y$pt._(_root);
 }
 
 // Path: nav
@@ -352,6 +353,16 @@ class _Translations$settings$pt extends Translations$settings$es {
 	@override String get sentryTestHint => 'Envia um erro de teste ao painel';
 }
 
+// Path: a11y
+class _Translations$a11y$pt extends Translations$a11y$es {
+	_Translations$a11y$pt._(TranslationsPt root) : this._root = root, super.internal(root);
+
+	final TranslationsPt _root; // ignore: unused_field
+
+	// Translations
+	@override String page({required Object n}) => 'Página ${n}';
+}
+
 /// The flat map containing all translations for locale <pt>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -505,6 +516,7 @@ extension on TranslationsPt {
 			'settings.diagnostics' => 'Diagnóstico',
 			'settings.sentryTest' => 'Testar Sentry',
 			'settings.sentryTestHint' => 'Envia um erro de teste ao painel',
+			'a11y.page' => ({required Object n}) => 'Página ${n}',
 			_ => null,
 		};
 	}

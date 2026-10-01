@@ -8,6 +8,8 @@ import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/app_theme.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 import 'package:warehouse/modules/catalog/application/search_focus/search_focus_cubit.dart';
+import 'package:warehouse/modules/catalog/domain/entities/product.dart';
+import 'package:warehouse/modules/catalog/domain/entities/products_snapshot.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/get_products_use_case.dart';
 import 'package:warehouse/modules/catalog/presentation/screens/products_screen.dart';
 
@@ -68,5 +70,25 @@ void main() {
 
     expect(tester.widget<EditableText>(find.byType(EditableText)).focusNode.hasFocus, isTrue);
     expect(focus.state, isFalse);
+  });
+
+  testWidgets('con el listado cargado, todo lo tocable tiene una etiqueta para el lector de pantalla', (tester) async {
+    final semantics = tester.ensureSemantics();
+    final getProducts = _MockGetProducts();
+    final products = List.generate(
+      12,
+      (i) => Product(remoteId: 'r$i', id: i, sku: 'SKU-$i', name: 'Producto $i', price: 10, currency: 'BOB', stock: 3),
+    );
+    when(getProducts.call).thenAnswer((_) async => ProductsSnapshot(products: products, syncedAt: DateTime(2026)));
+    final bloc = ProductsBloc(getProducts: getProducts)..add(const ProductsRequested());
+    final focus = SearchFocusCubit();
+    addTearDown(bloc.close);
+    addTearDown(focus.close);
+
+    await _pumpScreen(tester, bloc: bloc, focus: focus);
+    await tester.pumpAndSettle();
+
+    await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+    semantics.dispose();
   });
 }

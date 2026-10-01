@@ -181,5 +181,8 @@
     "diagnostics": "Diagnóstico",
     "sentryTest": "Probar Sentry",
     "sentryTestHint": "Envía un error de prueba al dashboard"
+  },
+  "a11y": {
+    "page": "Página {n}"
   }
 }

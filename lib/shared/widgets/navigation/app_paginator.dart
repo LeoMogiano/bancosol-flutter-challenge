@@ -4,11 +4,18 @@ import 'package:warehouse/core/services/haptic_service.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 
 class AppPaginator extends StatelessWidget {
-  const AppPaginator({required this.page, required this.pageCount, required this.onChanged, super.key});
+  const AppPaginator({
+    required this.page,
+    required this.pageCount,
+    required this.onChanged,
+    required this.pageLabel,
+    super.key,
+  });
 
   final int page;
   final int pageCount;
   final ValueChanged<int> onChanged;
+  final String Function(int page) pageLabel;
 
   static const double _buttonSize = 36;
   static const double _buttonRadius = 20;
@@ -22,6 +29,7 @@ class AppPaginator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final localizations = MaterialLocalizations.of(context);
 
     if (pageCount <= 1) {
       return const SizedBox.shrink();
@@ -39,16 +47,19 @@ class AppPaginator extends StatelessWidget {
           children: [
             _NavigationButton(
               icon: Icons.chevron_left_rounded,
+              tooltip: localizations.previousPageTooltip,
               onPressed: page > 1 ? () => _go(page - 1) : null,
               enabled: page > 1,
             ),
             ...pages.map((pageNum) {
               if (pageNum == -1) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 6),
-                  child: Text(
-                    '…',
-                    style: TextStyle(fontSize: 14.5.sp, color: colors.ink2),
+                return ExcludeSemantics(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    child: Text(
+                      '…',
+                      style: TextStyle(fontSize: 14.5.sp, color: colors.ink2),
+                    ),
                   ),
                 );
               }
@@ -56,29 +67,36 @@ class AppPaginator extends StatelessWidget {
               final isCurrentPage = pageNum == page;
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 3),
-                child: SizedBox(
-                  width: _buttonSize,
-                  height: _buttonSize,
-                  child: Material(
-                    color: isCurrentPage ? colors.accent : Colors.transparent,
-                    borderRadius: BorderRadius.circular(_buttonRadius),
-                    child: InkWell(
-                      onTap: () => _go(pageNum),
+                child: Semantics(
+                  button: true,
+                  selected: isCurrentPage,
+                  excludeSemantics: true,
+                  label: pageLabel(pageNum),
+                  onTap: () => _go(pageNum),
+                  child: SizedBox(
+                    width: _buttonSize,
+                    height: _buttonSize,
+                    child: Material(
+                      color: isCurrentPage ? colors.accent : Colors.transparent,
                       borderRadius: BorderRadius.circular(_buttonRadius),
-                      child: Container(
-                        decoration: isCurrentPage
-                            ? null
-                            : BoxDecoration(
-                                border: Border.all(color: colors.line),
-                                borderRadius: BorderRadius.circular(_buttonRadius),
+                      child: InkWell(
+                        onTap: () => _go(pageNum),
+                        borderRadius: BorderRadius.circular(_buttonRadius),
+                        child: Container(
+                          decoration: isCurrentPage
+                              ? null
+                              : BoxDecoration(
+                                  border: Border.all(color: colors.line),
+                                  borderRadius: BorderRadius.circular(_buttonRadius),
+                                ),
+                          child: Center(
+                            child: Text(
+                              pageNum.toString(),
+                              style: TextStyle(
+                                fontSize: 14.5.sp,
+                                fontWeight: FontWeight.w600,
+                                color: isCurrentPage ? colors.onAccent : colors.ink,
                               ),
-                        child: Center(
-                          child: Text(
-                            pageNum.toString(),
-                            style: TextStyle(
-                              fontSize: 14.5.sp,
-                              fontWeight: FontWeight.w600,
-                              color: isCurrentPage ? colors.onAccent : colors.ink,
                             ),
                           ),
                         ),
@@ -90,6 +108,7 @@ class AppPaginator extends StatelessWidget {
             }),
             _NavigationButton(
               icon: Icons.chevron_right_rounded,
+              tooltip: localizations.nextPageTooltip,
               onPressed: page < pageCount ? () => _go(page + 1) : null,
               enabled: page < pageCount,
             ),
@@ -132,9 +151,10 @@ class AppPaginator extends StatelessWidget {
 }
 
 class _NavigationButton extends StatelessWidget {
-  const _NavigationButton({required this.icon, required this.onPressed, required this.enabled});
+  const _NavigationButton({required this.icon, required this.tooltip, required this.onPressed, required this.enabled});
 
   final IconData icon;
+  final String tooltip;
   final VoidCallback? onPressed;
   final bool enabled;
 
@@ -142,22 +162,25 @@ class _NavigationButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
 
-    return SizedBox(
-      width: 40,
-      height: 40,
-      child: Material(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(20),
-        child: InkWell(
-          onTap: enabled ? onPressed : null,
+    return Tooltip(
+      message: tooltip,
+      child: SizedBox(
+        width: 40,
+        height: 40,
+        child: Material(
+          color: colors.surface,
           borderRadius: BorderRadius.circular(20),
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: colors.line),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Center(
-              child: Icon(icon, size: 20, color: colors.ink2.withValues(alpha: enabled ? 1 : 0.45)),
+          child: InkWell(
+            onTap: enabled ? onPressed : null,
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: colors.line),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Center(
+                child: Icon(icon, size: 20, color: colors.ink2.withValues(alpha: enabled ? 1 : 0.45)),
+              ),
             ),
           ),
         ),

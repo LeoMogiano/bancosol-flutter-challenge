@@ -65,6 +65,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$toasts$es toasts = Translations$toasts$es.internal(_root);
 	late final Translations$share$es share = Translations$share$es.internal(_root);
 	late final Translations$settings$es settings = Translations$settings$es.internal(_root);
+	late final Translations$a11y$es a11y = Translations$a11y$es.internal(_root);
 }
 
 // Path: nav
@@ -646,6 +647,18 @@ class Translations$settings$es {
 	String get sentryTestHint => 'Envía un error de prueba al dashboard';
 }
 
+// Path: a11y
+class Translations$a11y$es {
+	Translations$a11y$es.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// es: 'Página {n}'
+	String page({required Object n}) => 'Página ${n}';
+}
+
 /// The flat map containing all translations for locale <es>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -799,6 +812,7 @@ extension on Translations {
 			'settings.diagnostics' => 'Diagnóstico',
 			'settings.sentryTest' => 'Probar Sentry',
 			'settings.sentryTestHint' => 'Envía un error de prueba al dashboard',
+			'a11y.page' => ({required Object n}) => 'Página ${n}',
 			_ => null,
 		};
 	}
