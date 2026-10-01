@@ -1,13 +1,14 @@
 import 'package:get_it/get_it.dart';
 import 'package:warehouse/core/network/api_client.dart';
+import 'package:warehouse/core/services/share_service.dart';
 import 'package:warehouse/core/storage/local_store.dart';
 import 'package:warehouse/core/utils/app_clock.dart';
 import 'package:warehouse/modules/catalog/application/preferences/preferences_bloc.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 import 'package:warehouse/modules/catalog/data/datasources/product_local_data_source.dart';
 import 'package:warehouse/modules/catalog/data/datasources/product_remote_data_source.dart';
-import 'package:warehouse/modules/catalog/data/datasources/share_channel.dart';
 import 'package:warehouse/modules/catalog/data/repositories/product_repository_impl.dart';
+import 'package:warehouse/modules/catalog/data/repositories/share_repository_impl.dart';
 import 'package:warehouse/modules/catalog/domain/repositories/product_repository.dart';
 import 'package:warehouse/modules/catalog/domain/repositories/share_repository.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/create_product_use_case.dart';
@@ -22,7 +23,7 @@ abstract final class CatalogModule {
     di
       ..registerLazySingleton<ProductRemoteDataSource>(() => ProductRemoteDataSource(di<ApiClient>()))
       ..registerLazySingleton<ProductLocalDataSource>(() => ProductLocalDataSource(di<LocalStore>()))
-      ..registerLazySingleton<ShareRepository>(ShareChannel.new)
+      ..registerLazySingleton<ShareRepository>(() => ShareRepositoryImpl(di<ShareService>()))
       ..registerLazySingleton<ProductRepository>(
         () => ProductRepositoryImpl(remote: di<ProductRemoteDataSource>(), local: di<ProductLocalDataSource>()),
       )
