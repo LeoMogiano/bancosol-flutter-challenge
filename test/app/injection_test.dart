@@ -21,8 +21,8 @@ import 'package:warehouse/modules/catalog/domain/usecases/update_product_price_u
 void main() {
   setUpAll(() async {
     Hive.init(Directory.systemTemp.createTempSync('warehouse_test').path);
-    for (final box in StoreBox.all) {
-      await Hive.openBox<dynamic>(box);
+    for (final box in StoreBox.values) {
+      await Hive.openBox<dynamic>(box.id);
     }
     await injection();
   });
