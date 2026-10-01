@@ -19,3 +19,5 @@ linter:
     # Ambas reglas empujan sintaxis nueva de Dart, menos legible para quien revisa.
     unnecessary_type_name_in_constructor: false
     prefer_initializing_formals: false
+    # Choca con callbacks ValueChanged<bool> (switches) pasados como tear-off.
+    avoid_positional_boolean_parameters: false

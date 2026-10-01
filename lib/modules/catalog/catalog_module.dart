@@ -1,7 +1,9 @@
 import 'package:get_it/get_it.dart';
 import 'package:warehouse/core/network/api_client.dart';
 import 'package:warehouse/core/storage/local_store.dart';
+import 'package:warehouse/core/utils/app_clock.dart';
 import 'package:warehouse/modules/catalog/application/preferences/preferences_cubit.dart';
+import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 import 'package:warehouse/modules/catalog/data/datasources/product_local_data_source.dart';
 import 'package:warehouse/modules/catalog/data/datasources/product_remote_data_source.dart';
 import 'package:warehouse/modules/catalog/data/repositories/product_repository_impl.dart';
@@ -25,6 +27,14 @@ abstract final class CatalogModule {
       ..registerLazySingleton<UpdateProductPrice>(() => UpdateProductPrice(di<ProductRepository>()))
       ..registerLazySingleton<CreateProduct>(() => CreateProduct(di<ProductRepository>()))
       ..registerLazySingleton<DeleteProduct>(() => DeleteProduct(di<ProductRepository>()))
-      ..registerLazySingleton<PreferencesCubit>(() => PreferencesCubit(di<LocalStore>()));
+      ..registerLazySingleton<PreferencesCubit>(() => PreferencesCubit(di<LocalStore>()))
+      // Singleton: Resumen, Productos y Ajustes comparten el mismo catálogo en memoria.
+      ..registerLazySingleton<ProductsBloc>(
+        () => ProductsBloc(
+          getProducts: di<GetProducts>(),
+          useCache: () => di<PreferencesCubit>().state.cacheEnabled,
+          clock: di<AppClock>(),
+        ),
+      );
   }
 }
