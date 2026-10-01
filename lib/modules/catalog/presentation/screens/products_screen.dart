@@ -7,14 +7,15 @@ import 'package:warehouse/core/i18n/failure_i18n.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
+import 'package:warehouse/modules/catalog/application/search_focus/search_focus_cubit.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/services/product_query.dart';
-import 'package:warehouse/modules/catalog/presentation/shell/main_shell.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/filter_sheet.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/product_form_sheet.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/product_tile.dart';
 import 'package:warehouse/shared/widgets/buttons/app_button.dart';
 import 'package:warehouse/shared/widgets/buttons/app_icon_button.dart';
+import 'package:warehouse/shared/widgets/feedback/app_shimmer.dart';
 import 'package:warehouse/shared/widgets/feedback/app_state_view.dart';
 import 'package:warehouse/shared/widgets/feedback/app_toast.dart';
 import 'package:warehouse/shared/widgets/feedback/skeleton_box.dart';
@@ -36,36 +37,32 @@ class _ProductsScreenState extends State<ProductsScreen> {
   final _searchFocus = FocusNode();
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
-  SearchFocusRequest? _focusRequest;
   bool _refreshStartedHere = false;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Se captura aquí: en dispose() el context ya no puede leer providers.
-    if (_focusRequest == null) {
-      _focusRequest = context.read<SearchFocusRequest>()..changes.addListener(_onFocusRequested);
-      if (_focusRequest!.consume()) WidgetsBinding.instance.addPostFrameCallback((_) => _searchFocus.requestFocus());
-    }
+  void initState() {
+    super.initState();
+    if (context.read<SearchFocusCubit>().state) WidgetsBinding.instance.addPostFrameCallback((_) => _focusSearch());
   }
 
-  void _onFocusRequested() {
-    if (_focusRequest!.consume()) _searchFocus.requestFocus();
+  void _focusSearch() {
+    if (!mounted) return;
+    context.read<SearchFocusCubit>().consumed();
+    _searchFocus.requestFocus();
   }
 
   @override
   void dispose() {
-    _focusRequest?.changes.removeListener(_onFocusRequested);
     _searchFocus.dispose();
     _searchController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
 
+  // No espera la respuesta: el skeleton ya indica la carga y el spinner se oculta enseguida.
   Future<void> _refresh() async {
     _refreshStartedHere = true;
-    final bloc = context.read<ProductsBloc>()..add(const ProductsRefreshed());
-    await bloc.stream.firstWhere((state) => !state.isRefreshing);
+    context.read<ProductsBloc>().add(const ProductsRefreshed());
   }
 
   void _clearSearchAndFilters() {
@@ -85,6 +82,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
   }
 
   Future<void> _openProductForm(BuildContext context) async {
+    final t = context.t;
     final bloc = context.read<ProductsBloc>();
     final created = await ProductFormSheet.open(context, existing: bloc.state.all);
     if (created != null && context.mounted) {
@@ -93,7 +91,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
       bloc
         ..add(const ProductsQueryChanged(''))
         ..add(const ProductsFiltersApplied(ProductFilters.none));
-      AppToast.show(context, context.t.toasts.created);
+      AppToast.show(context, t.toasts.created);
     }
   }
 
@@ -107,16 +105,24 @@ class _ProductsScreenState extends State<ProductsScreen> {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    return BlocListener<ProductsBloc, ProductsState>(
-      listenWhen: (prev, curr) => _refreshStartedHere && prev.isRefreshing && !curr.isRefreshing,
-      listener: (context, state) {
-        _refreshStartedHere = false;
-        final failure = state.failure;
-        failure == null
-            ? AppToast.show(context, t.toasts.listUpdated)
-            : AppToast.show(context, failure.message, icon: Icons.error_rounded);
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<ProductsBloc, ProductsState>(
+          listenWhen: (prev, curr) => _refreshStartedHere && prev.isRefreshing && !curr.isRefreshing,
+          listener: (context, state) {
+            _refreshStartedHere = false;
+            final failure = state.failure;
+            failure == null
+                ? AppToast.show(context, t.toasts.listUpdated)
+                : AppToast.show(context, failure.message, icon: Icons.error_rounded);
+          },
+        ),
+        BlocListener<SearchFocusCubit, bool>(listenWhen: (_, pending) => pending, listener: (_, _) => _focusSearch()),
+      ],
       child: CustomScaffold(
+        scrollable: true,
+        onRefresh: _refresh,
+        scrollController: _scrollController,
         padding: EdgeInsets.zero,
         body: Column(
           children: [
@@ -143,6 +149,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   selector: (state) => state.filters.activeCount,
                   builder: (_, activeCount) => AppIconButton(
                     icon: Icons.tune_rounded,
+                    background: context.colors.surface2,
+                    size: 40,
                     badge: activeCount,
                     tooltip: t.filters.title,
                     onPressed: _openFilters,
@@ -151,53 +159,44 @@ class _ProductsScreenState extends State<ProductsScreen> {
               ),
             ),
             _ResultsLine(onClearFilters: _clearSearchAndFilters),
-            Expanded(
-              child: BlocSelector<ProductsBloc, ProductsState, _ListView>(
-                selector: _viewFor,
-                builder: (context, view) => switch (view) {
-                  _ListView.loading => const _LoadingList(),
-                  _ListView.error => AppStateView(
-                    type: AppStateType.error,
-                    title: t.products.errorTitle,
-                    message: t.products.errorMessage,
+            BlocSelector<ProductsBloc, ProductsState, _ListView>(
+              selector: _viewFor,
+              builder: (context, view) => switch (view) {
+                _ListView.loading => const _LoadingList(),
+                _ListView.error => AppStateView(
+                  type: AppStateType.error,
+                  title: t.products.errorTitle,
+                  message: t.products.errorMessage,
+                  actions: [
+                    AppButton(
+                      label: t.actions.retry,
+                      icon: Icons.refresh_rounded,
+                      onPressed: () => context.read<ProductsBloc>().add(const ProductsRequested()),
+                    ),
+                  ],
+                ),
+                _ListView.empty => AppStateView(
+                  type: AppStateType.empty,
+                  title: t.products.emptyTitle,
+                  message: t.products.emptyMessage,
+                ),
+                _ListView.noResults => BlocSelector<ProductsBloc, ProductsState, String>(
+                  selector: (state) => state.query,
+                  builder: (_, query) => AppStateView(
+                    type: AppStateType.noResults,
+                    title: query.isEmpty ? t.products.noResultsNoQuery : t.products.noResultsTitle(query: query),
+                    message: t.products.noResultsMessage,
                     actions: [
                       AppButton(
-                        label: t.actions.retry,
-                        icon: Icons.refresh_rounded,
-                        onPressed: () => context.read<ProductsBloc>().add(const ProductsRequested()),
+                        label: t.products.clearSearch,
+                        variant: AppButtonVariant.outline,
+                        onPressed: _clearSearchAndFilters,
                       ),
                     ],
                   ),
-                  _ListView.empty => AppStateView(
-                    type: AppStateType.empty,
-                    title: t.products.emptyTitle,
-                    message: t.products.emptyMessage,
-                    actions: [
-                      AppButton(label: t.actions.refresh, variant: AppButtonVariant.outline, onPressed: _refresh),
-                    ],
-                  ),
-                  _ListView.noResults => BlocSelector<ProductsBloc, ProductsState, String>(
-                    selector: (state) => state.query,
-                    builder: (_, query) => AppStateView(
-                      type: AppStateType.noResults,
-                      title: query.isEmpty ? t.products.noResultsNoQuery : t.products.noResultsTitle(query: query),
-                      message: t.products.noResultsMessage,
-                      actions: [
-                        AppButton(
-                          label: t.products.clearSearch,
-                          variant: AppButtonVariant.outline,
-                          onPressed: _clearSearchAndFilters,
-                        ),
-                      ],
-                    ),
-                  ),
-                  _ListView.list => RefreshIndicator(
-                    color: context.colors.accent,
-                    onRefresh: _refresh,
-                    child: _ProductList(controller: _scrollController, onPageChanged: _goToPage),
-                  ),
-                },
-              ),
+                ),
+                _ListView.list => _ProductList(onPageChanged: _goToPage),
+              },
             ),
           ],
         ),
@@ -206,7 +205,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
   }
 
   static _ListView _viewFor(ProductsState state) {
-    if (state.status == ProductsStatus.loading || state.status == ProductsStatus.initial) return _ListView.loading;
+    if (state.isRefreshing || state.status == ProductsStatus.loading || state.status == ProductsStatus.initial) {
+      return _ListView.loading;
+    }
     if (state.status == ProductsStatus.failure) return _ListView.error;
     if (state.all.isEmpty) return _ListView.empty;
     if (state.visible.isEmpty) return _ListView.noResults;
@@ -253,35 +254,38 @@ class _ResultsLine extends StatelessWidget {
 }
 
 class _ProductList extends StatelessWidget {
-  const _ProductList({required this.controller, required this.onPageChanged});
+  const _ProductList({required this.onPageChanged});
 
-  final ScrollController controller;
   final ValueChanged<int> onPageChanged;
 
   @override
   Widget build(BuildContext context) {
     // Se seleccionan `visible` y `page` (mismas instancias entre emisiones), no `pageItems`, que es una lista
     // nueva en cada acceso y reconstruiría la lista entera con cualquier cambio de estado.
-    return BlocSelector<ProductsBloc, ProductsState, ({List<Product> visible, int page, String? highlightId})>(
-      selector: (state) => (visible: state.visible, page: state.page, highlightId: state.highlightId),
+    return BlocSelector<
+      ProductsBloc,
+      ProductsState,
+      ({List<Product> visible, int page, String? highlightId, bool offline})
+    >(
+      selector: (state) =>
+          (visible: state.visible, page: state.page, highlightId: state.highlightId, offline: state.isOffline),
       builder: (context, data) {
         final items = ProductQuery.page(data.visible, data.page);
-        return ListView.separated(
-          controller: controller,
-          physics: const AlwaysScrollableScrollPhysics(),
-          // 130: holgura para que la barra de navegación flotante no tape el último elemento.
-          padding: const EdgeInsets.fromLTRB(20, 4, 20, 130),
-          itemCount: items.length + 1,
-          separatorBuilder: (_, _) => const SizedBox(height: 8),
-          itemBuilder: (context, index) {
-            if (index == items.length) return _PaginationFooter(onPageChanged: onPageChanged);
-            final product = items[index];
-            return ProductTile(
-              product: product,
-              highlighted: product.remoteId == data.highlightId,
-              onTap: () => context.push(AppRoutes.productDetail(product.remoteId)),
-            );
-          },
+        return Padding(
+          // Holgura para que la barra de navegación flotante (y el aviso offline) no tapen el último elemento.
+          padding: EdgeInsets.fromLTRB(20, 4, 20, data.offline ? 190 : 130),
+          child: Column(
+            spacing: 8,
+            children: [
+              for (final product in items)
+                ProductTile(
+                  product: product,
+                  highlighted: product.remoteId == data.highlightId,
+                  onTap: () => context.push(AppRoutes.productDetail(product.remoteId)),
+                ),
+              _PaginationFooter(onPageChanged: onPageChanged),
+            ],
+          ),
         );
       },
     );
@@ -304,12 +308,12 @@ class _PaginationFooter extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(top: 12),
           child: Column(
+            spacing: 12,
             children: [
               Text(
                 t.products.showing(from: '$from', to: '${from + data.shown - 1}', total: '${data.total}'),
                 style: TextStyle(fontSize: 13.sp, color: context.colors.ink3),
               ),
-              const SizedBox(height: 12),
               AppPaginator(page: data.page, pageCount: data.pageCount, onChanged: onPageChanged),
             ],
           ),
@@ -324,12 +328,11 @@ class _LoadingList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
-      itemCount: 6,
-      separatorBuilder: (_, _) => const SizedBox(height: 8),
-      itemBuilder: (_, _) => const SkeletonBox(height: 72),
+    return AppShimmer(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+        child: Column(spacing: 8, children: [for (var i = 0; i < 6; i++) const SkeletonBox(height: 72)]),
+      ),
     );
   }
 }

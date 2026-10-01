@@ -9,14 +9,15 @@ import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/preferences/preferences_cubit.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
+import 'package:warehouse/modules/catalog/application/search_focus/search_focus_cubit.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/services/product_query.dart';
-import 'package:warehouse/modules/catalog/presentation/shell/main_shell.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/inventory_card.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/product_form_sheet.dart';
 import 'package:warehouse/shared/widgets/buttons/app_button.dart';
 import 'package:warehouse/shared/widgets/buttons/app_icon_button.dart';
 import 'package:warehouse/shared/widgets/cards/stat_tile.dart';
+import 'package:warehouse/shared/widgets/feedback/app_shimmer.dart';
 import 'package:warehouse/shared/widgets/feedback/app_state_view.dart';
 import 'package:warehouse/shared/widgets/feedback/app_toast.dart';
 import 'package:warehouse/shared/widgets/feedback/skeleton_box.dart';
@@ -38,6 +39,10 @@ class _SummaryScreenState extends State<SummaryScreen> {
     final t = context.t;
     return CustomScaffold(
       scrollable: true,
+      onRefresh: () async {
+        _refreshStartedLocally = true;
+        context.read<ProductsBloc>().add(const ProductsRefreshed());
+      },
       padding: EdgeInsets.zero,
       body: Padding(
         padding: const EdgeInsets.only(bottom: 130),
@@ -58,23 +63,14 @@ class _SummaryScreenState extends State<SummaryScreen> {
                     },
                   ),
                 ),
-                AppIconButton(
-                  icon: Icons.sync_rounded,
-                  tooltip: t.settings.syncNow,
-                  onPressed: () {
-                    _refreshStartedLocally = true;
-                    context.read<ProductsBloc>().add(const ProductsRefreshed());
-                  },
-                ),
               ],
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
               child: Column(
+                spacing: 20,
                 children: [
-                  const SizedBox(height: 4),
                   _FakeSearchButton(label: t.summary.searchHint),
-                  const SizedBox(height: 20),
                   BlocListener<ProductsBloc, ProductsState>(
                     listenWhen: (prev, curr) => _refreshStartedLocally && prev.isRefreshing && !curr.isRefreshing,
                     listener: (context, state) {
@@ -85,10 +81,11 @@ class _SummaryScreenState extends State<SummaryScreen> {
                         AppToast.show(context, state.failure!.message, icon: Icons.error_rounded);
                       }
                     },
-                    child: BlocSelector<ProductsBloc, ProductsState, ProductsStatus>(
-                      selector: (state) => state.status,
-                      builder: (context, status) {
-                        if (status == ProductsStatus.loading || status == ProductsStatus.initial) {
+                    child: BlocSelector<ProductsBloc, ProductsState, ({ProductsStatus status, bool refreshing})>(
+                      selector: (state) => (status: state.status, refreshing: state.isRefreshing),
+                      builder: (context, data) {
+                        final status = data.status;
+                        if (data.refreshing || status == ProductsStatus.loading || status == ProductsStatus.initial) {
                           return _LoadingState();
                         } else if (status == ProductsStatus.failure) {
                           return AppStateView(
@@ -117,11 +114,6 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                     icon: Icons.add_rounded,
                                     onPressed: () => _createProduct(context),
                                   ),
-                                  AppButton(
-                                    label: t.actions.refresh,
-                                    variant: AppButtonVariant.outline,
-                                    onPressed: () => context.read<ProductsBloc>().add(const ProductsRefreshed()),
-                                  ),
                                 ],
                               );
                             }
@@ -132,10 +124,11 @@ class _SummaryScreenState extends State<SummaryScreen> {
                             final outOfStock = data.all.where((p) => p.stock == 0).length;
                             final lowStock = data.all.where((p) => p.stock > 0 && p.stock <= 5).length;
                             return Column(
+                              spacing: 20,
                               children: [
                                 InventoryCard(totalBob: totalBob, syncedAt: data.syncedAt),
-                                const SizedBox(height: 20),
                                 Row(
+                                  spacing: 10,
                                   children: [
                                     Expanded(
                                       child: StatTile(
@@ -145,7 +138,6 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                         onTap: () => StatefulNavigationShell.of(context).goBranch(1),
                                       ),
                                     ),
-                                    const SizedBox(width: 10),
                                     Expanded(
                                       child: StatTile(
                                         label: t.summary.statLowStock,
@@ -154,7 +146,6 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                         onTap: () => StatefulNavigationShell.of(context).goBranch(1),
                                       ),
                                     ),
-                                    const SizedBox(width: 10),
                                     Expanded(
                                       child: StatTile(
                                         label: t.summary.statOutOfStock,
@@ -185,30 +176,29 @@ class _SummaryScreenState extends State<SummaryScreen> {
 class _LoadingState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        SkeletonBox(height: 132, radius: 24),
-        SizedBox(height: 20),
-        Row(
-          children: [
-            Expanded(child: SkeletonBox(height: 84, radius: 20)),
-            SizedBox(width: 10),
-            Expanded(child: SkeletonBox(height: 84, radius: 20)),
-            SizedBox(width: 10),
-            Expanded(child: SkeletonBox(height: 84, radius: 20)),
-          ],
-        ),
-        SizedBox(height: 20),
-        Row(
-          children: [
-            Expanded(child: SkeletonBox(height: 64, radius: 20)),
-            SizedBox(width: 10),
-            Expanded(child: SkeletonBox(height: 64, radius: 20)),
-            SizedBox(width: 10),
-            Expanded(child: SkeletonBox(height: 64, radius: 20)),
-          ],
-        ),
-      ],
+    return const AppShimmer(
+      child: Column(
+        spacing: 20,
+        children: [
+          SkeletonBox(height: 132, radius: 24),
+          Row(
+            spacing: 10,
+            children: [
+              Expanded(child: SkeletonBox(height: 84, radius: 20)),
+              Expanded(child: SkeletonBox(height: 84, radius: 20)),
+              Expanded(child: SkeletonBox(height: 84, radius: 20)),
+            ],
+          ),
+          Row(
+            spacing: 10,
+            children: [
+              Expanded(child: SkeletonBox(height: 64, radius: 20)),
+              Expanded(child: SkeletonBox(height: 64, radius: 20)),
+              Expanded(child: SkeletonBox(height: 64, radius: 20)),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -229,7 +219,7 @@ class _FakeSearchButton extends StatelessWidget {
       child: InkWell(
         customBorder: const StadiumBorder(),
         onTap: () {
-          context.read<SearchFocusRequest>().request();
+          context.read<SearchFocusCubit>().request();
           StatefulNavigationShell.of(context).goBranch(1);
         },
         child: SizedBox(
@@ -237,9 +227,9 @@ class _FakeSearchButton extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 18),
             child: Row(
+              spacing: 10,
               children: [
                 Icon(Icons.search_rounded, size: 22, color: colors.ink2),
-                const SizedBox(width: 10),
                 Text(
                   label,
                   style: TextStyle(fontSize: 15.sp, color: colors.ink3),
@@ -254,10 +244,11 @@ class _FakeSearchButton extends StatelessWidget {
 }
 
 Future<void> _createProduct(BuildContext context) async {
+  final t = context.t;
   final bloc = context.read<ProductsBloc>();
   final created = await ProductFormSheet.open(context, existing: bloc.state.all);
   if (created == null || !context.mounted) return;
   bloc.add(ProductUpserted(created));
-  AppToast.show(context, context.t.toasts.created);
+  AppToast.show(context, t.toasts.created);
   StatefulNavigationShell.of(context).goBranch(1);
 }
