@@ -12,6 +12,6 @@ import UIKit
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
-    ShareChannel.register(with: engineBridge.pluginRegistry.registrar(forPlugin: "ShareChannel")!)
+    PlatformChannels.register(with: engineBridge.pluginRegistry)
   }
 }
