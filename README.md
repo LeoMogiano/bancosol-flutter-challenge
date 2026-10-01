@@ -83,7 +83,7 @@ flowchart LR
 - **Domain** no importa Flutter, dio ni JSON. Los repositorios lanzan `Failure`; nunca una excepción de dio.
 - **`ProductsBloc`** es único y compartido por Resumen, Productos y Ajustes: búsqueda, orden, filtros y paginación se calculan en cliente sobre la lista cargada (CrudCrud no filtra).
 - **Cada hoja** (editar precio, nuevo producto, eliminar, filtros) crea su propio cubit, que muere al cerrarla. Mientras hay una petición en curso la hoja no se puede cerrar.
-- **Reconstrucciones mínimas**: `BlocSelector` en las hojas del árbol, nunca un `BlocBuilder` alrededor de una pantalla.
+- **Reconstrucciones mínimas**: `context.select` en widgets chicos, `BlocSelector` para trozos de una pantalla grande, nunca un `BlocBuilder` alrededor de una pantalla. Estándar completo en [CONTRIBUTING.md](CONTRIBUTING.md#reconstrucciones).
 
 ## Decisiones técnicas
 
