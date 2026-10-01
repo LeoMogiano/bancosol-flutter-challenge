@@ -1,3 +1,4 @@
+import 'package:warehouse/core/storage/keys/products_cache_key.dart';
 import 'package:warehouse/core/storage/local_store.dart';
 import 'package:warehouse/modules/catalog/data/models/product_dto.dart';
 
