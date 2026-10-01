@@ -9,18 +9,20 @@ class _MockStore extends Mock implements LocalStore;
 void main() {
   late _MockStore store;
 
+  setUpAll(() => registerFallbackValue(SettingsKey.themeMode));
+
   setUp(() {
     store = _MockStore();
-    when(() => store.read<String>(any(), any())).thenReturn(null);
-    when(() => store.read<bool>(any(), any())).thenReturn(null);
-    when(() => store.write(any(), any(), any())).thenAnswer((_) async {});
-    when(() => store.delete(any(), any())).thenAnswer((_) async {});
+    when(() => store.read<String>(any())).thenReturn(null);
+    when(() => store.read<bool>(any())).thenReturn(null);
+    when(() => store.write(any(), any())).thenAnswer((_) async {});
+    when(() => store.delete(any())).thenAnswer((_) async {});
   });
 
   test('al abrir la app restaura tema, idioma y cache guardados', () {
-    when(() => store.read<String>(StoreBox.settings, 'theme_mode')).thenReturn('dark');
-    when(() => store.read<String>(StoreBox.settings, 'locale')).thenReturn('pt');
-    when(() => store.read<bool>(StoreBox.settings, 'cache_enabled')).thenReturn(false);
+    when(() => store.read<String>(SettingsKey.themeMode)).thenReturn('dark');
+    when(() => store.read<String>(SettingsKey.languageCode)).thenReturn('pt');
+    when(() => store.read<bool>(SettingsKey.cacheEnabled)).thenReturn(false);
 
     final state = PreferencesCubit(store).state;
 
@@ -35,6 +37,6 @@ void main() {
     await cubit.setLanguageCode(null);
 
     expect(cubit.state.languageCode, isNull);
-    verify(() => store.delete(StoreBox.settings, 'locale')).called(1);
+    verify(() => store.delete(SettingsKey.languageCode)).called(1);
   });
 }
