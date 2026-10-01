@@ -40,6 +40,7 @@ class ProductList extends StatelessWidget {
         children: [
           for (final product in items)
             ProductTile(
+              key: ValueKey(product.remoteId),
               product: product,
               highlighted: product.remoteId == data.highlightId,
               onTap: () => context.push(AppRoutes.productDetail(product.remoteId)),
