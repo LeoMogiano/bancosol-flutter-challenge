@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
-import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/filters/filter_draft_cubit.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/services/product_query.dart';
+import 'package:warehouse/modules/catalog/presentation/widgets/filter_sheet/filter_section.dart';
+import 'package:warehouse/modules/catalog/presentation/widgets/filter_sheet/price_range_section.dart';
+import 'package:warehouse/modules/catalog/presentation/widgets/filter_sheet/sort_section.dart';
 import 'package:warehouse/shared/widgets/buttons/app_button.dart';
 import 'package:warehouse/shared/widgets/feedback/custom_bottom_sheet.dart';
 import 'package:warehouse/shared/widgets/inputs/app_segmented.dart';
-import 'package:warehouse/shared/widgets/inputs/price_field.dart';
 import 'package:warehouse/shared/widgets/lists/app_switch_tile.dart';
 
 class FilterSheet extends StatelessWidget {
   const FilterSheet({required this.sort, required this.filters, required this.all, required this.query, super.key});
-
-  static const double _gap = 10;
 
   final ProductSort sort;
   final ProductFilters filters;
@@ -45,10 +43,6 @@ class FilterSheet extends StatelessWidget {
 class _FilterSheetContent extends StatelessWidget {
   const _FilterSheetContent();
 
-  static const double _gridGap = 8;
-  static const double _chipHeight = 44;
-  static const double _chipRadius = 14;
-
   @override
   Widget build(BuildContext context) {
     final t = context.t;
@@ -58,191 +52,14 @@ class _FilterSheetContent extends StatelessWidget {
       spacing: 18,
       children: [
         SheetHeader(title: t.filters.title),
-        const _SortSection(),
-        const _PriceRangeSection(),
+        const SortSection(),
+        const PriceRangeSection(),
         const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 10,
           children: [_CurrencySection(), _InStockSection()],
         ),
         const _ActionsSection(),
-      ],
-    );
-  }
-}
-
-class _SortSection extends StatelessWidget {
-  const _SortSection();
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.t;
-    final cubit = context.read<FilterDraftCubit>();
-    final colors = context.colors;
-
-    final selectedSort = context.select<FilterDraftCubit, ProductSort>((bloc) => bloc.state.sort);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          t.filters.sortBy,
-          style: TextStyle(fontSize: 14.5.sp, fontWeight: FontWeight.w600, color: colors.ink),
-        ),
-        const SizedBox(height: FilterSheet._gap),
-        GridView(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: _FilterSheetContent._gridGap,
-            mainAxisSpacing: _FilterSheetContent._gridGap,
-            mainAxisExtent: _FilterSheetContent._chipHeight,
-          ),
-          children: [
-            _SortChip(
-              label: t.filters.priceDesc,
-              icon: Icons.arrow_downward_rounded,
-              isSelected: selectedSort == ProductSort.priceDesc,
-              onTap: () => cubit.sortChanged(ProductSort.priceDesc),
-            ),
-            _SortChip(
-              label: t.filters.priceAsc,
-              icon: Icons.arrow_upward_rounded,
-              isSelected: selectedSort == ProductSort.priceAsc,
-              onTap: () => cubit.sortChanged(ProductSort.priceAsc),
-            ),
-            _SortChip(
-              label: t.filters.nameAsc,
-              icon: Icons.sort_by_alpha_rounded,
-              isSelected: selectedSort == ProductSort.nameAsc,
-              onTap: () => cubit.sortChanged(ProductSort.nameAsc),
-            ),
-            _SortChip(
-              label: t.filters.sku,
-              icon: Icons.tag_rounded,
-              isSelected: selectedSort == ProductSort.sku,
-              onTap: () => cubit.sortChanged(ProductSort.sku),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _SortChip extends StatelessWidget {
-  const _SortChip({required this.label, required this.icon, required this.isSelected, required this.onTap});
-
-  final String label;
-  final IconData icon;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-
-    return Material(
-      color: isSelected ? colors.accent : Colors.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(_FilterSheetContent._chipRadius),
-        side: isSelected ? BorderSide.none : BorderSide(color: colors.line),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 6,
-            children: [
-              Icon(icon, size: 17, color: isSelected ? colors.onAccent : colors.ink),
-              Flexible(
-                child: Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                    color: isSelected ? colors.onAccent : colors.ink,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _PriceRangeSection extends StatelessWidget {
-  const _PriceRangeSection();
-
-  static const double _sideBySideMinWidth = 340;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.t;
-    final cubit = context.read<FilterDraftCubit>();
-    final colors = context.colors;
-
-    final (minText, maxText) = context.select<FilterDraftCubit, (String, String)>(
-      (bloc) => (bloc.state.minText, bloc.state.maxText),
-    );
-    final isValid = cubit.rangeValid;
-
-    final min = PriceField(
-      currency: 'BOB',
-      label: t.filters.min,
-      initialValue: minText,
-      onChanged: cubit.minChanged,
-      errorText: isValid ? null : '',
-    );
-    final max = PriceField(
-      currency: 'BOB',
-      label: t.filters.max,
-      initialValue: maxText,
-      onChanged: cubit.maxChanged,
-      errorText: isValid ? null : '',
-    );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          t.filters.priceRange,
-          style: TextStyle(fontSize: 14.5.sp, fontWeight: FontWeight.w600, color: colors.ink),
-        ),
-        const SizedBox(height: FilterSheet._gap),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // En pantallas angostas lado a lado no deja espacio para escribir el monto.
-            LayoutBuilder(
-              builder: (_, constraints) => constraints.maxWidth < _sideBySideMinWidth
-                  ? Column(spacing: 10, children: [min, max])
-                  : Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 10,
-                      children: [
-                        Expanded(child: min),
-                        Expanded(child: max),
-                      ],
-                    ),
-            ),
-            if (!isValid)
-              Padding(
-                padding: const EdgeInsets.only(top: 6),
-                child: Text(
-                  t.filters.rangeError,
-                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500, color: colors.bad),
-                ),
-              ),
-          ],
-        ),
       ],
     );
   }
@@ -263,16 +80,9 @@ class _CurrencySection extends StatelessWidget {
       const AppSegment(value: 'USD', label: 'USD'),
     ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          t.filters.currency,
-          style: TextStyle(fontSize: 14.5.sp, fontWeight: FontWeight.w600, color: context.colors.ink),
-        ),
-        const SizedBox(height: FilterSheet._gap),
-        AppSegmented<String?>(segments: segments, selected: selectedCurrency, onChanged: cubit.currencyChanged),
-      ],
+    return FilterSection(
+      title: t.filters.currency,
+      child: AppSegmented<String?>(segments: segments, selected: selectedCurrency, onChanged: cubit.currencyChanged),
     );
   }
 }
