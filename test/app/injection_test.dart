@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hive_ce/hive_ce.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:warehouse/app/injection.dart';
 import 'package:warehouse/core/di/service_locator.dart';
 import 'package:warehouse/core/network/api_client.dart';

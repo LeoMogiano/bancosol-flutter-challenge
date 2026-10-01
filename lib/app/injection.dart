@@ -10,15 +10,11 @@ import 'package:warehouse/modules/catalog/catalog_module.dart';
 
 Future<void> injection() async {
   sl
-    // 1️⃣ Almacenamiento
     ..registerLazySingleton<LocalStore>(HiveLocalStore.new)
-    // 2️⃣ Servicios de core
     ..registerLazySingleton<AppClock>(AppClock.new)
-    // 3️⃣ Interceptores de red
     ..registerLazySingleton<ApiKeyInterceptor>(() => ApiKeyInterceptor(EnvConfig.apiKey))
     ..registerLazySingleton<RetryInterceptor>(RetryInterceptor.new)
     ..registerLazySingleton<RedactingLogInterceptor>(RedactingLogInterceptor.new)
-    // 4️⃣ Red
     ..registerLazySingleton<ApiClient>(
       () => ApiClient(
         baseUrl: EnvConfig.baseUrl,
