@@ -11,79 +11,78 @@ class RedactingLogInterceptor extends Interceptor {
     caseSensitive: false,
   );
 
-  // Los agrega sentry_dio en el adapter; solo aparecían al reintentar, cuando el options ya los trae. Ruido en el log.
-  static const _hiddenHeaders = {'sentry-trace', 'baggage'};
+  static const _maxBody = 2000;
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     options.extra['t0'] = DateTime.now().millisecondsSinceEpoch;
 
-    final redactedHeaders = _redactHeaders(options.headers);
-    final body = options.data;
-    final redactedBody = _redactBody(body);
+    LoggerService.d('➡️ Request: [${options.method}] ${redactUrl(options.uri)}', name: 'HTTP');
+    final body = _redactBody(options.data);
+    if (body.isNotEmpty) LoggerService.d('Body: $body', name: 'HTTP');
 
-    LoggerService.d('→ ${options.method} ${options.path}', name: 'HTTP');
-    if (redactedHeaders.isNotEmpty) {
-      LoggerService.d('Headers: $redactedHeaders', name: 'HTTP');
-    }
-    if (redactedBody.isNotEmpty) {
-      LoggerService.d('Body: $redactedBody', name: 'HTTP');
-    }
-
-    super.onRequest(options, handler);
+    handler.next(options);
   }
 
   @override
   void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) {
-    final t0 = response.requestOptions.extra['t0'] as int?;
-    final duration = t0 != null ? DateTime.now().millisecondsSinceEpoch - t0 : 0;
+    final options = response.requestOptions;
 
-    final body = response.data;
-    var redactedBody = _redactBody(body);
+    LoggerService.s(
+      'Response: [${response.statusCode}] ${options.method} ${redactUrl(options.uri)} (${_elapsed(options)}ms)',
+      name: 'HTTP',
+    );
+    final data = _redactBody(response.data);
+    if (data.isNotEmpty) LoggerService.d('Data: $data', name: 'HTTP');
 
-    if (redactedBody.length > 2000) {
-      redactedBody = redactedBody.substring(0, 2000);
-    }
-
-    LoggerService.d('← ${response.statusCode} ${response.requestOptions.path} (${duration}ms)', name: 'HTTP');
-    if (redactedBody.isNotEmpty) {
-      LoggerService.d('Body: $redactedBody', name: 'HTTP');
-    }
-
-    super.onResponse(response, handler);
+    handler.next(response);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    final status = err.response?.statusCode;
-    final statusOrType = status ?? err.type.name;
+    final req = err.requestOptions;
+    final res = err.response;
 
-    LoggerService.d('✖ $statusOrType ${err.requestOptions.path}', name: 'HTTP');
+    LoggerService.log('🚨 ERROR EN REQUEST', name: 'HTTP');
+    LoggerService.log('➡️ ${req.method} ${redactUrl(req.uri)} (${_elapsed(req)}ms)', name: 'HTTP');
+    final body = _redactBody(req.data);
+    if (body.isNotEmpty) LoggerService.log('Body: $body', name: 'HTTP');
 
-    super.onError(err, handler);
+    if (res != null) {
+      LoggerService.log('⬅️ Status: ${res.statusCode}', name: 'HTTP');
+      final data = _redactBody(res.data);
+      if (data.isNotEmpty) LoggerService.log('Response: $data', name: 'HTTP');
+    }
+
+    LoggerService.log('❌ Error: ${err.message ?? err.type.name}', name: 'HTTP');
+
+    handler.next(err);
   }
 
-  Map<String, dynamic> _redactHeaders(Map<String, dynamic> headers) {
-    final redacted = <String, dynamic>{};
-    headers.forEach((key, value) {
-      final name = key.toLowerCase();
-      if (_hiddenHeaders.contains(name)) return;
-      if (name == 'x-api-key' || name == 'authorization') {
-        redacted[key] = '***';
-      } else {
-        redacted[key] = value;
-      }
-    });
-    return redacted;
+  int _elapsed(RequestOptions options) {
+    final t0 = options.extra['t0'] as int?;
+    return t0 != null ? DateTime.now().millisecondsSinceEpoch - t0 : 0;
   }
 
   String _redactBody(Object? body) {
-    if (body == null) return '';
-    if (body is String) return redact(body);
-    if (body is Map || body is List) {
-      return redact(jsonEncode(body));
-    }
-    return '';
+    final out = switch (body) {
+      String() => redact(body),
+      Map() || List() => redact(jsonEncode(body)),
+      _ => '',
+    };
+    return out.length > _maxBody ? out.substring(0, _maxBody) : out;
+  }
+
+  @visibleForTesting
+  static String redactUrl(Uri uri) {
+    if (!uri.hasQuery) return '$uri';
+    return uri
+        .replace(
+          queryParameters: {
+            for (final e in uri.queryParametersAll.entries) e.key: _sensitivePattern.hasMatch(e.key) ? '***' : e.value,
+          },
+        )
+        .toString();
   }
 
   @visibleForTesting
