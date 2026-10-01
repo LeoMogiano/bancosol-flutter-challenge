@@ -2,16 +2,16 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/share_product.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/share_product_use_case.dart';
 
 part 'product_detail_state.dart';
 
 class ProductDetailCubit extends Cubit<ProductDetailState> {
-  ProductDetailCubit({required ShareProduct shareProduct})
+  ProductDetailCubit({required ShareProductUseCase shareProduct})
     : _shareProduct = shareProduct,
       super(const ProductDetailState());
 
-  final ShareProduct _shareProduct;
+  final ShareProductUseCase _shareProduct;
 
   Future<void> share(Product product, {required String text}) async {
     emit(state.copyWith(sharing: true, shareError: () => null));

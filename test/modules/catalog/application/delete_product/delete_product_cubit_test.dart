@@ -4,9 +4,9 @@ import 'package:mocktail/mocktail.dart';
 import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/modules/catalog/application/delete_product/delete_product_cubit.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/delete_product.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/delete_product_use_case.dart';
 
-class MockDeleteProduct extends Mock implements DeleteProduct;
+class MockDeleteProduct extends Mock implements DeleteProductUseCase;
 
 void main() {
   group('DeleteProductCubit', () {

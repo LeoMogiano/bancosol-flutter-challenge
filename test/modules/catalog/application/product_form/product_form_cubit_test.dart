@@ -4,10 +4,10 @@ import 'package:mocktail/mocktail.dart';
 import 'package:warehouse/modules/catalog/application/product_form/product_form_cubit.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product_draft.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/create_product.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/create_product_use_case.dart';
 import 'package:warehouse/modules/catalog/domain/validators/product_form_validator.dart';
 
-class MockCreateProduct extends Mock implements CreateProduct;
+class MockCreateProduct extends Mock implements CreateProductUseCase;
 
 class FakeProductDraft extends Fake implements ProductDraft;
 

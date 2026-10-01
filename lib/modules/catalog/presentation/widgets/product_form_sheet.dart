@@ -6,7 +6,7 @@ import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/services/haptic_service.dart';
 import 'package:warehouse/modules/catalog/application/product_form/product_form_cubit.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/create_product.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/create_product_use_case.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/product_form/product_form_fields.dart';
 import 'package:warehouse/shared/widgets/buttons/app_button.dart';
 import 'package:warehouse/shared/widgets/feedback/custom_bottom_sheet.dart';
@@ -24,7 +24,7 @@ class ProductFormSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ProductFormCubit(existing: existing, createProduct: sl<CreateProduct>()),
+      create: (_) => ProductFormCubit(existing: existing, createProduct: sl<CreateProductUseCase>()),
       child: BlocListener<ProductFormCubit, ProductFormState>(
         listenWhen: (prev, curr) => prev.submitting && !curr.submitting,
         listener: (context, state) =>

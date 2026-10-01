@@ -10,7 +10,7 @@ import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/price_edit/price_edit_cubit.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/update_product_price.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/update_product_price_use_case.dart';
 import 'package:warehouse/modules/catalog/domain/validators/price_validator.dart';
 import 'package:warehouse/shared/formatters/price_formatter.dart';
 import 'package:warehouse/shared/widgets/buttons/app_button.dart';
@@ -30,7 +30,7 @@ class PriceEditSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => PriceEditCubit(product: product, updatePrice: sl<UpdateProductPrice>()),
+      create: (_) => PriceEditCubit(product: product, updatePrice: sl<UpdateProductPriceUseCase>()),
       child: PriceEditContent(product: product),
     );
   }

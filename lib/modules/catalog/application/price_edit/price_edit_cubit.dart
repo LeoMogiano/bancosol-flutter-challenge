@@ -2,19 +2,18 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/invalid_price_exception.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/update_product_price.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/update_product_price_use_case.dart';
 import 'package:warehouse/modules/catalog/domain/validators/price_validator.dart';
 import 'package:warehouse/shared/formatters/price_formatter.dart';
 
 part 'price_edit_state.dart';
 
 class PriceEditCubit extends Cubit<PriceEditState> {
-  PriceEditCubit({required Product product, required UpdateProductPrice updatePrice})
+  PriceEditCubit({required Product product, required UpdateProductPriceUseCase updatePrice})
     : _updatePrice = updatePrice,
       super(PriceEditState(product: product, draft: PriceFormatter.format(product.price)));
 
-  final UpdateProductPrice _updatePrice;
+  final UpdateProductPriceUseCase _updatePrice;
 
   PriceError? get error =>
       validatePriceInput(state.draft, currency: state.product.currency, current: state.product.price);

@@ -10,12 +10,12 @@ import 'package:warehouse/core/network/interceptors/redacting_log_interceptor.da
 import 'package:warehouse/core/storage/local_store.dart';
 import 'package:warehouse/modules/catalog/application/preferences/preferences_cubit.dart';
 import 'package:warehouse/modules/catalog/domain/repositories/product_repository.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/create_product.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/delete_product.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/get_product.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/get_products.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/share_product.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/update_product_price.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/create_product_use_case.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/delete_product_use_case.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/get_product_use_case.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/get_products_use_case.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/share_product_use_case.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/update_product_price_use_case.dart';
 
 // get_it registra fábricas perezosas: un cableado roto solo explota al resolver.
 void main() {
@@ -31,12 +31,12 @@ void main() {
     expect(sl.get<ApiClient>, returnsNormally);
     expect(sl.get<PreferencesCubit>, returnsNormally);
     expect(sl.get<ProductRepository>, returnsNormally);
-    expect(sl.get<GetProducts>, returnsNormally);
-    expect(sl.get<GetProduct>, returnsNormally);
-    expect(sl.get<UpdateProductPrice>, returnsNormally);
-    expect(sl.get<CreateProduct>, returnsNormally);
-    expect(sl.get<DeleteProduct>, returnsNormally);
-    expect(sl.get<ShareProduct>, returnsNormally);
+    expect(sl.get<GetProductsUseCase>, returnsNormally);
+    expect(sl.get<GetProductUseCase>, returnsNormally);
+    expect(sl.get<UpdateProductPriceUseCase>, returnsNormally);
+    expect(sl.get<CreateProductUseCase>, returnsNormally);
+    expect(sl.get<DeleteProductUseCase>, returnsNormally);
+    expect(sl.get<ShareProductUseCase>, returnsNormally);
   });
 
   test('los interceptores van en orden: api key → log', () {

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product_draft.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/create_product.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/create_product_use_case.dart';
 import 'package:warehouse/modules/catalog/domain/validators/price_validator.dart';
 import 'package:warehouse/modules/catalog/domain/validators/product_form_validator.dart';
 
@@ -12,13 +12,13 @@ part 'product_form_state.dart';
 enum ProductField { sku, name, price, stock }
 
 class ProductFormCubit extends Cubit<ProductFormState> {
-  ProductFormCubit({required List<Product> existing, required CreateProduct createProduct})
+  ProductFormCubit({required List<Product> existing, required CreateProductUseCase createProduct})
     : _existing = existing,
       _createProduct = createProduct,
       super(const ProductFormState());
 
   final List<Product> _existing;
-  final CreateProduct _createProduct;
+  final CreateProductUseCase _createProduct;
 
   SkuError? get skuError => state.touched.contains(ProductField.sku) || state.submitted
       ? validateSku(state.sku, existingSkus: _existing.map((p) => p.sku))

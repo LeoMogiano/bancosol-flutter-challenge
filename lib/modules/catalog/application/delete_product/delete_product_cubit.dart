@@ -2,18 +2,18 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/delete_product.dart';
+import 'package:warehouse/modules/catalog/domain/usecases/delete_product_use_case.dart';
 
 part 'delete_product_state.dart';
 
 class DeleteProductCubit extends Cubit<DeleteProductState> {
-  DeleteProductCubit({required Product product, required DeleteProduct deleteProduct})
+  DeleteProductCubit({required Product product, required DeleteProductUseCase deleteProduct})
     : _product = product,
       _deleteProduct = deleteProduct,
       super(const DeleteProductState());
 
   final Product _product;
-  final DeleteProduct _deleteProduct;
+  final DeleteProductUseCase _deleteProduct;
 
   Future<void> confirm() async {
     if (state.submitting) return;
