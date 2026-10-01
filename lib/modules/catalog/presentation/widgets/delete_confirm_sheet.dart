@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/di/service_locator.dart';
-import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/core/i18n/failure_i18n.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/services/haptic_service.dart';
@@ -64,7 +63,12 @@ class DeleteConfirmSheet extends StatelessWidget {
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14.5.sp, height: 1.5, color: colors.ink2),
         ),
-        if (failure != null) ...[const SizedBox(height: 16), ErrorBanner(message: _errorMessage(t, failure))],
+        if (failure != null) ...[
+          const SizedBox(height: 16),
+          ErrorBanner(
+            message: failure.messageFor(offline: t.delete.offlineError, server: t.delete.serverError),
+          ),
+        ],
         const SizedBox(height: 22),
         SheetActions(
           secondary: AppButton(
@@ -83,10 +87,4 @@ class DeleteConfirmSheet extends StatelessWidget {
       ],
     );
   }
-
-  static String _errorMessage(Translations t, Failure failure) => switch (failure.type) {
-    FailureType.network || FailureType.timeout => t.delete.offlineError,
-    FailureType.notFound => failure.message,
-    _ => t.delete.serverError,
-  };
 }
