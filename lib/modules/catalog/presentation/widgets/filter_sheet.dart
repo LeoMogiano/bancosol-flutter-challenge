@@ -80,6 +80,7 @@ class _SortSection extends StatelessWidget {
     final cubit = context.read<FilterDraftCubit>();
     final colors = context.colors;
 
+    final selectedSort = context.select<FilterDraftCubit, ProductSort>((bloc) => bloc.state.sort);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -88,46 +89,41 @@ class _SortSection extends StatelessWidget {
           style: TextStyle(fontSize: 14.5.sp, fontWeight: FontWeight.w600, color: colors.ink),
         ),
         const SizedBox(height: FilterSheet._gap),
-        BlocSelector<FilterDraftCubit, FilterDraftState, ProductSort>(
-          selector: (state) => state.sort,
-          builder: (context, selectedSort) {
-            return GridView(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: _FilterSheetContent._gridGap,
-                mainAxisSpacing: _FilterSheetContent._gridGap,
-                mainAxisExtent: _FilterSheetContent._chipHeight,
-              ),
-              children: [
-                _SortChip(
-                  label: t.filters.priceDesc,
-                  icon: Icons.arrow_downward_rounded,
-                  isSelected: selectedSort == ProductSort.priceDesc,
-                  onTap: () => cubit.sortChanged(ProductSort.priceDesc),
-                ),
-                _SortChip(
-                  label: t.filters.priceAsc,
-                  icon: Icons.arrow_upward_rounded,
-                  isSelected: selectedSort == ProductSort.priceAsc,
-                  onTap: () => cubit.sortChanged(ProductSort.priceAsc),
-                ),
-                _SortChip(
-                  label: t.filters.nameAsc,
-                  icon: Icons.sort_by_alpha_rounded,
-                  isSelected: selectedSort == ProductSort.nameAsc,
-                  onTap: () => cubit.sortChanged(ProductSort.nameAsc),
-                ),
-                _SortChip(
-                  label: t.filters.sku,
-                  icon: Icons.tag_rounded,
-                  isSelected: selectedSort == ProductSort.sku,
-                  onTap: () => cubit.sortChanged(ProductSort.sku),
-                ),
-              ],
-            );
-          },
+        GridView(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: _FilterSheetContent._gridGap,
+            mainAxisSpacing: _FilterSheetContent._gridGap,
+            mainAxisExtent: _FilterSheetContent._chipHeight,
+          ),
+          children: [
+            _SortChip(
+              label: t.filters.priceDesc,
+              icon: Icons.arrow_downward_rounded,
+              isSelected: selectedSort == ProductSort.priceDesc,
+              onTap: () => cubit.sortChanged(ProductSort.priceDesc),
+            ),
+            _SortChip(
+              label: t.filters.priceAsc,
+              icon: Icons.arrow_upward_rounded,
+              isSelected: selectedSort == ProductSort.priceAsc,
+              onTap: () => cubit.sortChanged(ProductSort.priceAsc),
+            ),
+            _SortChip(
+              label: t.filters.nameAsc,
+              icon: Icons.sort_by_alpha_rounded,
+              isSelected: selectedSort == ProductSort.nameAsc,
+              onTap: () => cubit.sortChanged(ProductSort.nameAsc),
+            ),
+            _SortChip(
+              label: t.filters.sku,
+              icon: Icons.tag_rounded,
+              isSelected: selectedSort == ProductSort.sku,
+              onTap: () => cubit.sortChanged(ProductSort.sku),
+            ),
+          ],
         ),
       ],
     );
@@ -193,6 +189,26 @@ class _PriceRangeSection extends StatelessWidget {
     final cubit = context.read<FilterDraftCubit>();
     final colors = context.colors;
 
+    final (minText, maxText) = context.select<FilterDraftCubit, (String, String)>(
+      (bloc) => (bloc.state.minText, bloc.state.maxText),
+    );
+    final isValid = cubit.rangeValid;
+
+    final min = PriceField(
+      currency: 'BOB',
+      label: t.filters.min,
+      initialValue: minText,
+      onChanged: cubit.minChanged,
+      errorText: isValid ? null : '',
+    );
+    final max = PriceField(
+      currency: 'BOB',
+      label: t.filters.max,
+      initialValue: maxText,
+      onChanged: cubit.maxChanged,
+      errorText: isValid ? null : '',
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -201,53 +217,31 @@ class _PriceRangeSection extends StatelessWidget {
           style: TextStyle(fontSize: 14.5.sp, fontWeight: FontWeight.w600, color: colors.ink),
         ),
         const SizedBox(height: FilterSheet._gap),
-        BlocSelector<FilterDraftCubit, FilterDraftState, (String, String)>(
-          selector: (state) => (state.minText, state.maxText),
-          builder: (context, _) {
-            final cubitState = context.read<FilterDraftCubit>().state;
-            final isValid = context.read<FilterDraftCubit>().rangeValid;
-
-            final min = PriceField(
-              currency: 'BOB',
-              label: t.filters.min,
-              initialValue: cubitState.minText,
-              onChanged: cubit.minChanged,
-              errorText: isValid ? null : '',
-            );
-            final max = PriceField(
-              currency: 'BOB',
-              label: t.filters.max,
-              initialValue: cubitState.maxText,
-              onChanged: cubit.maxChanged,
-              errorText: isValid ? null : '',
-            );
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // En pantallas angostas lado a lado no deja espacio para escribir el monto.
-                LayoutBuilder(
-                  builder: (_, constraints) => constraints.maxWidth < _sideBySideMinWidth
-                      ? Column(spacing: 10, children: [min, max])
-                      : Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          spacing: 10,
-                          children: [
-                            Expanded(child: min),
-                            Expanded(child: max),
-                          ],
-                        ),
-                ),
-                if (!isValid)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 6),
-                    child: Text(
-                      t.filters.rangeError,
-                      style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500, color: colors.bad),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // En pantallas angostas lado a lado no deja espacio para escribir el monto.
+            LayoutBuilder(
+              builder: (_, constraints) => constraints.maxWidth < _sideBySideMinWidth
+                  ? Column(spacing: 10, children: [min, max])
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 10,
+                      children: [
+                        Expanded(child: min),
+                        Expanded(child: max),
+                      ],
                     ),
-                  ),
-              ],
-            );
-          },
+            ),
+            if (!isValid)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Text(
+                  t.filters.rangeError,
+                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500, color: colors.bad),
+                ),
+              ),
+          ],
         ),
       ],
     );
@@ -262,6 +256,13 @@ class _CurrencySection extends StatelessWidget {
     final t = context.t;
     final cubit = context.read<FilterDraftCubit>();
 
+    final selectedCurrency = context.select<FilterDraftCubit, String?>((bloc) => bloc.state.currency);
+    final segments = [
+      AppSegment(value: null, label: t.filters.all),
+      const AppSegment(value: 'BOB', label: 'BOB'),
+      const AppSegment(value: 'USD', label: 'USD'),
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -270,22 +271,7 @@ class _CurrencySection extends StatelessWidget {
           style: TextStyle(fontSize: 14.5.sp, fontWeight: FontWeight.w600, color: context.colors.ink),
         ),
         const SizedBox(height: FilterSheet._gap),
-        BlocSelector<FilterDraftCubit, FilterDraftState, String?>(
-          selector: (state) => state.currency,
-          builder: (context, selectedCurrency) {
-            final segments = [
-              AppSegment(value: null, label: t.filters.all),
-              const AppSegment(value: 'BOB', label: 'BOB'),
-              const AppSegment(value: 'USD', label: 'USD'),
-            ];
-
-            return AppSegmented<String?>(
-              segments: segments,
-              selected: selectedCurrency,
-              onChanged: cubit.currencyChanged,
-            );
-          },
-        ),
+        AppSegmented<String?>(segments: segments, selected: selectedCurrency, onChanged: cubit.currencyChanged),
       ],
     );
   }
@@ -299,16 +285,12 @@ class _InStockSection extends StatelessWidget {
     final t = context.t;
     final cubit = context.read<FilterDraftCubit>();
 
-    return BlocSelector<FilterDraftCubit, FilterDraftState, bool>(
-      selector: (state) => state.inStockOnly,
-      builder: (context, inStockOnly) {
-        return AppSwitchTile(
-          title: t.filters.inStockOnly,
-          subtitle: t.filters.inStockOnlyHint,
-          value: inStockOnly,
-          onChanged: cubit.inStockChanged,
-        );
-      },
+    final inStockOnly = context.select<FilterDraftCubit, bool>((bloc) => bloc.state.inStockOnly);
+    return AppSwitchTile(
+      title: t.filters.inStockOnly,
+      subtitle: t.filters.inStockOnlyHint,
+      value: inStockOnly,
+      onChanged: cubit.inStockChanged,
     );
   }
 }
@@ -321,21 +303,17 @@ class _ActionsSection extends StatelessWidget {
     final t = context.t;
     final cubit = context.read<FilterDraftCubit>();
 
-    return BlocBuilder<FilterDraftCubit, FilterDraftState>(
-      builder: (context, state) {
-        final isRangeValid = cubit.rangeValid;
-        final resultCount = cubit.resultCount;
-
-        return SheetActions(
-          secondary: AppButton(label: t.filters.reset, onPressed: cubit.reset, variant: AppButtonVariant.outline),
-          primary: AppButton(
-            label: t.filters.apply(n: resultCount),
-            onPressed: isRangeValid
-                ? () => Navigator.of(context).pop((sort: state.sort, filters: cubit.filters))
-                : null,
-          ),
-        );
-      },
+    final data = context.select<FilterDraftCubit, ({bool rangeValid, int resultCount})>(
+      (bloc) => (rangeValid: bloc.rangeValid, resultCount: bloc.resultCount),
+    );
+    return SheetActions(
+      secondary: AppButton(label: t.filters.reset, onPressed: cubit.reset, variant: AppButtonVariant.outline),
+      primary: AppButton(
+        label: t.filters.apply(n: data.resultCount),
+        onPressed: data.rangeValid
+            ? () => Navigator.of(context).pop((sort: cubit.state.sort, filters: cubit.filters))
+            : null,
+      ),
     );
   }
 }
