@@ -77,7 +77,7 @@ flowchart LR
   UC --> R[ProductRepository]
   R --> API[ApiClient · dio]
   R --> H[(Hive)]
-  API --> I[api key → retry → log]
+  API --> I[api key → log]
 ```
 
 - **Domain** no importa Flutter, dio ni JSON. Los repositorios lanzan `Failure`; nunca una excepción de dio.
@@ -91,7 +91,6 @@ flowchart LR
 |---|---|
 | `Failure(type, statusCode, detail)` con `enum FailureType` | El `switch` sobre el enum es exhaustivo; el texto para el usuario se resuelve en la UI con slang, así no queda congelado en un idioma. `InternalDetail` oculta el detalle técnico en `toString()` |
 | `ApiClient` con un único `_send` | Toda respuesta o error sale como dato o `Failure`. Si un DTO no sabe leer la respuesta, el `Failure(parse)` lleva la línea exacta que falló |
-| `RetryInterceptor` | Reintenta GET / PUT / DELETE ante timeout, 5xx o 429 (respeta `Retry-After`), por el mismo `Dio`. **Nunca POST**: un reintento podría crear el producto dos veces |
 | Log propio que censura secretos | El `LogInterceptor` de dio imprime cuerpos y headers en crudo; el nuestro oculta `x-api-key`, tokens y contraseñas. Solo corre en debug |
 | Sentry acotado | Issue solo para bugs reales (parse / inesperados y HTTP 400, 405, 5xx); 404 y 429 quedan como breadcrumb. cada issue lleva captura de pantalla. `sendDefaultPii: false`, sin cuerpos y sin la api key |
 | Cache Hive sin adapters | Se guardan mapas JSON: sin `build_runner`. El cache es descartable: si está corrupto se ignora y la app igual arranca |

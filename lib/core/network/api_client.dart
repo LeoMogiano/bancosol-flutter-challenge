@@ -7,7 +7,6 @@ import 'package:sentry_dio/sentry_dio.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/core/network/network_config.dart';
-import 'package:warehouse/core/network/replays_requests.dart';
 import 'package:warehouse/core/services/logger_service.dart';
 
 typedef Decoder<T> = T Function(Object? data);
@@ -24,10 +23,7 @@ class ApiClient {
         ),
       ) {
     if (adapter != null) _dio.httpClientAdapter = adapter;
-    for (final interceptor in interceptors) {
-      _dio.interceptors.add(interceptor);
-      if (interceptor is ReplaysRequests) (interceptor as ReplaysRequests).replayClient = _dio;
-    }
+    _dio.interceptors.addAll(interceptors);
     // Issue solo para bugs reales (payload/verbo mal, backend caído); 404/429 quedan como breadcrumb. Cuida la cuota.
     if (Sentry.isEnabled) {
       _dio.addSentry(
