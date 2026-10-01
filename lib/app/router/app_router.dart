@@ -4,7 +4,7 @@ import 'package:warehouse/app/router/app_routes.dart';
 import 'package:warehouse/core/theme/app_dimens.dart';
 import 'package:warehouse/modules/catalog/presentation/screens/product_detail_screen.dart';
 import 'package:warehouse/modules/catalog/presentation/screens/products_screen.dart';
-import 'package:warehouse/modules/catalog/presentation/screens/settings_placeholder_screen.dart';
+import 'package:warehouse/modules/catalog/presentation/screens/settings_screen.dart';
 import 'package:warehouse/modules/catalog/presentation/screens/summary_screen.dart';
 import 'package:warehouse/modules/catalog/presentation/shell/main_shell.dart';
 
@@ -40,7 +40,7 @@ final GoRouter appRouter = GoRouter(
           routes: [GoRoute(path: AppRoutes.products, builder: (_, _) => const ProductsScreen())],
         ),
         StatefulShellBranch(
-          routes: [GoRoute(path: AppRoutes.settings, builder: (_, _) => const SettingsPlaceholderScreen())],
+          routes: [GoRoute(path: AppRoutes.settings, builder: (_, _) => const SettingsScreen())],
         ),
       ],
     ),
