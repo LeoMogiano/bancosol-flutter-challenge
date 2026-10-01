@@ -4,12 +4,13 @@ App Flutter (Android + iOS) para gestionar un catálogo de productos sobre [Crud
 
 ## Inicio rápido
 
-Requisitos: Flutter 3.47 (Dart 3.13), Xcode + CocoaPods, Android SDK.
+Requisitos: Flutter 3.47 (Dart 3.13) y Android SDK. En **Windows / Linux** corre en Android; en **macOS** además iOS (Xcode + CocoaPods).
 
 ```bash
-./tool/setup.sh          # .env por flavor, dependencias, traducciones y pods
-./tool/setup.sh --run    # lo mismo y arranca en dev
-./tool/setup.sh --check  # lo mismo y valida como CI (formato, análisis, tamaños, tests)
+cp .env.example .env.dev      # copy en Windows; igual para .env.qa / .env.prod
+flutter pub get
+dart run slang                # genera las traducciones
+flutter run --flavor dev --dart-define-from-file=.env.dev
 ```
 
 En VS Code, `.vscode/launch.json` trae Debug / Release × dev / qa / prod.
@@ -19,7 +20,6 @@ En VS Code, `.vscode/launch.json` trae Debug / Release × dev / qa / prod.
 | `BASE_URL` | Endpoint de CrudCrud: `https://crudcrud.com/api/<id>` |
 | `API_KEY` | Header `x-api-key`; vacío = no se envía |
 | `SENTRY_DSN` | Vacío = Sentry apagado |
-| `USD_TO_BOB` | Tasa para comparar precios en USD; vacío = 6.96 |
 
 El ambiente no vive en el `.env`: sale del flavor, así no pueden desalinearse.
 
