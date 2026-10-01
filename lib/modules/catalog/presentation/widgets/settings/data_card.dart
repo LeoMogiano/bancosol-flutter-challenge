@@ -56,9 +56,11 @@ class _SyncTile extends StatelessWidget {
     final state = await bloc.stream.firstWhere((s) => !s.isRefreshing);
     if (!context.mounted) return;
     final failure = state.failure;
-    failure == null
-        ? AppToast.show(context, t.toasts.synced)
-        : AppToast.show(context, failure.message, icon: Icons.error_rounded);
+    if (failure == null) {
+      AppToast.showSuccess(context, t.toasts.synced);
+    } else {
+      AppToast.showError(context, failure.message);
+    }
   }
 
   @override

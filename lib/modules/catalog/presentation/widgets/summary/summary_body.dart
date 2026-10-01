@@ -104,7 +104,7 @@ class _SummaryContent extends StatelessWidget {
     final created = await ProductFormSheet.open(context, existing: bloc.state.all);
     if (created == null || !context.mounted) return;
     bloc.add(ProductUpserted(created));
-    AppToast.show(context, t.toasts.created);
+    AppToast.showSuccess(context, t.toasts.created);
     StatefulNavigationShell.of(context).goBranch(1);
   }
 }

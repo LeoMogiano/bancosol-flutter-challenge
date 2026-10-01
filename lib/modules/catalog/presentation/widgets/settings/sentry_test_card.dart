@@ -12,7 +12,7 @@ class SentryTestCard extends StatelessWidget {
   Future<void> _sendTestError(BuildContext context) async {
     final t = context.t;
     if (!Sentry.isEnabled) {
-      AppToast.show(context, t.toasts.sentryDisabled, icon: Icons.info_outline_rounded);
+      AppToast.showInfo(context, t.toasts.sentryDisabled);
       return;
     }
     final id = await Sentry.captureException(
@@ -20,7 +20,11 @@ class SentryTestCard extends StatelessWidget {
       stackTrace: StackTrace.current,
     );
     if (!context.mounted) return;
-    AppToast.show(context, t.toasts.sentrySent(id: id.toString().substring(0, 8)), icon: Icons.bug_report_rounded);
+    AppToast.showSuccess(
+      context,
+      t.toasts.sentrySent(id: id.toString().substring(0, 8)),
+      icon: Icons.bug_report_rounded,
+    );
   }
 
   @override

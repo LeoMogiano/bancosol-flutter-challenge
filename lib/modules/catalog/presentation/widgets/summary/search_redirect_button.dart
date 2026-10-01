@@ -5,8 +5,8 @@ import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/search_focus/search_focus_cubit.dart';
 
-class FakeSearchButton extends StatelessWidget {
-  const FakeSearchButton({required this.label, super.key});
+class SearchRedirectButton extends StatelessWidget {
+  const SearchRedirectButton({required this.label, super.key});
 
   static const double _height = 52;
 

@@ -80,7 +80,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
       bloc
         ..add(const ProductsQueryChanged(''))
         ..add(const ProductsFiltersApplied(ProductFilters.none));
-      AppToast.show(context, t.toasts.created);
+      AppToast.showSuccess(context, t.toasts.created);
     }
   }
 
@@ -101,9 +101,11 @@ class _ProductsScreenState extends State<ProductsScreen> {
           listener: (context, state) {
             _refreshStartedHere = false;
             final failure = state.failure;
-            failure == null
-                ? AppToast.show(context, t.toasts.listUpdated)
-                : AppToast.show(context, failure.message, icon: Icons.error_rounded);
+            if (failure == null) {
+              AppToast.showSuccess(context, t.toasts.listUpdated);
+            } else {
+              AppToast.showError(context, failure.message);
+            }
           },
         ),
         BlocListener<SearchFocusCubit, bool>(listenWhen: (_, pending) => pending, listener: (_, _) => _focusSearch()),
