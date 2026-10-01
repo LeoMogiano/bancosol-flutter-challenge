@@ -5,6 +5,7 @@ import 'package:warehouse/core/di/service_locator.dart';
 import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/core/i18n/failure_i18n.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
+import 'package:warehouse/core/services/haptic_service.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/price_edit/price_edit_cubit.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
@@ -50,6 +51,14 @@ class PriceEditContent extends StatelessWidget {
         BlocListener<PriceEditCubit, PriceEditState>(
           listenWhen: (prev, curr) => prev.saved == null && curr.saved != null,
           listener: (context, state) => Navigator.of(context).pop(state.saved),
+        ),
+        BlocListener<PriceEditCubit, PriceEditState>(
+          listenWhen: (prev, curr) =>
+              prev.submitting &&
+              !curr.submitting &&
+              curr.submitError != null &&
+              curr.submitError!.type != FailureType.notFound,
+          listener: (_, _) => HapticService.error(),
         ),
         // 404: el producto ya no existe; editarlo no tiene sentido, se cierra y se recarga la lista.
         BlocListener<PriceEditCubit, PriceEditState>(
