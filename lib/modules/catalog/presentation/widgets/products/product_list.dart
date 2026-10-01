@@ -72,7 +72,7 @@ class _PaginationFooter extends StatelessWidget {
         children: [
           Text(
             t.products.showing(from: '$from', to: '$to', total: '${data.total}'),
-            style: TextStyle(fontSize: 13.sp, color: context.colors.ink3),
+            style: TextStyle(fontSize: 14.sp, color: context.colors.ink3),
           ),
           AppPaginator(page: data.page, pageCount: data.pageCount, onChanged: onPageChanged),
         ],
