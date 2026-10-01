@@ -83,7 +83,10 @@
     "inStockOnly": "In stock only",
     "inStockOnlyHint": "Hides products with stock 0",
     "reset": "Reset",
-    "apply": "Show {n} products",
+    "apply": {
+      "one": "Show {n} product",
+      "other": "Show {n} products"
+    },
     "rangeError": "Minimum cannot be greater than maximum"
   },
   "detail": {

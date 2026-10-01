@@ -333,8 +333,11 @@ class Translations$filters$es {
 	/// es: 'Restablecer'
 	String get reset => 'Restablecer';
 
-	/// es: 'Ver {n} productos'
-	String apply({required Object n}) => 'Ver ${n} productos';
+	/// es: '(one) {Ver {n} producto} (other) {Ver {n} productos}'
+	String apply({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
+		one: 'Ver ${n} producto',
+		other: 'Ver ${n} productos',
+	);
 
 	/// es: 'El mínimo no puede ser mayor que el máximo'
 	String get rangeError => 'El mínimo no puede ser mayor que el máximo';
@@ -699,7 +702,7 @@ extension on Translations {
 			'filters.inStockOnly' => 'Solo con stock',
 			'filters.inStockOnlyHint' => 'Oculta productos con stock 0',
 			'filters.reset' => 'Restablecer',
-			'filters.apply' => ({required Object n}) => 'Ver ${n} productos',
+			'filters.apply' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n, one: 'Ver ${n} producto', other: 'Ver ${n} productos', ), 
 			'filters.rangeError' => 'El mínimo no puede ser mayor que el máximo',
 			'detail.title' => 'Detalle del producto',
 			'detail.price' => 'Precio',

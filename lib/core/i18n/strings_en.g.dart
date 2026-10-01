@@ -196,7 +196,10 @@ class _Translations$filters$en extends Translations$filters$es {
 	@override String get inStockOnly => 'In stock only';
 	@override String get inStockOnlyHint => 'Hides products with stock 0';
 	@override String get reset => 'Reset';
-	@override String apply({required Object n}) => 'Show ${n} products';
+	@override String apply({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Show ${n} product',
+		other: 'Show ${n} products',
+	);
 	@override String get rangeError => 'Minimum cannot be greater than maximum';
 }
 
@@ -417,7 +420,7 @@ extension on TranslationsEn {
 			'filters.inStockOnly' => 'In stock only',
 			'filters.inStockOnlyHint' => 'Hides products with stock 0',
 			'filters.reset' => 'Reset',
-			'filters.apply' => ({required Object n}) => 'Show ${n} products',
+			'filters.apply' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Show ${n} product', other: 'Show ${n} products', ), 
 			'filters.rangeError' => 'Minimum cannot be greater than maximum',
 			'detail.title' => 'Product detail',
 			'detail.price' => 'Price',

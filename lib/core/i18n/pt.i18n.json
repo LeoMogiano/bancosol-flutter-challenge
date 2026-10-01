@@ -83,7 +83,10 @@
     "inStockOnly": "Somente com estoque",
     "inStockOnlyHint": "Oculta produtos com estoque 0",
     "reset": "Redefinir",
-    "apply": "Ver {n} produtos",
+    "apply": {
+      "one": "Ver {n} produto",
+      "other": "Ver {n} produtos"
+    },
     "rangeError": "O mínimo não pode ser maior que o máximo"
   },
   "detail": {

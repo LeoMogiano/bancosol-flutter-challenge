@@ -13,6 +13,7 @@ import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/services/product_query.dart';
 import 'package:warehouse/modules/catalog/presentation/shell/main_shell.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/inventory_card.dart';
+import 'package:warehouse/modules/catalog/presentation/widgets/product_form_sheet.dart';
 import 'package:warehouse/shared/widgets/buttons/app_button.dart';
 import 'package:warehouse/shared/widgets/buttons/app_icon_button.dart';
 import 'package:warehouse/shared/widgets/cards/stat_tile.dart';
@@ -107,7 +108,11 @@ class _SummaryScreenState extends State<SummaryScreen> {
                           title: t.summary.emptyTitle,
                           message: t.summary.emptyMessage,
                           actions: [
-                            AppButton(label: t.actions.newProduct, onPressed: null),
+                            AppButton(
+                              label: t.actions.newProduct,
+                              icon: Icons.add_rounded,
+                              onPressed: () => _createProduct(context),
+                            ),
                             AppButton(
                               label: t.actions.refresh,
                               variant: AppButtonVariant.outline,
@@ -239,4 +244,13 @@ class _FakeSearchButton extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> _createProduct(BuildContext context) async {
+  final bloc = context.read<ProductsBloc>();
+  final created = await ProductFormSheet.open(context, existing: bloc.state.all);
+  if (created == null || !context.mounted) return;
+  bloc.add(ProductUpserted(created));
+  AppToast.show(context, context.t.toasts.created);
+  StatefulNavigationShell.of(context).goBranch(1);
 }
