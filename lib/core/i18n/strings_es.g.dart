@@ -566,6 +566,12 @@ class Translations$toasts$es {
 
 	/// es: 'Compartido'
 	String get shared => 'Compartido';
+
+	/// es: 'Error de prueba enviado · {id}'
+	String sentrySent({required Object id}) => 'Error de prueba enviado · ${id}';
+
+	/// es: 'Sentry no está activo en este build'
+	String get sentryDisabled => 'Sentry no está activo en este build';
 }
 
 // Path: share
@@ -626,6 +632,15 @@ class Translations$settings$es {
 
 	/// es: 'Versión'
 	String get version => 'Versión';
+
+	/// es: 'Diagnóstico'
+	String get diagnostics => 'Diagnóstico';
+
+	/// es: 'Probar Sentry'
+	String get sentryTest => 'Probar Sentry';
+
+	/// es: 'Envía un error de prueba al dashboard'
+	String get sentryTestHint => 'Envía un error de prueba al dashboard';
 }
 
 /// The flat map containing all translations for locale <es>.
@@ -761,6 +776,8 @@ extension on Translations {
 			'toasts.listUpdated' => 'Lista actualizada',
 			'toasts.synced' => 'Catálogo sincronizado',
 			'toasts.shared' => 'Compartido',
+			'toasts.sentrySent' => ({required Object id}) => 'Error de prueba enviado · ${id}',
+			'toasts.sentryDisabled' => 'Sentry no está activo en este build',
 			'share.text' => ({required Object name, required Object price, required Object currency, required Object sku}) => 'Nombre: ${name}\nPrecio: ${price} ${currency}\nSKU: ${sku}',
 			'settings.eyebrow' => 'PREFERENCIAS',
 			'settings.title' => 'Ajustes',
@@ -775,6 +792,9 @@ extension on Translations {
 			'settings.neverSynced' => 'Sin sincronizar',
 			'settings.about' => 'Acerca de',
 			'settings.version' => 'Versión',
+			'settings.diagnostics' => 'Diagnóstico',
+			'settings.sentryTest' => 'Probar Sentry',
+			'settings.sentryTestHint' => 'Envía un error de prueba al dashboard',
 			_ => null,
 		};
 	}

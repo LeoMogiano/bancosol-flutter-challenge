@@ -156,7 +156,9 @@
     "deleted": "Product deleted",
     "listUpdated": "List updated",
     "synced": "Catalog synced",
-    "shared": "Shared"
+    "shared": "Shared",
+    "sentrySent": "Test error sent · {id}",
+    "sentryDisabled": "Sentry is not enabled in this build"
   },
   "share": {
     "text": "Name: {name}\nPrice: {price} {currency}\nSKU: {sku}"
@@ -174,6 +176,9 @@
     "syncedAt": "Synced {time}",
     "neverSynced": "Not synced yet",
     "about": "About",
-    "version": "Version"
+    "version": "Version",
+    "diagnostics": "Diagnostics",
+    "sentryTest": "Test Sentry",
+    "sentryTestHint": "Sends a test error to the dashboard"
   }
 }
