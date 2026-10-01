@@ -133,8 +133,6 @@ iOS: Xcode no entiende `--dart-define-from-file`, así que cada scheme tiene una
 flutter test --coverage --dart-define-from-file=.env.dev
 ```
 
-Pocos tests, uno por regla de negocio:
-
 | Capa | Reglas |
 |---|---|
 | Red | Cada error HTTP se mapea a su `FailureType`; GET con 500 reintenta, POST nunca; secretos fuera de logs y Sentry |
