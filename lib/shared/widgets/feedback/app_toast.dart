@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:warehouse/core/services/haptic_service.dart';
 import 'package:warehouse/core/theme/app_dimens.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 
@@ -9,10 +10,15 @@ abstract final class AppToast {
   static OverlayEntry? _current;
   static Timer? _timer;
 
-  static void showSuccess(BuildContext context, String message, {IconData icon = Icons.check_circle_rounded}) =>
-      _show(context, message, icon);
+  static void showSuccess(BuildContext context, String message, {IconData icon = Icons.check_circle_rounded}) {
+    HapticService.success();
+    _show(context, message, icon);
+  }
 
-  static void showError(BuildContext context, String message) => _show(context, message, Icons.error_rounded);
+  static void showError(BuildContext context, String message) {
+    HapticService.error();
+    _show(context, message, Icons.error_rounded);
+  }
 
   static void showInfo(BuildContext context, String message, {IconData icon = Icons.info_outline_rounded}) =>
       _show(context, message, icon);

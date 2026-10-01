@@ -1,7 +1,4 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/theme/app_dimens.dart';
 import 'package:warehouse/core/theme/app_fonts.dart';
@@ -13,7 +10,6 @@ class CustomBottomSheet extends StatelessWidget {
   final Widget child;
 
   static Future<T?> show<T>(BuildContext context, Widget child) {
-    unawaited(HapticFeedback.lightImpact());
     return showModalBottomSheet<T>(
       context: context,
       useRootNavigator: true,

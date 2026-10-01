@@ -1,8 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
+import 'package:warehouse/core/services/haptic_service.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 
 class AppNavItem {
@@ -89,7 +87,7 @@ class _TabState extends State<_Tab> {
   bool _pressed = false;
 
   void _handleTap() {
-    if (!widget.isActive) unawaited(HapticFeedback.selectionClick());
+    if (!widget.isActive) HapticService.selection();
     widget.onTap();
   }
 

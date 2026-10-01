@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:warehouse/core/services/haptic_service.dart';
 import 'package:warehouse/core/theme/app_dimens.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 
@@ -13,6 +14,7 @@ class CustomScaffold extends StatelessWidget {
     this.onRefresh,
     this.scrollController,
     this.bottomBar,
+    this.navigationBarColor = Colors.transparent,
   });
 
   final Widget body;
@@ -22,6 +24,7 @@ class CustomScaffold extends StatelessWidget {
   final RefreshCallback? onRefresh;
   final ScrollController? scrollController;
   final Widget? bottomBar;
+  final Color navigationBarColor;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +42,15 @@ class CustomScaffold extends StatelessWidget {
       );
     }
     if (onRefresh != null) {
-      content = RefreshIndicator(color: context.colors.accent, onRefresh: onRefresh!, child: content);
+      final refresh = onRefresh!;
+      content = RefreshIndicator(
+        color: context.colors.accent,
+        onRefresh: () {
+          HapticService.refresh();
+          return refresh();
+        },
+        child: content,
+      );
     }
     if (safeArea) content = SafeArea(child: content);
     content = Padding(padding: padding, child: content);
@@ -55,7 +66,10 @@ class CustomScaffold extends StatelessWidget {
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: statusBarIconBrightness,
         statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
-        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarColor: navigationBarColor,
+        systemNavigationBarDividerColor: Colors.transparent,
+        // Sin esto Android 10+ pinta un scrim oscuro sobre la nav bar de 3 botones.
+        systemNavigationBarContrastEnforced: false,
         systemNavigationBarIconBrightness: navBarIconBrightness,
       ),
       child: Scaffold(backgroundColor: context.colors.bg, body: content, bottomNavigationBar: bottomBar),
