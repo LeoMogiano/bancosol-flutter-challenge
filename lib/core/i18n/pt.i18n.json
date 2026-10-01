@@ -156,7 +156,9 @@
     "deleted": "Produto excluído",
     "listUpdated": "Lista atualizada",
     "synced": "Catálogo sincronizado",
-    "shared": "Compartilhado"
+    "shared": "Compartilhado",
+    "sentrySent": "Erro de teste enviado · {id}",
+    "sentryDisabled": "O Sentry não está ativo neste build"
   },
   "share": {
     "text": "Nome: {name}\nPreço: {price} {currency}\nSKU: {sku}"
@@ -174,6 +176,9 @@
     "syncedAt": "Sincronizado {time}",
     "neverSynced": "Ainda não sincronizado",
     "about": "Sobre",
-    "version": "Versão"
+    "version": "Versão",
+    "diagnostics": "Diagnóstico",
+    "sentryTest": "Testar Sentry",
+    "sentryTestHint": "Envia um erro de teste ao painel"
   }
 }

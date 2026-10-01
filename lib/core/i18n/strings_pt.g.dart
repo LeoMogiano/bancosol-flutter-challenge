@@ -312,6 +312,8 @@ class _Translations$toasts$pt extends Translations$toasts$es {
 	@override String get listUpdated => 'Lista atualizada';
 	@override String get synced => 'Catálogo sincronizado';
 	@override String get shared => 'Compartilhado';
+	@override String sentrySent({required Object id}) => 'Erro de teste enviado · ${id}';
+	@override String get sentryDisabled => 'O Sentry não está ativo neste build';
 }
 
 // Path: share
@@ -344,6 +346,9 @@ class _Translations$settings$pt extends Translations$settings$es {
 	@override String get neverSynced => 'Ainda não sincronizado';
 	@override String get about => 'Sobre';
 	@override String get version => 'Versão';
+	@override String get diagnostics => 'Diagnóstico';
+	@override String get sentryTest => 'Testar Sentry';
+	@override String get sentryTestHint => 'Envia um erro de teste ao painel';
 }
 
 /// The flat map containing all translations for locale <pt>.
@@ -479,6 +484,8 @@ extension on TranslationsPt {
 			'toasts.listUpdated' => 'Lista atualizada',
 			'toasts.synced' => 'Catálogo sincronizado',
 			'toasts.shared' => 'Compartilhado',
+			'toasts.sentrySent' => ({required Object id}) => 'Erro de teste enviado · ${id}',
+			'toasts.sentryDisabled' => 'O Sentry não está ativo neste build',
 			'share.text' => ({required Object name, required Object price, required Object currency, required Object sku}) => 'Nome: ${name}\nPreço: ${price} ${currency}\nSKU: ${sku}',
 			'settings.eyebrow' => 'PREFERÊNCIAS',
 			'settings.title' => 'Ajustes',
@@ -493,6 +500,9 @@ extension on TranslationsPt {
 			'settings.neverSynced' => 'Ainda não sincronizado',
 			'settings.about' => 'Sobre',
 			'settings.version' => 'Versão',
+			'settings.diagnostics' => 'Diagnóstico',
+			'settings.sentryTest' => 'Testar Sentry',
+			'settings.sentryTestHint' => 'Envia um erro de teste ao painel',
 			_ => null,
 		};
 	}

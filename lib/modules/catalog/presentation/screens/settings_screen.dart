@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sizer/sizer.dart';
+import 'package:warehouse/app/env_config.dart';
 import 'package:warehouse/core/constants/app_assets.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/preferences/preferences_cubit.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/settings/data_card.dart';
+import 'package:warehouse/modules/catalog/presentation/widgets/settings/sentry_test_card.dart';
 import 'package:warehouse/shared/widgets/cards/app_card.dart';
 import 'package:warehouse/shared/widgets/inputs/app_segmented.dart';
 import 'package:warehouse/shared/widgets/layout/app_top_bar.dart';
@@ -35,6 +37,7 @@ class SettingsScreen extends StatelessWidget {
                 _Section(title: t.settings.language, child: const _LanguageSelector()),
                 _Section(title: t.settings.data, child: const DataCard()),
                 _Section(title: t.settings.about, child: const _VersionCard()),
+                if (!EnvConfig.isProd) _Section(title: t.settings.diagnostics, child: const SentryTestCard()),
               ],
             ),
           ),
