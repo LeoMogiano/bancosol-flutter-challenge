@@ -93,7 +93,7 @@ flowchart LR
 | `ApiClient` con un único `_send` | Toda respuesta o error sale como dato o `Failure`. Si un DTO no sabe leer la respuesta, el `Failure(parse)` lleva la línea exacta que falló |
 | `RetryInterceptor` | Reintenta GET / PUT / DELETE ante timeout, 5xx o 429 (respeta `Retry-After`), por el mismo `Dio`. **Nunca POST**: un reintento podría crear el producto dos veces |
 | Log propio que censura secretos | El `LogInterceptor` de dio imprime cuerpos y headers en crudo; el nuestro oculta `x-api-key`, tokens y contraseñas. Solo corre en debug |
-| Sentry acotado | Issue solo para bugs reales (parse / inesperados y HTTP 400, 405, 5xx); 404 y 429 quedan como breadcrumb. `sendDefaultPii: false`, sin cuerpos y sin la api key |
+| Sentry acotado | Issue solo para bugs reales (parse / inesperados y HTTP 400, 405, 5xx); 404 y 429 quedan como breadcrumb. cada issue lleva captura de pantalla. `sendDefaultPii: false`, sin cuerpos y sin la api key |
 | Cache Hive sin adapters | Se guardan mapas JSON: sin `build_runner`. El cache es descartable: si está corrupto se ignora y la app igual arranca |
 | Fuentes variables | Outfit (sustituye a Poppins) y Playfair Display (sustituye a DM Serif Display), ambas variables, recortadas a latín y al eje 400–700: 140 KB en total |
 | Tamaños de texto con `sizer` | Solo valores de una tabla px → sp calibrada en 411 × 891; paddings, radios y alturas son fijos para no descuadrar en tablet |
