@@ -3,12 +3,17 @@ import 'package:warehouse/core/network/api_client.dart';
 import 'package:warehouse/core/services/share_service.dart';
 import 'package:warehouse/core/storage/local_store.dart';
 import 'package:warehouse/core/utils/app_clock.dart';
+import 'package:warehouse/modules/catalog/application/delete_product/delete_product_bloc.dart';
 import 'package:warehouse/modules/catalog/application/preferences/preferences_bloc.dart';
+import 'package:warehouse/modules/catalog/application/price_edit/price_edit_bloc.dart';
+import 'package:warehouse/modules/catalog/application/product_detail/product_detail_bloc.dart';
+import 'package:warehouse/modules/catalog/application/product_form/product_form_bloc.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 import 'package:warehouse/modules/catalog/data/datasources/product_local_data_source.dart';
 import 'package:warehouse/modules/catalog/data/datasources/product_remote_data_source.dart';
 import 'package:warehouse/modules/catalog/data/repositories/product_repository_impl.dart';
 import 'package:warehouse/modules/catalog/data/repositories/share_repository_impl.dart';
+import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/repositories/product_repository.dart';
 import 'package:warehouse/modules/catalog/domain/repositories/share_repository.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/create_product_use_case.dart';
@@ -41,6 +46,16 @@ abstract final class CatalogModule {
           useCache: () => di<PreferencesBloc>().state.cacheEnabled,
           clock: di<AppClock>(),
         ),
+      )
+      ..registerFactory<ProductDetailBloc>(() => ProductDetailBloc(shareProduct: di<ShareProductUseCase>()))
+      ..registerFactoryParam<ProductFormBloc, List<Product>, void>(
+        (existing, _) => ProductFormBloc(existing: existing, createProduct: di<CreateProductUseCase>()),
+      )
+      ..registerFactoryParam<PriceEditBloc, Product, void>(
+        (product, _) => PriceEditBloc(product: product, updatePrice: di<UpdateProductPriceUseCase>()),
+      )
+      ..registerFactoryParam<DeleteProductBloc, Product, void>(
+        (product, _) => DeleteProductBloc(product: product, deleteProduct: di<DeleteProductUseCase>()),
       );
   }
 }

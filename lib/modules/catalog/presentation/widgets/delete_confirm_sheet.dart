@@ -10,7 +10,6 @@ import 'package:warehouse/core/theme/app_fonts.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/delete_product/delete_product_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/delete_product_use_case.dart';
 import 'package:warehouse/shared/widgets/buttons/app_button.dart';
 import 'package:warehouse/shared/widgets/feedback/custom_bottom_sheet.dart';
 import 'package:warehouse/shared/widgets/feedback/error_banner.dart';
@@ -28,7 +27,7 @@ class DeleteConfirmSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => DeleteProductBloc(product: product, deleteProduct: sl<DeleteProductUseCase>()),
+      create: (_) => sl<DeleteProductBloc>(param1: product),
       child: BlocListener<DeleteProductBloc, DeleteProductState>(
         listenWhen: (prev, curr) => prev.submitting && !curr.submitting,
         listener: (context, state) => state.deleted ? Navigator.of(context).pop(true) : HapticService.error(),

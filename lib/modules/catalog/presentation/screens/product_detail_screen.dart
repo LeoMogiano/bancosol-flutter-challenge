@@ -9,7 +9,6 @@ import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/product_detail/product_detail_bloc.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
-import 'package:warehouse/modules/catalog/domain/usecases/share_product_use_case.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/delete_confirm_sheet.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/price_edit_sheet.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/product_detail/detail_bottom_bar.dart';
@@ -63,7 +62,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     }
 
     return BlocProvider(
-      create: (_) => ProductDetailBloc(shareProduct: sl<ShareProductUseCase>()),
+      create: (_) => sl<ProductDetailBloc>(),
       child: _ProductDetailContent(product: product, edited: _edited, onPriceEdited: () => _edited.value = true),
     );
   }
