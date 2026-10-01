@@ -1,5 +1,6 @@
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:warehouse/core/error/failure.dart';
+import 'package:warehouse/core/services/logger_service.dart';
 
 abstract final class StoreBox {
   static const String settings = 'settings';
@@ -22,8 +23,9 @@ class HiveLocalStore implements LocalStore {
     for (final name in StoreBox.all) {
       try {
         await Hive.openBox<dynamic>(name);
-      } on Object {
+      } on Object catch (e, s) {
         // Caja corrupta: se descarta (solo cache y preferencias) para que la app siempre arranque.
+        LoggerService.e('Caja "$name" corrupta: se borró y se recrea vacía', name: 'STORE', error: e, stackTrace: s);
         await Hive.deleteBoxFromDisk(name);
         await Hive.openBox<dynamic>(name);
       }
