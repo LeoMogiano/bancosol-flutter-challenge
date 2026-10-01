@@ -1,4 +1,4 @@
-part of 'price_edit_cubit.dart';
+part of 'price_edit_bloc.dart';
 
 class PriceEditState extends Equatable {
   const PriceEditState({

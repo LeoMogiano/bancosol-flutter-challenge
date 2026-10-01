@@ -1,4 +1,4 @@
-part of 'filter_draft_cubit.dart';
+part of 'filter_draft_bloc.dart';
 
 class FilterDraftState extends Equatable {
   const FilterDraftState({

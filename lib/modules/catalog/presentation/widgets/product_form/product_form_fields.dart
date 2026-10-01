@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
-import 'package:warehouse/modules/catalog/application/product_form/product_form_cubit.dart';
+import 'package:warehouse/modules/catalog/application/product_form/product_form_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/validators/price_validator.dart';
 import 'package:warehouse/modules/catalog/domain/validators/product_form_validator.dart';
 import 'package:warehouse/modules/catalog/presentation/i18n/validation_i18n.dart';
@@ -20,17 +20,17 @@ class FormSkuField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final cubit = context.read<ProductFormCubit>();
+    final bloc = context.read<ProductFormBloc>();
 
-    final data = context.select<ProductFormCubit, (String, SkuError?)>((bloc) => (bloc.state.sku, bloc.skuError));
+    final data = context.select<ProductFormBloc, (String, SkuError?)>((bloc) => (bloc.state.sku, bloc.skuError));
 
     return CustomInput(
       label: t.form.sku,
       initialValue: data.$1,
       textCapitalization: TextCapitalization.characters,
       inputFormatters: [SkuInputFormatter()],
-      onChanged: cubit.skuChanged,
-      onBlur: () => cubit.fieldBlurred(ProductField.sku),
+      onChanged: (value) => bloc.add(ProductFormFieldChanged(ProductField.sku, value)),
+      onBlur: () => bloc.add(const ProductFormFieldBlurred(ProductField.sku)),
       errorText: data.$2?.message,
     );
   }
@@ -42,16 +42,16 @@ class FormNameField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final cubit = context.read<ProductFormCubit>();
+    final bloc = context.read<ProductFormBloc>();
 
-    final data = context.select<ProductFormCubit, (String, NameError?)>((bloc) => (bloc.state.name, bloc.nameError));
+    final data = context.select<ProductFormBloc, (String, NameError?)>((bloc) => (bloc.state.name, bloc.nameError));
 
     return CustomInput(
       label: t.form.name,
       initialValue: data.$1,
       inputFormatters: [NameInputFormatter()],
-      onChanged: cubit.nameChanged,
-      onBlur: () => cubit.fieldBlurred(ProductField.name),
+      onChanged: (value) => bloc.add(ProductFormFieldChanged(ProductField.name, value)),
+      onBlur: () => bloc.add(const ProductFormFieldBlurred(ProductField.name)),
       errorText: data.$2?.message,
     );
   }
@@ -63,9 +63,9 @@ class FormPriceField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final cubit = context.read<ProductFormCubit>();
+    final bloc = context.read<ProductFormBloc>();
 
-    final data = context.select<ProductFormCubit, (String, String, PriceError?)>(
+    final data = context.select<ProductFormBloc, (String, String, PriceError?)>(
       (bloc) => (bloc.state.price, bloc.state.currency, bloc.priceError),
     );
 
@@ -73,8 +73,8 @@ class FormPriceField extends StatelessWidget {
       label: t.form.price,
       currency: data.$2,
       initialValue: data.$1,
-      onChanged: cubit.priceChanged,
-      onBlur: () => cubit.fieldBlurred(ProductField.price),
+      onChanged: (value) => bloc.add(ProductFormFieldChanged(ProductField.price, value)),
+      onBlur: () => bloc.add(const ProductFormFieldBlurred(ProductField.price)),
       errorText: data.$3?.message,
     );
   }
@@ -86,17 +86,17 @@ class FormStockField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final cubit = context.read<ProductFormCubit>();
+    final bloc = context.read<ProductFormBloc>();
 
-    final data = context.select<ProductFormCubit, (String, StockError?)>((bloc) => (bloc.state.stock, bloc.stockError));
+    final data = context.select<ProductFormBloc, (String, StockError?)>((bloc) => (bloc.state.stock, bloc.stockError));
 
     return CustomInput(
       label: t.form.stock,
       initialValue: data.$1,
       keyboardType: TextInputType.number,
       inputFormatters: [StockInputFormatter()],
-      onChanged: cubit.stockChanged,
-      onBlur: () => cubit.fieldBlurred(ProductField.stock),
+      onChanged: (value) => bloc.add(ProductFormFieldChanged(ProductField.stock, value)),
+      onBlur: () => bloc.add(const ProductFormFieldBlurred(ProductField.stock)),
       errorText: data.$2?.message,
     );
   }
@@ -108,9 +108,9 @@ class FormCurrencyField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final cubit = context.read<ProductFormCubit>();
+    final bloc = context.read<ProductFormBloc>();
 
-    final currency = context.select<ProductFormCubit, String>((bloc) => bloc.state.currency);
+    final currency = context.select<ProductFormBloc, String>((bloc) => bloc.state.currency);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,7 +126,7 @@ class FormCurrencyField extends StatelessWidget {
             AppSegment(value: 'USD', label: 'USD'),
           ],
           selected: currency,
-          onChanged: cubit.currencyChanged,
+          onChanged: (value) => bloc.add(ProductFormCurrencyChanged(value)),
         ),
       ],
     );

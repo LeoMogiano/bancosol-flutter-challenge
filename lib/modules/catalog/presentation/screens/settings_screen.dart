@@ -6,7 +6,7 @@ import 'package:warehouse/app/env_config.dart';
 import 'package:warehouse/core/constants/app_assets.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
-import 'package:warehouse/modules/catalog/application/preferences/preferences_cubit.dart';
+import 'package:warehouse/modules/catalog/application/preferences/preferences_bloc.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/settings/data_card.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/settings/sentry_test_card.dart';
 import 'package:warehouse/shared/widgets/cards/app_card.dart';
@@ -77,11 +77,11 @@ class _ThemeSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final themeMode = context.select<PreferencesCubit, ThemeMode>((bloc) => bloc.state.themeMode);
+    final themeMode = context.select<PreferencesBloc, ThemeMode>((bloc) => bloc.state.themeMode);
     return AppSegmented<ThemeMode>(
       // "Sistema" no está en el diseño: el modo efectivo del dispositivo se muestra como Claro u Oscuro.
       selected: themeMode == ThemeMode.system ? (context.isDarkMode ? ThemeMode.dark : ThemeMode.light) : themeMode,
-      onChanged: context.read<PreferencesCubit>().setThemeMode,
+      onChanged: (mode) => context.read<PreferencesBloc>().add(PreferencesThemeModeChanged(mode)),
       segments: [
         AppSegment(value: ThemeMode.light, label: t.theme.light, icon: Icons.light_mode_rounded),
         AppSegment(value: ThemeMode.dark, label: t.theme.dark, icon: Icons.dark_mode_rounded),
@@ -96,10 +96,10 @@ class _LanguageSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final languageCode = context.select<PreferencesCubit, String?>((bloc) => bloc.state.languageCode);
+    final languageCode = context.select<PreferencesBloc, String?>((bloc) => bloc.state.languageCode);
     return AppSegmented<String?>(
       selected: languageCode,
-      onChanged: context.read<PreferencesCubit>().setLanguageCode,
+      onChanged: (code) => context.read<PreferencesBloc>().add(PreferencesLanguageChanged(code)),
       segments: [
         AppSegment(value: null, label: t.settings.deviceLanguage),
         const AppSegment(value: 'es', label: 'ES', leading: _Flag(AppAssets.flagBolivia)),

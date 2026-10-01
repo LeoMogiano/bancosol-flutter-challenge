@@ -1,7 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:warehouse/modules/catalog/application/product_form/product_form_cubit.dart';
+import 'package:warehouse/modules/catalog/application/product_form/product_form_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product_draft.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/create_product_use_case.dart';
@@ -16,7 +16,7 @@ void main() {
     registerFallbackValue(FakeProductDraft());
   });
 
-  group('ProductFormCubit', () {
+  group('ProductFormBloc', () {
     late MockCreateProduct mockCreateProduct;
     const existing = [
       Product(remoteId: 'id1', id: 1, sku: 'SKU-001', name: 'Existing', price: 100, currency: 'BOB', stock: 5),
@@ -27,24 +27,30 @@ void main() {
     });
 
     test('los errores aparecen solo al salir del campo o al intentar crear', () async {
-      final cubit = ProductFormCubit(existing: existing, createProduct: mockCreateProduct)..skuChanged('');
-      expect(cubit.skuError, null);
+      final bloc = ProductFormBloc(existing: existing, createProduct: mockCreateProduct)
+        ..add(const ProductFormFieldChanged(ProductField.sku, ''));
+      await pumpEventQueue();
+      expect(bloc.skuError, null);
 
-      cubit.fieldBlurred(ProductField.sku);
-      expect(cubit.skuError, SkuError.empty);
+      bloc.add(const ProductFormFieldBlurred(ProductField.sku));
+      await pumpEventQueue();
+      expect(bloc.skuError, SkuError.empty);
 
-      cubit.skuChanged('SKU-002');
-      expect(cubit.skuError, null);
+      bloc.add(const ProductFormFieldChanged(ProductField.sku, 'SKU-002'));
+      await pumpEventQueue();
+      expect(bloc.skuError, null);
 
-      cubit.nameChanged('');
-      expect(cubit.nameError, null);
+      bloc.add(const ProductFormFieldChanged(ProductField.name, ''));
+      await pumpEventQueue();
+      expect(bloc.nameError, null);
 
-      await cubit.submit();
-      expect(cubit.state.submitted, true);
-      expect(cubit.nameError, NameError.empty);
+      bloc.add(const ProductFormSubmitted());
+      await pumpEventQueue();
+      expect(bloc.state.submitted, true);
+      expect(bloc.nameError, NameError.empty);
     });
 
-    blocTest<ProductFormCubit, ProductFormState>(
+    blocTest<ProductFormBloc, ProductFormState>(
       'el nuevo producto toma el siguiente id del catálogo',
       build: () {
         when(() => mockCreateProduct(any())).thenAnswer(
@@ -58,17 +64,15 @@ void main() {
             stock: 10,
           ),
         );
-        return ProductFormCubit(existing: existing, createProduct: mockCreateProduct);
+        return ProductFormBloc(existing: existing, createProduct: mockCreateProduct);
       },
-      act: (cubit) async {
-        cubit
-          ..skuChanged('SKU-002')
-          ..nameChanged('New Product')
-          ..priceChanged('150.00')
-          ..stockChanged('10');
-        await cubit.submit();
-      },
-      verify: (cubit) {
+      act: (bloc) => bloc
+        ..add(const ProductFormFieldChanged(ProductField.sku, 'SKU-002'))
+        ..add(const ProductFormFieldChanged(ProductField.name, 'New Product'))
+        ..add(const ProductFormFieldChanged(ProductField.price, '150.00'))
+        ..add(const ProductFormFieldChanged(ProductField.stock, '10'))
+        ..add(const ProductFormSubmitted()),
+      verify: (_) {
         final draft = verify(() => mockCreateProduct(captureAny())).captured.single as ProductDraft;
         expect(draft.id, existing.map((p) => p.id).reduce((a, b) => a > b ? a : b) + 1);
       },

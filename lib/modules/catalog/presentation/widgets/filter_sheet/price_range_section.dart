@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
-import 'package:warehouse/modules/catalog/application/filters/filter_draft_cubit.dart';
+import 'package:warehouse/modules/catalog/application/filters/filter_draft_bloc.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/filter_sheet/filter_section.dart';
 import 'package:warehouse/shared/widgets/inputs/price_field.dart';
 
@@ -15,7 +15,7 @@ class PriceRangeSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final isValid = context.select<FilterDraftCubit, bool>((cubit) => cubit.rangeValid);
+    final isValid = context.select<FilterDraftBloc, bool>((bloc) => bloc.rangeValid);
 
     return FilterSection(
       title: t.filters.priceRange,
@@ -57,17 +57,17 @@ class _BoundField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final cubit = context.read<FilterDraftCubit>();
+    final bloc = context.read<FilterDraftBloc>();
     // El texto se selecciona para que `reset` limpie el campo; cada límite escucha solo el suyo.
-    final data = context.select<FilterDraftCubit, ({String text, bool valid})>(
-      (cubit) => (text: isMin ? cubit.state.minText : cubit.state.maxText, valid: cubit.rangeValid),
+    final data = context.select<FilterDraftBloc, ({String text, bool valid})>(
+      (bloc) => (text: isMin ? bloc.state.minText : bloc.state.maxText, valid: bloc.rangeValid),
     );
 
     return PriceField(
       currency: 'BOB',
       label: isMin ? t.filters.min : t.filters.max,
       initialValue: data.text,
-      onChanged: isMin ? cubit.minChanged : cubit.maxChanged,
+      onChanged: (text) => bloc.add(isMin ? FilterDraftMinChanged(text) : FilterDraftMaxChanged(text)),
       errorText: data.valid ? null : '',
     );
   }

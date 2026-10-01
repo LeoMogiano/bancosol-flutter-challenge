@@ -66,13 +66,13 @@ lib/
 └── modules/catalog/
     ├── domain/           Dart puro: entidades, interfaces de repositorio, casos de uso, validadores, ProductQuery
     ├── data/             DTOs, ApiClient remoto, cache Hive, MethodChannel de compartir, repositorio
-    ├── application/      ProductsBloc (catálogo) y cubits por pantalla / hoja
+    ├── application/      ProductsBloc (catálogo) y un bloc por pantalla / hoja
     └── presentation/     pantallas, hojas y widgets propios del catálogo
 ```
 
 ```mermaid
 flowchart LR
-  UI[Pantallas / hojas] --> B[Bloc / Cubit]
+  UI[Pantallas / hojas] --> B[Bloc]
   B --> UC[Caso de uso]
   UC --> R[ProductRepository]
   R --> API[ApiClient · dio]
@@ -82,7 +82,7 @@ flowchart LR
 
 - **Domain** no importa Flutter, dio ni JSON. Los repositorios lanzan `Failure`; nunca una excepción de dio.
 - **`ProductsBloc`** es único y compartido por Resumen, Productos y Ajustes: búsqueda, orden, filtros y paginación se calculan en cliente sobre la lista cargada (CrudCrud no filtra).
-- **Cada hoja** (editar precio, nuevo producto, eliminar, filtros) crea su propio cubit, que muere al cerrarla. Mientras hay una petición en curso la hoja no se puede cerrar.
+- **Cada hoja** (editar precio, nuevo producto, eliminar, filtros) crea su propio bloc, que muere al cerrarla. Mientras hay una petición en curso la hoja no se puede cerrar, y el envío usa `droppable()`: un doble tap no dispara dos peticiones.
 - **Reconstrucciones mínimas**: `context.select` en widgets chicos, `BlocSelector` para trozos de una pantalla grande, nunca un `BlocBuilder` alrededor de una pantalla. Estándar completo en [CONTRIBUTING.md](CONTRIBUTING.md#reconstrucciones).
 
 ## Decisiones técnicas

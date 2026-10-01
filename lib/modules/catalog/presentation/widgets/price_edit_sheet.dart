@@ -7,7 +7,7 @@ import 'package:warehouse/core/i18n/failure_i18n.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/services/haptic_service.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
-import 'package:warehouse/modules/catalog/application/price_edit/price_edit_cubit.dart';
+import 'package:warehouse/modules/catalog/application/price_edit/price_edit_bloc.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/update_product_price_use_case.dart';
@@ -30,7 +30,7 @@ class PriceEditSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => PriceEditCubit(product: product, updatePrice: sl<UpdateProductPriceUseCase>()),
+      create: (_) => PriceEditBloc(product: product, updatePrice: sl<UpdateProductPriceUseCase>()),
       child: PriceEditContent(product: product),
     );
   }
@@ -48,11 +48,11 @@ class PriceEditContent extends StatelessWidget {
     final colors = context.colors;
     return MultiBlocListener(
       listeners: [
-        BlocListener<PriceEditCubit, PriceEditState>(
+        BlocListener<PriceEditBloc, PriceEditState>(
           listenWhen: (prev, curr) => prev.saved == null && curr.saved != null,
           listener: (context, state) => Navigator.of(context).pop(state.saved),
         ),
-        BlocListener<PriceEditCubit, PriceEditState>(
+        BlocListener<PriceEditBloc, PriceEditState>(
           listenWhen: (prev, curr) =>
               prev.submitting &&
               !curr.submitting &&
@@ -61,7 +61,7 @@ class PriceEditContent extends StatelessWidget {
           listener: (_, _) => HapticService.error(),
         ),
         // 404: el producto ya no existe; editarlo no tiene sentido, se cierra y se recarga la lista.
-        BlocListener<PriceEditCubit, PriceEditState>(
+        BlocListener<PriceEditBloc, PriceEditState>(
           listenWhen: (prev, curr) => curr.submitError?.type == FailureType.notFound && prev.submitError == null,
           listener: (context, state) {
             final products = context.read<ProductsBloc>();
@@ -71,7 +71,7 @@ class PriceEditContent extends StatelessWidget {
           },
         ),
       ],
-      child: BlocSelector<PriceEditCubit, PriceEditState, bool>(
+      child: BlocSelector<PriceEditBloc, PriceEditState, bool>(
         selector: (state) => state.submitting,
         // Mientras guarda no se puede cerrar: el usuario no sabría si el precio cambió.
         builder: (context, submitting) => PopScope(
@@ -115,8 +115,8 @@ class _PriceInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final cubit = context.read<PriceEditCubit>();
-    final data = context.select<PriceEditCubit, ({PriceError? error, int? changePercent})>(
+    final bloc = context.read<PriceEditBloc>();
+    final data = context.select<PriceEditBloc, ({PriceError? error, int? changePercent})>(
       (bloc) => (error: bloc.error, changePercent: bloc.changePercent),
     );
     final error = switch (data.error) {
@@ -133,11 +133,11 @@ class _PriceInput extends StatelessWidget {
       _ => t.priceEdit.help,
     };
     return PriceField(
-      currency: cubit.state.product.currency,
+      currency: bloc.state.product.currency,
       large: true,
       autofocus: true,
-      initialValue: cubit.state.draft,
-      onChanged: cubit.draftChanged,
+      initialValue: bloc.state.draft,
+      onChanged: (value) => bloc.add(PriceEditDraftChanged(value)),
       errorText: error,
       helperText: helper,
       helperIsWarning: data.error == null && data.changePercent != null,
@@ -151,7 +151,7 @@ class _ServerError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final failure = context.select<PriceEditCubit, Failure?>((bloc) => bloc.state.submitError);
+    final failure = context.select<PriceEditBloc, Failure?>((bloc) => bloc.state.submitError);
     if (failure == null) return const SizedBox.shrink();
     final message = switch (failure.type) {
       FailureType.network || FailureType.timeout => t.priceEdit.offlineError,
@@ -171,8 +171,8 @@ class _Actions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final cubit = context.read<PriceEditCubit>();
-    final data = context.select<PriceEditCubit, ({bool canSubmit, bool submitting, bool failed})>(
+    final bloc = context.read<PriceEditBloc>();
+    final data = context.select<PriceEditBloc, ({bool canSubmit, bool submitting, bool failed})>(
       (bloc) => (canSubmit: bloc.canSubmit, submitting: bloc.state.submitting, failed: bloc.state.submitError != null),
     );
     return SheetActions(
@@ -185,7 +185,7 @@ class _Actions extends StatelessWidget {
         label: data.failed ? t.actions.retry : t.priceEdit.save,
         loading: data.submitting,
         loadingLabel: t.priceEdit.saving,
-        onPressed: data.canSubmit ? cubit.submit : null,
+        onPressed: data.canSubmit ? () => bloc.add(const PriceEditSubmitted()) : null,
       ),
     );
   }

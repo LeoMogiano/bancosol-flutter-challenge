@@ -6,7 +6,7 @@ import 'package:warehouse/app/router/app_routes.dart';
 import 'package:warehouse/core/di/service_locator.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
-import 'package:warehouse/modules/catalog/application/product_detail/product_detail_cubit.dart';
+import 'package:warehouse/modules/catalog/application/product_detail/product_detail_bloc.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/share_product_use_case.dart';
@@ -63,7 +63,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     }
 
     return BlocProvider(
-      create: (_) => ProductDetailCubit(shareProduct: sl<ShareProductUseCase>()),
+      create: (_) => ProductDetailBloc(shareProduct: sl<ShareProductUseCase>()),
       child: _ProductDetailContent(product: product, edited: _edited, onPriceEdited: () => _edited.value = true),
     );
   }

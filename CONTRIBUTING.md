@@ -33,7 +33,8 @@ flutter test --dart-define-from-file=.env.dev
 - Textos visibles solo desde slang (`context.t`); nada escrito a mano.
 - Colores solo desde `context.colors`.
 - `fontSize` solo con valores `.sp` de la tabla px → sp; paddings, radios y alturas son fijos.
-- Estado de un Bloc en la UI: ver [Reconstrucciones](#reconstrucciones). Los formularios guardan su estado en un cubit, no en `setState`.
+- Estado de un Bloc en la UI: ver [Reconstrucciones](#reconstrucciones). Los formularios guardan su estado en un bloc, no en `setState`.
+- Bloc con eventos por defecto; los envíos (guardar, eliminar, compartir) llevan `transformer: droppable()`. Cubit solo para un flag local sin I/O (ej. `SearchFocusCubit`).
 - Comentarios solo para explicar un porqué que no es obvio.
 - Tests: pocos y esenciales, cada uno con una regla concreta y nombre en español.
 

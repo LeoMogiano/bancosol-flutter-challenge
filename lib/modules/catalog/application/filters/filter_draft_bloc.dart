@@ -5,10 +5,11 @@ import 'package:warehouse/modules/catalog/domain/services/product_query.dart';
 import 'package:warehouse/modules/catalog/domain/validators/price_validator.dart';
 import 'package:warehouse/modules/catalog/domain/validators/product_form_validator.dart';
 
+part 'filter_draft_event.dart';
 part 'filter_draft_state.dart';
 
-class FilterDraftCubit extends Cubit<FilterDraftState> {
-  FilterDraftCubit({
+class FilterDraftBloc extends Bloc<FilterDraftEvent, FilterDraftState> {
+  FilterDraftBloc({
     required ProductSort sort,
     required ProductFilters filters,
     required List<Product> all,
@@ -23,7 +24,14 @@ class FilterDraftCubit extends Cubit<FilterDraftState> {
            currency: filters.currency,
            inStockOnly: filters.inStockOnly,
          ),
-       );
+       ) {
+    on<FilterDraftSortChanged>((event, emit) => emit(state.copyWith(sort: event.sort)));
+    on<FilterDraftMinChanged>((event, emit) => emit(state.copyWith(minText: event.text)));
+    on<FilterDraftMaxChanged>((event, emit) => emit(state.copyWith(maxText: event.text)));
+    on<FilterDraftCurrencyChanged>((event, emit) => emit(state.copyWith(currency: () => event.currency)));
+    on<FilterDraftInStockToggled>((event, emit) => emit(state.copyWith(inStockOnly: event.inStockOnly)));
+    on<FilterDraftReset>((event, emit) => emit(const FilterDraftState()));
+  }
 
   final List<Product> _all;
   final String _query;
@@ -42,29 +50,5 @@ class FilterDraftCubit extends Cubit<FilterDraftState> {
 
   int get resultCount {
     return ProductQuery.apply(_all, query: _query, sort: state.sort, filters: filters).length;
-  }
-
-  void sortChanged(ProductSort sort) {
-    emit(state.copyWith(sort: sort));
-  }
-
-  void minChanged(String value) {
-    emit(state.copyWith(minText: value));
-  }
-
-  void maxChanged(String value) {
-    emit(state.copyWith(maxText: value));
-  }
-
-  void currencyChanged(String? currency) {
-    emit(state.copyWith(currency: () => currency));
-  }
-
-  void inStockChanged(bool value) {
-    emit(state.copyWith(inStockOnly: value));
-  }
-
-  void reset() {
-    emit(const FilterDraftState());
   }
 }

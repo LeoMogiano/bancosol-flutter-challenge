@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:warehouse/core/storage/local_store.dart';
-import 'package:warehouse/modules/catalog/application/preferences/preferences_cubit.dart';
+import 'package:warehouse/modules/catalog/application/preferences/preferences_bloc.dart';
 
 class _MockStore extends Mock implements LocalStore;
 
@@ -24,7 +24,7 @@ void main() {
     when(() => store.read<String>(SettingsKey.languageCode)).thenReturn('pt');
     when(() => store.read<bool>(SettingsKey.cacheEnabled)).thenReturn(false);
 
-    final state = PreferencesCubit(store).state;
+    final state = PreferencesBloc(store).state;
 
     expect(state.themeMode, ThemeMode.dark);
     expect(state.languageCode, 'pt');
@@ -32,11 +32,10 @@ void main() {
   });
 
   test('volver al idioma del dispositivo borra la preferencia guardada', () async {
-    final cubit = PreferencesCubit(store);
+    final bloc = PreferencesBloc(store)..add(const PreferencesLanguageChanged(null));
+    await pumpEventQueue();
 
-    await cubit.setLanguageCode(null);
-
-    expect(cubit.state.languageCode, isNull);
+    expect(bloc.state.languageCode, isNull);
     verify(() => store.delete(SettingsKey.languageCode)).called(1);
   });
 }

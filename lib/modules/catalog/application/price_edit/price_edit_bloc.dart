@@ -1,3 +1,4 @@
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/core/error/failure.dart';
@@ -6,12 +7,16 @@ import 'package:warehouse/modules/catalog/domain/usecases/update_product_price_u
 import 'package:warehouse/modules/catalog/domain/validators/price_validator.dart';
 import 'package:warehouse/shared/formatters/price_formatter.dart';
 
+part 'price_edit_event.dart';
 part 'price_edit_state.dart';
 
-class PriceEditCubit extends Cubit<PriceEditState> {
-  PriceEditCubit({required Product product, required UpdateProductPriceUseCase updatePrice})
+class PriceEditBloc extends Bloc<PriceEditEvent, PriceEditState> {
+  PriceEditBloc({required Product product, required UpdateProductPriceUseCase updatePrice})
     : _updatePrice = updatePrice,
-      super(PriceEditState(product: product, draft: PriceFormatter.format(product.price)));
+      super(PriceEditState(product: product, draft: PriceFormatter.format(product.price))) {
+    on<PriceEditDraftChanged>(_onDraftChanged);
+    on<PriceEditSubmitted>(_onSubmitted, transformer: droppable());
+  }
 
   final UpdateProductPriceUseCase _updatePrice;
 
@@ -26,11 +31,11 @@ class PriceEditCubit extends Cubit<PriceEditState> {
 
   bool get canSubmit => error == null && !state.submitting;
 
-  void draftChanged(String value) {
-    emit(state.copyWith(draft: value, submitError: () => null));
+  void _onDraftChanged(PriceEditDraftChanged event, Emitter<PriceEditState> emit) {
+    emit(state.copyWith(draft: event.draft, submitError: () => null));
   }
 
-  Future<void> submit() async {
+  Future<void> _onSubmitted(PriceEditSubmitted event, Emitter<PriceEditState> emit) async {
     if (!canSubmit) return;
     emit(state.copyWith(submitting: true));
     try {

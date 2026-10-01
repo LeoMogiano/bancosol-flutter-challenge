@@ -1,4 +1,4 @@
-part of 'product_form_cubit.dart';
+part of 'product_form_bloc.dart';
 
 class ProductFormState extends Equatable {
   const ProductFormState({
