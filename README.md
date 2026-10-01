@@ -23,17 +23,25 @@ En VS Code, `.vscode/launch.json` trae Debug / Release × dev / qa / prod.
 
 El ambiente no vive en el `.env`: sale del flavor, así no pueden desalinearse.
 
-## Funcionalidades
+## Criterios de aceptación
 
-| Requisito | Solución |
-|---|---|
-| Listar (nombre, SKU, precio, moneda, stock) | Skeletons y estados de error, vacío y sin resultados con reintento |
-| Buscar por nombre o SKU | Debounce de 350 ms; ignora mayúsculas, espacios y guiones (`1004` → `SKU-1004`) |
-| Editar solo el precio | Hoja con validación en vivo (`precio > 0`, moneda no vacía) antes de tocar la red |
-| Ordenar por precio, nombre y SKU | Orden estable (desempate por id); USD se compara convertido a BOB |
-| Compartir | `MethodChannel` propio (`app/share`) en Kotlin y Swift; texto estructurado Nombre / Precio / SKU |
-| Bloc y widgets genéricos | `flutter_bloc`; componentes reutilizables en `lib/shared/widgets` |
-| **Plus** | Filtros (precio, moneda, stock), paginación, cache offline con Hive, API key, Sentry, crear / eliminar, i18n es / en / pt, tema claro / oscuro, flavors |
+| # | Criterio | Implementación |
+|---|---|---|
+| 1 | Listar nombre, SKU, precio, moneda y stock | Lista paginada con tarjetas reutilizables |
+| 1 | Carga y errores | Skeletons; estados de error, vacío y sin resultados con reintento |
+| 2 | Buscar por nombre o SKU | Debounce de 350 ms; ignora mayúsculas, espacios y guiones (`1004` → `SKU-1004`) |
+| 3 | Editar solo el precio | Hoja que solo expone el campo precio; nombre, SKU, moneda y stock se conservan |
+| 3 | Reflejar el cambio en el listado | El producto se actualiza en el bloc compartido y se resalta unos segundos |
+| 3 | Carga y errores | Botón con progreso, hoja bloqueada durante el envío, error → "Reintentar" |
+| 4 | Ordenar por precio asc / desc, nombre y SKU | Orden estable (desempate por id); USD se compara convertido a BOB |
+| 5 | Compartir con el sheet nativo | `MethodChannel` propio (`app/share`): `ACTION_SEND` en Kotlin, `UIActivityViewController` en Swift |
+| 5 | Información estructurada | Nombre, precio y SKU con formato, no texto plano |
+| — | `precio > 0` y moneda no vacía | Validación en vivo en dominio, antes de tocar la red |
+| — | Errores claros | `Failure` tipado traducido a un mensaje por caso (offline, 404, 429, servidor…) |
+| — | Componentes genéricos | `CustomScaffold`, `CustomInput`, `CustomBottomSheet`, `AppButton`, `AppStateView` en `lib/shared/widgets` |
+| — | Manejo de estado | `flutter_bloc` |
+
+**Plus:** filtros (rango de precio, moneda, con stock), paginación, cache offline con Hive, header API key, Sentry y logging, crear / eliminar productos, i18n es / en / pt, tema claro / oscuro, flavors dev / qa / prod.
 
 ## Arquitectura
 
