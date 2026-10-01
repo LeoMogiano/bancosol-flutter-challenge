@@ -36,16 +36,31 @@ El ambiente no vive en el `.env`: sale del flavor, así no pueden desalinearse.
 | 4 | Ordenar por precio asc / desc | Mayor precio / Menor precio; USD se convierte a BOB para comparar |
 | 4 | Ordenar por nombre y SKU | Nombre A–Z y SKU A–Z, sin distinguir mayúsculas; empates se resuelven por id para que el orden no salte entre recargas |
 | 5 | Compartir con el sheet nativo | `MethodChannel` propio (`app/share`): `ACTION_SEND` en Kotlin, `UIActivityViewController` en Swift |
-| 5 | Información estructurada | Nombre, precio y SKU con formato, no texto plano |
-| — | `precio > 0` y moneda no vacía | Validación en vivo en dominio, antes de tocar la red |
+| 5 | Información estructurada | Una línea por campo (`Nombre: …` / `Precio: 1,500.50 BOB` / `SKU: …`) en el idioma activo; el nombre va como asunto para correo |
+| — | `precio > 0` y moneda no vacía | Validación en vivo en dominio, antes de tocar la red (ver [Validaciones](#validaciones)) |
 | — | Errores claros | `Failure` tipado traducido a un mensaje por caso (offline, 404, 429, servidor…) |
 | — | Componentes genéricos | `CustomScaffold`, `CustomInput`, `CustomBottomSheet`, `AppButton`, `AppStateView` en `lib/shared/widgets` |
 | — | Manejo de estado | `flutter_bloc` |
 
+### Validaciones
+
+Viven en `domain/validators`, se muestran en vivo y bloquean el envío antes de tocar la red.
+
+| Campo | Reglas |
+|---|---|
+| Precio | Obligatorio; número con hasta 2 decimales (rechaza `12.`, `NaN`, `1e5`); `> 0`; `≤ 999,999.99`; distinto al actual. Un cambio ≥ 50 % avisa sin bloquear |
+| Moneda | No vacía |
+| Nombre | ≥ 3 caracteres, no solo números, no repetido |
+| SKU | ≥ 4 caracteres, mayúsculas, números y guiones (`SKU-1003`), no repetido sin distinguir mayúsculas |
+| Stock | Entero entre 0 y 99,999 |
+| Filtro de precio | Mínimo ≤ máximo |
+
+Nombre, SKU y stock aplican al crear un producto; al editar solo se valida el precio.
+
 **Plus**
 
 - **Filtros**, en la misma hoja "Ordenar y filtrar", combinables con búsqueda y orden:
-  - Rango de precio en BOB (mínimo, máximo o ambos; valida mínimo ≤ máximo).
+  - Rango de precio en BOB: mínimo, máximo o ambos.
   - Moneda: Todas, BOB o USD.
   - Solo con stock: oculta los productos con stock 0.
   - El botón "Ver N productos" cuenta en vivo antes de aplicar; un badge en el buscador indica cuántos filtros hay activos y "Restablecer" los limpia.
