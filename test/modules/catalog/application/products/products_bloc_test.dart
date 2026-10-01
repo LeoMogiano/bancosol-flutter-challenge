@@ -70,6 +70,17 @@ void main() {
   );
 
   blocTest<ProductsBloc, ProductsState>(
+    'un error inesperado no deja el refresco colgado',
+    setUp: () => when(() => getProducts()).thenThrow(StateError('bug')),
+    build: build,
+    act: (bloc) => bloc.add(const ProductsRefreshed()),
+    verify: (bloc) {
+      expect(bloc.state.isRefreshing, isFalse);
+      expect(bloc.state.failure?.type, FailureType.unexpected);
+    },
+  );
+
+  blocTest<ProductsBloc, ProductsState>(
     'buscar vuelve a la página 1',
     build: build,
     seed: () {
