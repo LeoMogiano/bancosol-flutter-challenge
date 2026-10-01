@@ -4,21 +4,30 @@ App Flutter (Android + iOS) para gestionar un catálogo de productos sobre [Crud
 
 ## Capturas
 
+### iOS
+
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/android-summary.webp" width="250" alt="Resumen · Android"><br><sub>Resumen · Android</sub></td>
-    <td align="center"><img src="docs/screenshots/ios-products.webp" width="250" alt="Productos · iOS"><br><sub>Productos · iOS</sub></td>
-    <td align="center"><img src="docs/screenshots/ios-settings.webp" width="250" alt="Ajustes · iOS"><br><sub>Ajustes · iOS</sub></td>
+    <td align="center"><img src="docs/screenshots/ios-products.webp" width="250" alt="Productos"><br><sub>Productos</sub></td>
+    <td align="center"><img src="docs/screenshots/ios-settings.webp" width="250" alt="Ajustes"><br><sub>Ajustes</sub></td>
+    <td align="center"><img src="docs/screenshots/ios-edit-price.webp" width="250" alt="Editar precio"><br><sub>Editar precio</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/android-filters.webp" width="250" alt="Ordenar y filtrar · Android"><br><sub>Ordenar y filtrar · Android</sub></td>
-    <td align="center"><img src="docs/screenshots/android-new-product.webp" width="250" alt="Nuevo producto · Android"><br><sub>Nuevo producto · Android</sub></td>
-    <td align="center"><img src="docs/screenshots/ios-edit-price.webp" width="250" alt="Editar precio · iOS"><br><sub>Editar precio · iOS</sub></td>
+    <td align="center"><img src="docs/screenshots/ios-share.webp" width="250" alt="Compartir"><br><sub>Compartir</sub></td>
+    <td align="center"><img src="docs/screenshots/ios-offline.webp" width="250" alt="Cache offline"><br><sub>Cache offline</sub></td>
+  </tr>
+</table>
+
+### Android
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/android-summary.webp" width="250" alt="Resumen"><br><sub>Resumen</sub></td>
+    <td align="center"><img src="docs/screenshots/android-new-product.webp" width="250" alt="Nuevo producto"><br><sub>Nuevo producto</sub></td>
+    <td align="center"><img src="docs/screenshots/android-share.webp" width="250" alt="Compartir"><br><sub>Compartir</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/android-share.webp" width="250" alt="Compartir · Android"><br><sub>Compartir · Android</sub></td>
-    <td align="center"><img src="docs/screenshots/ios-share.webp" width="250" alt="Compartir · iOS"><br><sub>Compartir · iOS</sub></td>
-    <td align="center"><img src="docs/screenshots/ios-offline.webp" width="250" alt="Cache offline · iOS"><br><sub>Cache offline · iOS</sub></td>
+    <td align="center"><img src="docs/screenshots/android-filters.webp" width="250" alt="Ordenar y filtrar"><br><sub>Ordenar y filtrar</sub></td>
   </tr>
 </table>
 
