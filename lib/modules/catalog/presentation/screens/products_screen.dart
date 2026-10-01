@@ -94,6 +94,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
+
     return MultiBlocListener(
       listeners: [
         BlocListener<ProductsBloc, ProductsState>(
