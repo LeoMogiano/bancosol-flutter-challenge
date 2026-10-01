@@ -1,24 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/di/service_locator.dart';
 import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
-import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/product_form/product_form_cubit.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/create_product.dart';
-import 'package:warehouse/modules/catalog/domain/validators/price_validator.dart';
-import 'package:warehouse/modules/catalog/domain/validators/product_form_validator.dart';
-import 'package:warehouse/shared/formatters/name_input_formatter.dart';
-import 'package:warehouse/shared/formatters/sku_input_formatter.dart';
-import 'package:warehouse/shared/formatters/stock_input_formatter.dart';
+import 'package:warehouse/modules/catalog/presentation/widgets/product_form/product_form_fields.dart';
 import 'package:warehouse/shared/widgets/buttons/app_button.dart';
 import 'package:warehouse/shared/widgets/feedback/custom_bottom_sheet.dart';
 import 'package:warehouse/shared/widgets/feedback/error_banner.dart';
-import 'package:warehouse/shared/widgets/inputs/app_segmented.dart';
-import 'package:warehouse/shared/widgets/inputs/custom_input.dart';
-import 'package:warehouse/shared/widgets/inputs/price_field.dart';
 
 class ProductFormSheet extends StatelessWidget {
   const ProductFormSheet({required this.existing, super.key});
@@ -60,185 +51,30 @@ class _ProductFormContent extends StatelessWidget {
         children: [
           SheetHeader(title: t.form.title),
           const SizedBox(height: 18),
-          const _SkuField(),
+          const FormSkuField(),
           const SizedBox(height: 12),
-          const _NameField(),
+          const FormNameField(),
           const SizedBox(height: 12),
           // Lado a lado no deja espacio para el monto en pantallas de 320–360 dp.
           LayoutBuilder(
             builder: (_, constraints) => constraints.maxWidth < _sideBySideMinWidth
-                ? const Column(spacing: 12, children: [_PriceField(), _StockField()])
+                ? const Column(spacing: 12, children: [FormPriceField(), FormStockField()])
                 : const Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     spacing: 10,
                     children: [
-                      Expanded(flex: 5, child: _PriceField()),
-                      Expanded(flex: 4, child: _StockField()),
+                      Expanded(flex: 5, child: FormPriceField()),
+                      Expanded(flex: 4, child: FormStockField()),
                     ],
                   ),
           ),
           const SizedBox(height: 12),
-          const _CurrencyField(),
+          const FormCurrencyField(),
           const SizedBox(height: 18),
           const _ErrorBanner(),
           const _ActionsSection(),
         ],
       ),
-    );
-  }
-}
-
-class _SkuField extends StatelessWidget {
-  const _SkuField();
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.t;
-    final cubit = context.read<ProductFormCubit>();
-
-    final data = context.select<ProductFormCubit, (String, SkuError?)>((bloc) => (bloc.state.sku, bloc.skuError));
-    final errorText = data.$2 != null
-        ? switch (data.$2) {
-            SkuError.empty => t.validation.skuEmpty,
-            SkuError.tooShort => t.validation.skuTooShort,
-            SkuError.invalidFormat => t.validation.skuFormat,
-            SkuError.duplicate => t.validation.skuDuplicate,
-            null => null,
-          }
-        : null;
-
-    return CustomInput(
-      label: t.form.sku,
-      initialValue: data.$1,
-      textCapitalization: TextCapitalization.characters,
-      inputFormatters: [SkuInputFormatter()],
-      onChanged: cubit.skuChanged,
-      onBlur: () => cubit.fieldBlurred(ProductField.sku),
-      errorText: errorText,
-    );
-  }
-}
-
-class _NameField extends StatelessWidget {
-  const _NameField();
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.t;
-    final cubit = context.read<ProductFormCubit>();
-
-    final data = context.select<ProductFormCubit, (String, NameError?)>((bloc) => (bloc.state.name, bloc.nameError));
-    final errorText = data.$2 != null
-        ? switch (data.$2) {
-            NameError.empty => t.validation.nameEmpty,
-            NameError.tooShort => t.validation.nameTooShort,
-            NameError.onlyDigits => t.validation.nameOnlyDigits,
-            NameError.duplicate => t.validation.nameDuplicate,
-            null => null,
-          }
-        : null;
-
-    return CustomInput(
-      label: t.form.name,
-      initialValue: data.$1,
-      inputFormatters: [NameInputFormatter()],
-      onChanged: cubit.nameChanged,
-      onBlur: () => cubit.fieldBlurred(ProductField.name),
-      errorText: errorText,
-    );
-  }
-}
-
-class _PriceField extends StatelessWidget {
-  const _PriceField();
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.t;
-    final cubit = context.read<ProductFormCubit>();
-
-    final data = context.select<ProductFormCubit, (String, String, PriceError?)>(
-      (bloc) => (bloc.state.price, bloc.state.currency, bloc.priceError),
-    );
-    final errorText = data.$3 != null
-        ? switch (data.$3) {
-            PriceError.empty => t.validation.priceEmpty,
-            PriceError.incompleteDecimals => t.validation.priceIncomplete,
-            PriceError.notPositive => t.validation.priceNotPositive,
-            PriceError.tooHigh => t.validation.priceTooHigh,
-            PriceError.currencyEmpty => t.validation.currencyEmpty,
-            PriceError.unchanged => null,
-            null => null,
-          }
-        : null;
-
-    return PriceField(
-      label: t.form.price,
-      currency: data.$2,
-      initialValue: data.$1,
-      onChanged: cubit.priceChanged,
-      onBlur: () => cubit.fieldBlurred(ProductField.price),
-      errorText: errorText,
-    );
-  }
-}
-
-class _StockField extends StatelessWidget {
-  const _StockField();
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.t;
-    final cubit = context.read<ProductFormCubit>();
-
-    final data = context.select<ProductFormCubit, (String, StockError?)>((bloc) => (bloc.state.stock, bloc.stockError));
-    final errorText = data.$2 != null
-        ? switch (data.$2) {
-            StockError.empty => t.validation.stockEmpty,
-            StockError.tooHigh => t.validation.stockTooHigh,
-            null => null,
-          }
-        : null;
-
-    return CustomInput(
-      label: t.form.stock,
-      initialValue: data.$1,
-      keyboardType: TextInputType.number,
-      inputFormatters: [StockInputFormatter()],
-      onChanged: cubit.stockChanged,
-      onBlur: () => cubit.fieldBlurred(ProductField.stock),
-      errorText: errorText,
-    );
-  }
-}
-
-class _CurrencyField extends StatelessWidget {
-  const _CurrencyField();
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.t;
-    final cubit = context.read<ProductFormCubit>();
-
-    final currency = context.select<ProductFormCubit, String>((bloc) => bloc.state.currency);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 8,
-      children: [
-        Text(
-          t.form.currency,
-          style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600, color: context.colors.ink2),
-        ),
-        AppSegmented<String>(
-          segments: const [
-            AppSegment(value: 'BOB', label: 'BOB'),
-            AppSegment(value: 'USD', label: 'USD'),
-          ],
-          selected: currency,
-          onChanged: cubit.currencyChanged,
-        ),
-      ],
     );
   }
 }

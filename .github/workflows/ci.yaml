@@ -36,6 +36,9 @@ jobs:
       - name: Analyze
         run: flutter analyze
 
+      - name: Check screen sizes
+        run: ./tool/check_sizes.sh
+
       - name: Test
         run: flutter test --coverage --dart-define-from-file=.env.dev
 

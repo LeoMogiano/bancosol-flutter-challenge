@@ -22,6 +22,7 @@ Tipos: `feat`, `fix`, `test`, `refactor`, `docs`, `chore`, `build`, `ci`.
 ```bash
 dart format -l 120 lib test
 flutter analyze                                   # 0 issues
+./tool/check_sizes.sh                             # ningún archivo de presentación > 200 líneas
 flutter test --dart-define-from-file=.env.dev
 ```
 
@@ -34,6 +35,21 @@ flutter test --dart-define-from-file=.env.dev
 - Estado de un Bloc en la UI: ver [Reconstrucciones](#reconstrucciones). Los formularios guardan su estado en un cubit, no en `setState`.
 - Comentarios solo para explicar un porqué que no es obvio.
 - Tests: pocos y esenciales, cada uno con una regla concreta y nombre en español.
+
+## Tamaño de pantallas
+
+| Qué | Máximo |
+|---|---|
+| Archivo en `presentation/` (pantalla, hoja, widget) | 200 líneas, lo valida `tool/check_sizes.sh` en CI |
+| `build` de una pantalla | ~60 líneas: solo compone secciones |
+| Widget privado | ~80 líneas |
+| Anidación dentro de un `build` | ~6 niveles |
+
+- La pantalla conserva su estado (controllers, focos, flags), los listeners y los handlers que navegan; las secciones van como widgets.
+- Las secciones propias de una pantalla viven en `presentation/widgets/<pantalla>/` y son públicas; las que se usan en un solo archivo quedan privadas.
+- Bloques repetidos (chips, stats, opciones) se generan desde una lista de records, no se copian.
+- Un `switch` de error a texto va en una extensión `*_i18n.dart`, no dentro del widget.
+- Al extraer una sección, que lea su propio dato con `context.select` (ver [Reconstrucciones](#reconstrucciones)) en vez de recibirlo de una pantalla que lo seleccione completo.
 
 ## Reconstrucciones
 
