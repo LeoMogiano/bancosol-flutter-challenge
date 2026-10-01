@@ -25,7 +25,7 @@ void configureSentryOptions(SentryFlutterOptions options) {
     // Explícito: activarlo enviaría todos los headers, x-api-key incluido.
     ..sendDefaultPii = false
     ..maxRequestBodySize = MaxRequestBodySize.never
-    ..attachScreenshot = false
+    ..attachScreenshot = true
     ..beforeBreadcrumb = redactBreadcrumb;
 }
 
