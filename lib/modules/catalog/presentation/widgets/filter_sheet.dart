@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
-import 'package:warehouse/modules/catalog/application/filters/filter_draft_cubit.dart';
+import 'package:warehouse/modules/catalog/application/filters/filter_draft_bloc.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/services/product_query.dart';
@@ -34,7 +34,7 @@ class FilterSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => FilterDraftCubit(sort: sort, filters: filters, all: all, query: query),
+      create: (context) => FilterDraftBloc(sort: sort, filters: filters, all: all, query: query),
       child: const _FilterSheetContent(),
     );
   }
@@ -71,9 +71,9 @@ class _CurrencySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final cubit = context.read<FilterDraftCubit>();
+    final bloc = context.read<FilterDraftBloc>();
 
-    final selectedCurrency = context.select<FilterDraftCubit, String?>((bloc) => bloc.state.currency);
+    final selectedCurrency = context.select<FilterDraftBloc, String?>((bloc) => bloc.state.currency);
     final segments = [
       AppSegment(value: null, label: t.filters.all),
       const AppSegment(value: 'BOB', label: 'BOB'),
@@ -82,7 +82,11 @@ class _CurrencySection extends StatelessWidget {
 
     return FilterSection(
       title: t.filters.currency,
-      child: AppSegmented<String?>(segments: segments, selected: selectedCurrency, onChanged: cubit.currencyChanged),
+      child: AppSegmented<String?>(
+        segments: segments,
+        selected: selectedCurrency,
+        onChanged: (currency) => bloc.add(FilterDraftCurrencyChanged(currency)),
+      ),
     );
   }
 }
@@ -93,14 +97,14 @@ class _InStockSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final cubit = context.read<FilterDraftCubit>();
+    final bloc = context.read<FilterDraftBloc>();
 
-    final inStockOnly = context.select<FilterDraftCubit, bool>((bloc) => bloc.state.inStockOnly);
+    final inStockOnly = context.select<FilterDraftBloc, bool>((bloc) => bloc.state.inStockOnly);
     return AppSwitchTile(
       title: t.filters.inStockOnly,
       subtitle: t.filters.inStockOnlyHint,
       value: inStockOnly,
-      onChanged: cubit.inStockChanged,
+      onChanged: (value) => bloc.add(FilterDraftInStockToggled(inStockOnly: value)),
     );
   }
 }
@@ -111,17 +115,21 @@ class _ActionsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final cubit = context.read<FilterDraftCubit>();
+    final bloc = context.read<FilterDraftBloc>();
 
-    final data = context.select<FilterDraftCubit, ({bool rangeValid, int resultCount})>(
+    final data = context.select<FilterDraftBloc, ({bool rangeValid, int resultCount})>(
       (bloc) => (rangeValid: bloc.rangeValid, resultCount: bloc.resultCount),
     );
     return SheetActions(
-      secondary: AppButton(label: t.filters.reset, onPressed: cubit.reset, variant: AppButtonVariant.outline),
+      secondary: AppButton(
+        label: t.filters.reset,
+        onPressed: () => bloc.add(const FilterDraftReset()),
+        variant: AppButtonVariant.outline,
+      ),
       primary: AppButton(
         label: t.filters.apply(n: data.resultCount),
         onPressed: data.rangeValid
-            ? () => Navigator.of(context).pop((sort: cubit.state.sort, filters: cubit.filters))
+            ? () => Navigator.of(context).pop((sort: bloc.state.sort, filters: bloc.filters))
             : null,
       ),
     );

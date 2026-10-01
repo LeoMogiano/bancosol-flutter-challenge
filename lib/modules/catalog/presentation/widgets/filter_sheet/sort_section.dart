@@ -4,7 +4,7 @@ import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/services/haptic_service.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
-import 'package:warehouse/modules/catalog/application/filters/filter_draft_cubit.dart';
+import 'package:warehouse/modules/catalog/application/filters/filter_draft_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/services/product_query.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/filter_sheet/filter_section.dart';
 
@@ -18,8 +18,8 @@ class SortSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final cubit = context.read<FilterDraftCubit>();
-    final selected = context.select<FilterDraftCubit, ProductSort>((cubit) => cubit.state.sort);
+    final bloc = context.read<FilterDraftBloc>();
+    final selected = context.select<FilterDraftBloc, ProductSort>((bloc) => bloc.state.sort);
     final options = [
       (sort: ProductSort.priceDesc, label: t.filters.priceDesc, icon: Icons.arrow_downward_rounded),
       (sort: ProductSort.priceAsc, label: t.filters.priceAsc, icon: Icons.arrow_upward_rounded),
@@ -48,7 +48,7 @@ class SortSection extends StatelessWidget {
                         onTap: () {
                           if (selected == option.sort) return;
                           HapticService.selection();
-                          cubit.sortChanged(option.sort);
+                          bloc.add(FilterDraftSortChanged(option.sort));
                         },
                       ),
                     ),
