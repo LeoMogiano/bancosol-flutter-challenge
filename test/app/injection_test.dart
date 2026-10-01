@@ -7,7 +7,7 @@ import 'package:warehouse/core/di/service_locator.dart';
 import 'package:warehouse/core/network/api_client.dart';
 import 'package:warehouse/core/network/interceptors/api_key_interceptor.dart';
 import 'package:warehouse/core/network/interceptors/redacting_log_interceptor.dart';
-import 'package:warehouse/core/storage/local_store.dart';
+import 'package:warehouse/core/storage/keys/store_box.dart';
 import 'package:warehouse/modules/catalog/application/preferences/preferences_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/repositories/product_repository.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/create_product_use_case.dart';

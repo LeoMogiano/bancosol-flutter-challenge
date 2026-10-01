@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:warehouse/core/storage/keys/settings_key.dart';
 import 'package:warehouse/core/storage/local_store.dart';
 import 'package:warehouse/modules/catalog/application/preferences/preferences_bloc.dart';
 

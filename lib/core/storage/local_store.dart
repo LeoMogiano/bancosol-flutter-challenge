@@ -1,49 +1,8 @@
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/core/services/logger_service.dart';
-
-// Los ids son los nombres en disco: renombrarlos invalida lo ya guardado.
-enum StoreBox {
-  settings('settings'),
-  productsCache('products_cache');
-
-  StoreBox(this.id);
-
-  final String id;
-}
-
-abstract interface class StoreKey {
-  StoreBox get box;
-
-  String get id;
-}
-
-enum SettingsKey implements StoreKey {
-  themeMode('theme_mode'),
-  languageCode('locale'),
-  cacheEnabled('cache_enabled');
-
-  SettingsKey(this.id);
-
-  @override
-  final String id;
-
-  @override
-  StoreBox get box => StoreBox.settings;
-}
-
-enum ProductsCacheKey implements StoreKey {
-  items('items'),
-  syncedAt('synced_at');
-
-  ProductsCacheKey(this.id);
-
-  @override
-  final String id;
-
-  @override
-  StoreBox get box => StoreBox.productsCache;
-}
+import 'package:warehouse/core/storage/keys/store_box.dart';
+import 'package:warehouse/core/storage/keys/store_key.dart';
 
 abstract interface class LocalStore {
   T? read<T>(StoreKey key);
