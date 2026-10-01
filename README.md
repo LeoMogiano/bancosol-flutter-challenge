@@ -8,7 +8,7 @@ App Flutter (Android + iOS) para gestionar un catálogo de productos sobre la AP
 | Buscar por nombre o SKU | Debounce de 350 ms; ignora mayúsculas, espacios y guiones (`1004` encuentra `SKU-1004`) |
 | Editar **solo** el precio | Hoja con validación en vivo; `precio > 0` y `moneda no vacía` se validan antes de tocar la red |
 | Ordenar por precio (asc/desc), nombre y SKU | Orden estable (desempata por id); USD se compara convertido a BOB |
-| Compartir producto con el share sheet nativo | `MethodChannel` propio (`app/share`) en Kotlin y Swift, texto estructurado Nombre / Precio / SKU |
+| Compartir producto con el share sheet nativo | `ShareService` sobre un `MethodChannel` propio (`app/share`) en Kotlin y Swift, texto estructurado Nombre / Precio / SKU |
 | Bloc, reutilización de widgets | `flutter_bloc`; widgets genéricos en `lib/shared/widgets` |
 
 **Plus implementados:** filtros (rango de precio, moneda, solo con stock), paginación de 10, cache local con Hive (muestra el último listado sin conexión), header API key, telemetría con Sentry, crear y eliminar productos, i18n es / en / pt con cambio en vivo, tema claro / oscuro, flavors dev / qa / prod.
@@ -59,13 +59,13 @@ Clean architecture por capas, con **un solo módulo** (`catalog`) porque la app 
 ```
 lib/
 ├── app/                  raíz de composición: arranque, DI (get_it), router (go_router), Sentry, env
-├── core/                 infraestructura que NO dibuja: red, Failure, Hive, tema, i18n, utilidades de tiempo
+├── core/                 infraestructura que NO dibuja: red, Failure, Hive, servicios de plataforma (share, háptica), tema, i18n, tiempo
 ├── shared/               lo que dibuja y se reutiliza en toda la app
 │   ├── widgets/          CustomScaffold, CustomInput, CustomBottomSheet, AppButton, AppStateView, AppNavBar…
 │   └── formatters/       formato de precio y TextInputFormatters (precio, SKU, stock, nombre)
 └── modules/catalog/
     ├── domain/           Dart puro: entidades, interfaces de repositorio, casos de uso, validadores, ProductQuery
-    ├── data/             DTOs, ApiClient remoto, cache Hive, MethodChannel de compartir, repositorio
+    ├── data/             DTOs, datasources remoto / Hive, repositorios (producto y compartir)
     ├── application/      ProductsBloc (catálogo) y un bloc por pantalla / hoja
     └── presentation/     pantallas, hojas y widgets propios del catálogo
 ```

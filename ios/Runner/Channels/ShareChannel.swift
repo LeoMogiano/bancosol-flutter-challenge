@@ -3,9 +3,9 @@ import UIKit
 
 final class ShareChannel: AppChannel {
   let name = "app/share"
-  var handlers: [String: ChannelHandler] { ["shareProduct": shareProduct] }
+  var handlers: [String: ChannelHandler] { ["shareText": shareText] }
 
-  private func shareProduct(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+  private func shareText(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     guard let args = call.arguments as? [String: Any], let text = args["text"] as? String, !text.isEmpty,
           let presenter = topViewController() else {
       return result(FlutterError(code: "SHARE_FAILED", message: "nothing to share", details: nil))
