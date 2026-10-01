@@ -16,5 +16,6 @@ linter:
     public_member_api_docs: false
     sort_pub_dependencies: false
     avoid_setters_without_getters: false
-    # `new(...)` en lugar de `ClassName(...)` es menos legible para quien revisa.
+    # Ambas reglas empujan sintaxis nueva de Dart, menos legible para quien revisa.
     unnecessary_type_name_in_constructor: false
+    prefer_initializing_formals: false
