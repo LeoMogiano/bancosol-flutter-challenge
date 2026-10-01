@@ -26,6 +26,7 @@ void configureSentryOptions(SentryFlutterOptions options) {
     ..sendDefaultPii = false
     ..maxRequestBodySize = MaxRequestBodySize.never
     ..attachScreenshot = true
+    ..enableLogs = true
     ..beforeBreadcrumb = redactBreadcrumb;
 }
 
