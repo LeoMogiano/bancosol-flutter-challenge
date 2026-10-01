@@ -33,6 +33,7 @@ class CustomScaffold extends StatelessWidget {
     if (scrollable) {
       content = SingleChildScrollView(
         controller: scrollController,
+        clipBehavior: .none,
         physics: onRefresh != null ? const AlwaysScrollableScrollPhysics() : null,
         child: content,
       );
