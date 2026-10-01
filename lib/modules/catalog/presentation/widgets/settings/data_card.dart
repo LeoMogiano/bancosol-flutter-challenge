@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:warehouse/core/i18n/failure_i18n.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/preferences/preferences_cubit.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
+import 'package:warehouse/shared/formatters/time_formatter.dart';
 import 'package:warehouse/shared/widgets/cards/app_card.dart';
 import 'package:warehouse/shared/widgets/feedback/app_toast.dart';
 import 'package:warehouse/shared/widgets/lists/app_switch_tile.dart';
@@ -75,7 +75,9 @@ class _SyncTile extends StatelessWidget {
     return AppTile(
       icon: Icons.sync_rounded,
       title: t.settings.syncNow,
-      subtitle: syncedAt == null ? t.settings.neverSynced : t.settings.syncedAt(time: DateFormat.Hm().format(syncedAt)),
+      subtitle: syncedAt == null
+          ? t.settings.neverSynced
+          : t.settings.syncedAt(time: TimeFormatter.format(context, syncedAt)),
       onTap: data.refreshing ? null : () => _sync(context),
       trailing: data.refreshing
           ? SizedBox.square(dimension: 20, child: CircularProgressIndicator(strokeWidth: 2, color: colors.accent))

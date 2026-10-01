@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/shared/formatters/price_formatter.dart';
+import 'package:warehouse/shared/formatters/time_formatter.dart';
 
 class InventoryCard extends StatelessWidget {
   const InventoryCard({required this.totalBob, required this.syncedAt, super.key});
@@ -18,7 +18,7 @@ class InventoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.t;
     final colors = context.colors;
-    final timeStr = syncedAt != null ? DateFormat.Hm().format(syncedAt!) : '';
+    final timeStr = syncedAt != null ? TimeFormatter.format(context, syncedAt!) : '';
 
     final valueSize = 22.65.sp;
     return Container(
