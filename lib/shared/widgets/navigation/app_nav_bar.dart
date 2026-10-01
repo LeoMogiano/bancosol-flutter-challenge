@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -27,6 +28,8 @@ class AppNavBar extends StatelessWidget {
   final ValueChanged<int> onTap;
   final VoidCallback onSearch;
 
+  static const double _minBottom = 16;
+
   static final _shadow = BoxShadow(
     color: const Color(0xFF1E281E).withValues(alpha: 0.28),
     blurRadius: 30,
@@ -37,10 +40,11 @@ class AppNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final safeArea = MediaQuery.of(context).padding.bottom;
+    // El inset inferior de iOS ya separa la barra del home indicator; sumarle un margen la deja flotando alta.
+    final bottom = math.max(_minBottom, MediaQuery.paddingOf(context).bottom);
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(16, 0, 16, 24 + safeArea),
+      padding: EdgeInsets.fromLTRB(16, 0, 16, bottom),
       child: Row(
         children: [
           Expanded(
