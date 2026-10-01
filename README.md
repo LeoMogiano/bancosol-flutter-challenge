@@ -33,7 +33,8 @@ El ambiente no vive en el `.env`: sale del flavor, así no pueden desalinearse.
 | 3 | Editar solo el precio | Hoja que solo expone el campo precio; nombre, SKU, moneda y stock se conservan |
 | 3 | Reflejar el cambio en el listado | El producto se actualiza en el bloc compartido y se resalta unos segundos |
 | 3 | Carga y errores | Botón con progreso, hoja bloqueada durante el envío, error → "Reintentar" |
-| 4 | Ordenar por precio asc / desc, nombre y SKU | Orden estable (desempate por id); USD se compara convertido a BOB |
+| 4 | Ordenar por precio asc / desc | Mayor precio / Menor precio; USD se convierte a BOB para comparar |
+| 4 | Ordenar por nombre y SKU | Nombre A–Z y SKU A–Z, sin distinguir mayúsculas; empates se resuelven por id para que el orden no salte entre recargas |
 | 5 | Compartir con el sheet nativo | `MethodChannel` propio (`app/share`): `ACTION_SEND` en Kotlin, `UIActivityViewController` en Swift |
 | 5 | Información estructurada | Nombre, precio y SKU con formato, no texto plano |
 | — | `precio > 0` y moneda no vacía | Validación en vivo en dominio, antes de tocar la red |
@@ -41,7 +42,14 @@ El ambiente no vive en el `.env`: sale del flavor, así no pueden desalinearse.
 | — | Componentes genéricos | `CustomScaffold`, `CustomInput`, `CustomBottomSheet`, `AppButton`, `AppStateView` en `lib/shared/widgets` |
 | — | Manejo de estado | `flutter_bloc` |
 
-**Plus:** filtros (rango de precio, moneda, con stock), paginación, cache offline con Hive, header API key, Sentry y logging, crear / eliminar productos, i18n es / en / pt, tema claro / oscuro, flavors dev / qa / prod.
+**Plus**
+
+- **Filtros**, en la misma hoja "Ordenar y filtrar", combinables con búsqueda y orden:
+  - Rango de precio en BOB (mínimo, máximo o ambos; valida mínimo ≤ máximo).
+  - Moneda: Todas, BOB o USD.
+  - Solo con stock: oculta los productos con stock 0.
+  - El botón "Ver N productos" cuenta en vivo antes de aplicar; un badge en el buscador indica cuántos filtros hay activos y "Restablecer" los limpia.
+- Paginación de 10, cache offline con Hive, header API key, Sentry y logging, crear / eliminar productos, i18n es / en / pt, tema claro / oscuro, flavors dev / qa / prod.
 
 ## Arquitectura
 
