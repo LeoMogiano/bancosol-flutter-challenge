@@ -1,5 +1,5 @@
 import 'package:warehouse/core/error/failure.dart';
-import 'package:warehouse/core/services/logger_service.dart';
+import 'package:warehouse/core/utils/logger_service.dart';
 import 'package:warehouse/modules/catalog/data/datasources/product_local_data_source.dart';
 import 'package:warehouse/modules/catalog/data/datasources/product_remote_data_source.dart';
 import 'package:warehouse/modules/catalog/data/models/product_dto.dart';

@@ -1,8 +1,8 @@
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:warehouse/core/error/failure.dart';
-import 'package:warehouse/core/services/logger_service.dart';
 import 'package:warehouse/core/storage/keys/store_box.dart';
 import 'package:warehouse/core/storage/keys/store_key.dart';
+import 'package:warehouse/core/utils/logger_service.dart';
 
 abstract interface class LocalStore {
   T? read<T>(StoreKey key);
