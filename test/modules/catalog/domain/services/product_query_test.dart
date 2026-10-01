@@ -20,7 +20,7 @@ void main() {
       final result = ProductQuery.apply(products, sort: ProductSort.priceAsc);
 
       final prices = result.map(ProductQuery.priceInBob).toList();
-      expect(prices, [50, 200, 100 * ProductQuery.usdToBob]);
+      expect(prices, [50, 200, 696]); // USD 100 * 6.96 = 696
     });
 
     test('filtrar con stock oculta los agotados', () {
