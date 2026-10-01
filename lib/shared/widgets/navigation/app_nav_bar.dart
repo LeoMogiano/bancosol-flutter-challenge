@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -47,23 +46,15 @@ class AppNavBar extends StatelessWidget {
           Expanded(
             child: DecoratedBox(
               decoration: BoxDecoration(borderRadius: BorderRadius.circular(33), boxShadow: [_shadow]),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(33),
-                child: RepaintBoundary(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                    child: Container(
-                      height: 66,
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: colors.nav,
-                        borderRadius: BorderRadius.circular(33),
-                        border: Border.all(color: colors.line),
-                      ),
-                      child: AppNavTabs(items: items, currentIndex: currentIndex, onTap: onTap),
-                    ),
-                  ),
+              child: Container(
+                height: 66,
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: colors.nav,
+                  borderRadius: BorderRadius.circular(33),
+                  border: Border.all(color: colors.line),
                 ),
+                child: AppNavTabs(items: items, currentIndex: currentIndex, onTap: onTap),
               ),
             ),
           ),
