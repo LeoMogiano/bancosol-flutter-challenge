@@ -1,4 +1,4 @@
-import 'package:warehouse/app/env_config.dart';
+import 'package:warehouse/core/config/env_config.dart';
 import 'package:warehouse/core/di/service_locator.dart';
 import 'package:warehouse/core/network/api_client.dart';
 import 'package:warehouse/core/network/interceptors/api_key_interceptor.dart';

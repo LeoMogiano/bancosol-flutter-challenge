@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sizer/sizer.dart';
-import 'package:warehouse/app/env_config.dart';
+import 'package:warehouse/core/config/env_config.dart';
 import 'package:warehouse/core/constants/app_assets.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
