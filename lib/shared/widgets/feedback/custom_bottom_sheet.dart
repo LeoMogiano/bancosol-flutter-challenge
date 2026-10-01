@@ -39,13 +39,13 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final viewInsets = MediaQuery.of(context).viewInsets;
+    final viewInsets = MediaQuery.viewInsetsOf(context);
     final colors = context.colors;
 
     return Padding(
       padding: EdgeInsets.only(bottom: viewInsets.bottom),
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.88),
+        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.88),
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: colors.surface,
