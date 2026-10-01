@@ -27,7 +27,7 @@ class ProductFilters extends Equatable {
 
 abstract final class ProductQuery {
   static const int pageSize = 10;
-  static const double usdToBob = 6.96;
+  static final double usdToBob = double.tryParse(const String.fromEnvironment('USD_TO_BOB')) ?? 6.96;
 
   static double priceInBob(Product p) {
     return p.currency == 'USD' ? p.price * usdToBob : p.price;
