@@ -8,7 +8,12 @@ import 'package:warehouse/core/network/api_client.dart';
 import 'package:warehouse/core/network/interceptors/api_key_interceptor.dart';
 import 'package:warehouse/core/network/interceptors/redacting_log_interceptor.dart';
 import 'package:warehouse/core/storage/keys/store_box.dart';
+import 'package:warehouse/modules/catalog/application/delete_product/delete_product_bloc.dart';
 import 'package:warehouse/modules/catalog/application/preferences/preferences_bloc.dart';
+import 'package:warehouse/modules/catalog/application/price_edit/price_edit_bloc.dart';
+import 'package:warehouse/modules/catalog/application/product_detail/product_detail_bloc.dart';
+import 'package:warehouse/modules/catalog/application/product_form/product_form_bloc.dart';
+import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/repositories/product_repository.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/create_product_use_case.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/delete_product_use_case.dart';
@@ -16,6 +21,8 @@ import 'package:warehouse/modules/catalog/domain/usecases/get_product_use_case.d
 import 'package:warehouse/modules/catalog/domain/usecases/get_products_use_case.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/share_product_use_case.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/update_product_price_use_case.dart';
+
+const _product = Product(remoteId: 'r1', id: 1, sku: 'SKU-1', name: 'Mesa', price: 10, currency: 'BOB', stock: 1);
 
 // get_it registra fábricas perezosas: un cableado roto solo explota al resolver.
 void main() {
@@ -37,6 +44,10 @@ void main() {
     expect(sl.get<CreateProductUseCase>, returnsNormally);
     expect(sl.get<DeleteProductUseCase>, returnsNormally);
     expect(sl.get<ShareProductUseCase>, returnsNormally);
+    expect(sl.get<ProductDetailBloc>, returnsNormally);
+    expect(() => sl<ProductFormBloc>(param1: const <Product>[]), returnsNormally);
+    expect(() => sl<PriceEditBloc>(param1: _product), returnsNormally);
+    expect(() => sl<DeleteProductBloc>(param1: _product), returnsNormally);
   });
 
   test('los interceptores van en orden: api key → log', () {
