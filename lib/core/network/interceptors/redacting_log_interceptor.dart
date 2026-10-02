@@ -109,9 +109,7 @@ class RedactingLogInterceptor extends Interceptor {
       });
       return redacted;
     }
-    if (value is List) {
-      return value.map(_redactJsonValue).toList();
-    }
+    if (value is List) return value.map(_redactJsonValue).toList();
     return value;
   }
 }

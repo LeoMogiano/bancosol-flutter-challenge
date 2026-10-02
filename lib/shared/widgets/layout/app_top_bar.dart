@@ -24,9 +24,7 @@ class AppTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (_compact) {
-      return _buildCompact(context);
-    }
+    if (_compact) return _buildCompact(context);
     return _buildLarge(context);
   }
 
