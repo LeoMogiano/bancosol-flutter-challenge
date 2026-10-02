@@ -21,13 +21,11 @@ class SummaryBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final data = context.select<ProductsBloc, ({bool loading, bool failed})>(
-      (bloc) => (loading: bloc.state.isLoading, failed: bloc.state.status == ProductsStatus.failure),
-    );
+    final view = context.select<ProductsBloc, ProductsView>((bloc) => bloc.state.view);
 
-    if (data.loading) return const _LoadingState();
-    if (data.failed) {
-      return AppStateView(
+    return switch (view) {
+      ProductsView.loading => const _LoadingState(),
+      ProductsView.error => AppStateView(
         type: AppStateType.error,
         title: t.summary.errorTitle,
         message: t.summary.errorMessage,
@@ -37,9 +35,37 @@ class SummaryBody extends StatelessWidget {
             onPressed: () => context.read<ProductsBloc>().add(const ProductsRequested()),
           ),
         ],
-      );
-    }
-    return const _SummaryContent();
+      ),
+      ProductsView.empty => const _EmptyState(),
+      // El resumen ignora la búsqueda: siempre describe el catálogo completo.
+      ProductsView.noResults || ProductsView.list => const _SummaryContent(),
+    };
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.t;
+    return AppStateView(
+      type: AppStateType.empty,
+      title: t.summary.emptyTitle,
+      message: t.summary.emptyMessage,
+      actions: [
+        AppButton(label: t.actions.newProduct, icon: Icons.add_rounded, onPressed: () => _createProduct(context)),
+      ],
+    );
+  }
+
+  Future<void> _createProduct(BuildContext context) async {
+    final t = context.t;
+    final bloc = context.read<ProductsBloc>();
+    final created = await ProductFormSheet.open(context, existing: bloc.state.all);
+    if (created == null || !context.mounted) return;
+    bloc.add(ProductUpserted(created));
+    AppToast.showSuccess(context, t.toasts.created);
   }
 }
 
@@ -53,17 +79,6 @@ class _SummaryContent extends StatelessWidget {
     final data = context.select<ProductsBloc, ({List<Product> all, DateTime? syncedAt})>(
       (bloc) => (all: bloc.state.all, syncedAt: bloc.state.syncedAt),
     );
-
-    if (data.all.isEmpty) {
-      return AppStateView(
-        type: AppStateType.empty,
-        title: t.summary.emptyTitle,
-        message: t.summary.emptyMessage,
-        actions: [
-          AppButton(label: t.actions.newProduct, icon: Icons.add_rounded, onPressed: () => _createProduct(context)),
-        ],
-      );
-    }
 
     final totalBob = data.all.fold<double>(0, (sum, p) => sum + ProductQuery.priceInBob(p) * p.stock);
     final stats = [
@@ -96,16 +111,6 @@ class _SummaryContent extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  Future<void> _createProduct(BuildContext context) async {
-    final t = context.t;
-    final bloc = context.read<ProductsBloc>();
-    final created = await ProductFormSheet.open(context, existing: bloc.state.all);
-    if (created == null || !context.mounted) return;
-    bloc.add(ProductUpserted(created));
-    AppToast.showSuccess(context, t.toasts.created);
-    StatefulNavigationShell.of(context).goBranch(1);
   }
 }
 
