@@ -8,30 +8,20 @@ import 'package:warehouse/shared/widgets/feedback/app_shimmer.dart';
 import 'package:warehouse/shared/widgets/feedback/app_state_view.dart';
 import 'package:warehouse/shared/widgets/feedback/skeleton_box.dart';
 
-enum _BodyView { loading, error, empty, noResults, list }
-
 class ProductsBody extends StatelessWidget {
   const ProductsBody({required this.onClearSearch, required this.onPageChanged, super.key});
 
   final VoidCallback onClearSearch;
   final ValueChanged<int> onPageChanged;
 
-  static _BodyView _viewFor(ProductsState state) {
-    if (state.isLoading) return _BodyView.loading;
-    if (state.status == ProductsStatus.failure) return _BodyView.error;
-    if (state.all.isEmpty) return _BodyView.empty;
-    if (state.visible.isEmpty) return _BodyView.noResults;
-    return _BodyView.list;
-  }
-
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final view = context.select<ProductsBloc, _BodyView>((bloc) => _viewFor(bloc.state));
+    final view = context.select<ProductsBloc, ProductsView>((bloc) => bloc.state.view);
 
     return switch (view) {
-      _BodyView.loading => const _LoadingList(),
-      _BodyView.error => AppStateView(
+      ProductsView.loading => const _LoadingList(),
+      ProductsView.error => AppStateView(
         type: AppStateType.error,
         title: t.products.errorTitle,
         message: t.products.errorMessage,
@@ -43,13 +33,13 @@ class ProductsBody extends StatelessWidget {
           ),
         ],
       ),
-      _BodyView.empty => AppStateView(
+      ProductsView.empty => AppStateView(
         type: AppStateType.empty,
         title: t.products.emptyTitle,
         message: t.products.emptyMessage,
       ),
-      _BodyView.noResults => _NoResultsView(onClearSearch: onClearSearch),
-      _BodyView.list => ProductList(onPageChanged: onPageChanged),
+      ProductsView.noResults => _NoResultsView(onClearSearch: onClearSearch),
+      ProductsView.list => ProductList(onPageChanged: onPageChanged),
     };
   }
 }

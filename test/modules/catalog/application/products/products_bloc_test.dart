@@ -112,4 +112,10 @@ void main() {
     },
     verify: (bloc) => expect(bloc.state.highlightId, isNull),
   );
+
+  test('una búsqueda sin coincidencias muestra "sin resultados", no "catálogo vacío"', () {
+    final state = ProductsState(status: ProductsStatus.success, all: [_product(1)]);
+
+    expect(state.view, ProductsView.noResults);
+  });
 }
