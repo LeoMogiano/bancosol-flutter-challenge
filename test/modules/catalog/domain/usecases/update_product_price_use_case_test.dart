@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:warehouse/core/error/failure.dart';
+import 'package:warehouse/modules/catalog/domain/entities/currency.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/repositories/product_repository.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/update_product_price_use_case.dart';
@@ -28,7 +29,7 @@ void main() {
         sku: 'SKU-001',
         name: 'Product',
         price: 100,
-        currency: 'USD',
+        currency: Currency.usd,
         stock: 10,
       );
     });

@@ -28,7 +28,7 @@ class DetailInfoTable extends StatelessWidget {
             trailing: StockIndicator(stock: product.stock),
           ),
           divider,
-          _InfoRow(label: t.detail.currency, value: product.currency),
+          _InfoRow(label: t.detail.currency, value: product.currency.code),
           divider,
           _InfoRow(label: t.detail.id, value: '${product.id}', valueWeight: FontWeight.w400),
         ],

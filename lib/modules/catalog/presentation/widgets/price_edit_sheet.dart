@@ -90,7 +90,7 @@ class PriceEditContent extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${PriceFormatter.format(product.price)} ${product.currency}',
+                    '${PriceFormatter.format(product.price)} ${product.currency.code}',
                     style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600, color: colors.ink),
                   ),
                 ],
@@ -122,7 +122,6 @@ class _PriceInput extends StatelessWidget {
       PriceError.incompleteDecimals => t.validation.priceIncomplete,
       PriceError.notPositive => t.validation.priceNotPositive,
       PriceError.tooHigh => t.validation.priceTooHigh,
-      PriceError.currencyEmpty => t.validation.currencyEmpty,
       PriceError.empty || PriceError.unchanged || null => null,
     };
     final helper = switch (data.error) {
@@ -132,7 +131,7 @@ class _PriceInput extends StatelessWidget {
       _ => t.priceEdit.help,
     };
     return PriceField(
-      currency: bloc.state.product.currency,
+      currency: bloc.state.product.currency.code,
       large: true,
       autofocus: true,
       initialValue: bloc.state.draft,

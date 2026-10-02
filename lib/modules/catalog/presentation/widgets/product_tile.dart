@@ -32,7 +32,7 @@ class ProductTile extends StatelessWidget {
       button: true,
       excludeSemantics: true,
       label:
-          '${product.name}, ${product.sku}, $price ${product.currency}, ${StockIndicator.labelFor(t, product.stock)}',
+          '${product.name}, ${product.sku}, $price ${product.currency.code}, ${StockIndicator.labelFor(t, product.stock)}',
       onTap: onTap,
       child: GestureDetector(
         onTap: onTap,
@@ -88,7 +88,7 @@ class ProductTile extends StatelessWidget {
                     style: TextStyle(fontSize: 15.5.sp, fontWeight: FontWeight.w700, color: colors.ink),
                   ),
                   Text(
-                    product.currency,
+                    product.currency.code,
                     style: TextStyle(fontSize: 12.5.sp, fontWeight: FontWeight.w400, color: colors.ink3),
                   ),
                 ],

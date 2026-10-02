@@ -2,6 +2,7 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/core/error/failure.dart';
+import 'package:warehouse/modules/catalog/domain/entities/currency.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product_draft.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/create_product_use_case.dart';
@@ -35,9 +36,8 @@ class ProductFormBloc extends Bloc<ProductFormEvent, ProductFormState> {
       ? validateName(state.name, existingNames: _existing.map((p) => p.name))
       : null;
 
-  PriceError? get priceError => state.touched.contains(ProductField.price) || state.submitted
-      ? validatePriceInput(state.price, currency: state.currency)
-      : null;
+  PriceError? get priceError =>
+      state.touched.contains(ProductField.price) || state.submitted ? validatePriceInput(state.price) : null;
 
   StockError? get stockError =>
       state.touched.contains(ProductField.stock) || state.submitted ? validateStock(state.stock) : null;

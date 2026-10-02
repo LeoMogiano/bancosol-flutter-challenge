@@ -118,7 +118,6 @@
     "priceIncomplete": "Complete the cents",
     "priceNotPositive": "Price must be greater than 0",
     "priceTooHigh": "Maximum price is 999,999.99",
-    "currencyEmpty": "Currency cannot be empty",
     "priceUnchanged": "It's the same as the current price",
     "skuEmpty": "SKU is required",
     "skuTooShort": "At least 4 characters",

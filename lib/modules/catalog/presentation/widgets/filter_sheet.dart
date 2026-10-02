@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/modules/catalog/application/filters/filter_draft_bloc.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
+import 'package:warehouse/modules/catalog/domain/entities/currency.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/services/product_query.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/filter_sheet/filter_section.dart';
@@ -73,16 +74,15 @@ class _CurrencySection extends StatelessWidget {
     final t = context.t;
     final bloc = context.read<FilterDraftBloc>();
 
-    final selectedCurrency = context.select<FilterDraftBloc, String?>((bloc) => bloc.state.currency);
+    final selectedCurrency = context.select<FilterDraftBloc, Currency?>((bloc) => bloc.state.currency);
     final segments = [
       AppSegment(value: null, label: t.filters.all),
-      const AppSegment(value: 'BOB', label: 'BOB'),
-      const AppSegment(value: 'USD', label: 'USD'),
+      for (final currency in Currency.values) AppSegment(value: currency, label: currency.code),
     ];
 
     return FilterSection(
       title: t.filters.currency,
-      child: AppSegmented<String?>(
+      child: AppSegmented<Currency?>(
         segments: segments,
         selected: selectedCurrency,
         onChanged: (currency) => bloc.add(FilterDraftCurrencyChanged(currency)),

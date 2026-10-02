@@ -122,7 +122,7 @@ class _ProductDetailContent extends StatelessWidget {
                 spacing: 20,
                 children: [
                   DetailHeader(product: product),
-                  DetailPriceCard(price: product.price, currency: product.currency, edited: edited),
+                  DetailPriceCard(price: product.price, currency: product.currency.code, edited: edited),
                   DetailInfoTable(product: product),
                   const _DetailNote(),
                 ],

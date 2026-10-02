@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:warehouse/modules/catalog/domain/entities/currency.dart';
 
 class Product extends Equatable {
   const Product({
@@ -17,7 +18,7 @@ class Product extends Equatable {
   final String sku;
   final String name;
   final double price;
-  final String currency;
+  final Currency currency;
   final int stock;
 
   Product withPrice(double price) =>
