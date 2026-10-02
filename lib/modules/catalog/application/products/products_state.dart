@@ -1,12 +1,12 @@
 part of 'products_bloc.dart';
 
-enum ProductsStatus { initial, loading, success, failure }
+enum ProductsStatus { loading, success, failure }
 
 enum ProductsView { loading, error, empty, noResults, list }
 
 class ProductsState extends Equatable {
   const ProductsState({
-    this.status = ProductsStatus.initial,
+    this.status = ProductsStatus.loading,
     this.all = const [],
     this.visible = const [],
     this.query = '',
@@ -39,7 +39,7 @@ class ProductsState extends Equatable {
   final Failure? failure;
   final String? highlightId;
 
-  bool get isLoading => isRefreshing || status == ProductsStatus.loading || status == ProductsStatus.initial;
+  bool get isLoading => status == ProductsStatus.loading || isRefreshing;
 
   ProductsView get view {
     if (isLoading) return ProductsView.loading;
