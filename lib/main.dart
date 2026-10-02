@@ -25,8 +25,8 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return StateProvider(
       child: BlocListener<PreferencesBloc, PreferencesState>(
-        listenWhen: (prev, curr) => prev.languageCode != curr.languageCode,
-        listener: (_, state) => applyAppLocale(state.languageCode),
+        listenWhen: (prev, curr) => prev.locale != curr.locale,
+        listener: (_, state) => applyAppLocale(state.locale),
         child: Sizer(
           builder: (_, _, _) => BlocSelector<PreferencesBloc, PreferencesState, ThemeMode>(
             selector: (state) => state.themeMode,

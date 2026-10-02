@@ -1,9 +1,9 @@
 import 'package:warehouse/core/i18n/strings.g.dart';
 
-Future<void> applyAppLocale(String? languageCode) async {
-  if (languageCode == null) {
+Future<void> applyAppLocale(AppLocale? locale) async {
+  if (locale == null) {
     await LocaleSettings.useDeviceLocale();
   } else {
-    await LocaleSettings.setLocaleRaw(languageCode);
+    await LocaleSettings.setLocale(locale);
   }
 }
