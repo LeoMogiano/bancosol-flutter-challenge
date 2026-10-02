@@ -116,7 +116,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
             }
           },
         ),
-        BlocListener<SearchFocusCubit, bool>(listenWhen: (_, pending) => pending, listener: (_, _) => _scheduleFocusSearch()),
+        BlocListener<SearchFocusCubit, bool>(
+          listenWhen: (_, pending) => pending,
+          listener: (_, _) => _scheduleFocusSearch(),
+        ),
       ],
       child: CustomScaffold(
         scrollable: true,
