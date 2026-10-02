@@ -1,5 +1,5 @@
 import 'package:warehouse/core/error/failure.dart';
-import 'package:warehouse/core/i18n/strings.g.dart';
+import 'package:warehouse/core/i18n/generated/strings.g.dart';
 
 extension FailureI18n on Failure {
   String get message => switch (type) {

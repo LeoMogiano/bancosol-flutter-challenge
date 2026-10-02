@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/error/failure.dart';
-import 'package:warehouse/core/i18n/strings.g.dart';
+import 'package:warehouse/core/i18n/generated/strings.g.dart';
 import 'package:warehouse/core/theme/app_theme.dart';
 import 'package:warehouse/modules/catalog/application/price_edit/price_edit_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/entities/currency.dart';

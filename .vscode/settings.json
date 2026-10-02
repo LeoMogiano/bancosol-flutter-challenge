@@ -15,7 +15,7 @@
     "search.exclude": {
         "**/build": true,
         "**/.dart_tool": true,
-        "lib/core/i18n/strings*.g.dart": true
+        "lib/core/i18n/generated/**": true
     },
     "files.watcherExclude": {
         "**/build/**": true,
