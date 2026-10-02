@@ -11,6 +11,7 @@ class ProductsState extends Equatable {
     this.sort = ProductSort.nameAsc,
     this.filters = ProductFilters.none,
     this.page = 1,
+    this.pageItems = const [],
     this.syncedAt,
     this.isOffline = false,
     this.isRefreshing = false,
@@ -27,6 +28,9 @@ class ProductsState extends Equatable {
   final ProductSort sort;
   final ProductFilters filters;
   final int page;
+
+  // Se guarda (no getter) para que la instancia no cambie entre emisiones y `select` no reconstruya la lista.
+  final List<Product> pageItems;
   final DateTime? syncedAt;
   final bool isOffline;
   final bool isRefreshing;
@@ -37,8 +41,6 @@ class ProductsState extends Equatable {
 
   int get pageCount => ProductQuery.pageCount(visible.length);
 
-  List<Product> get pageItems => ProductQuery.page(visible, page);
-
   ProductsState copyWith({
     ProductsStatus? status,
     List<Product>? all,
@@ -47,6 +49,7 @@ class ProductsState extends Equatable {
     ProductSort? sort,
     ProductFilters? filters,
     int? page,
+    List<Product>? pageItems,
     DateTime? Function()? syncedAt,
     bool? isOffline,
     bool? isRefreshing,
@@ -61,6 +64,7 @@ class ProductsState extends Equatable {
       sort: sort ?? this.sort,
       filters: filters ?? this.filters,
       page: page ?? this.page,
+      pageItems: pageItems ?? this.pageItems,
       syncedAt: syncedAt != null ? syncedAt() : this.syncedAt,
       isOffline: isOffline ?? this.isOffline,
       isRefreshing: isRefreshing ?? this.isRefreshing,
@@ -78,6 +82,7 @@ class ProductsState extends Equatable {
     sort,
     filters,
     page,
+    pageItems,
     syncedAt,
     isOffline,
     isRefreshing,

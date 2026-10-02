@@ -93,7 +93,7 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
   }
 
   void _onPageChanged(ProductsPageChanged event, Emitter<ProductsState> emit) {
-    emit(state.copyWith(page: event.page.clamp(1, state.pageCount)));
+    emit(_withPage(state, event.page));
   }
 
   void _onUpserted(ProductUpserted event, Emitter<ProductsState> emit) {
@@ -122,7 +122,12 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
 
   ProductsState _withView(ProductsState next) {
     final visible = ProductQuery.apply(next.all, query: next.query, sort: next.sort, filters: next.filters);
-    return next.copyWith(visible: visible, page: next.page.clamp(1, ProductQuery.pageCount(visible.length)));
+    return _withPage(next.copyWith(visible: visible), next.page);
+  }
+
+  ProductsState _withPage(ProductsState next, int page) {
+    final clamped = page.clamp(1, next.pageCount);
+    return next.copyWith(page: clamped, pageItems: ProductQuery.page(next.visible, clamped));
   }
 
   @override
