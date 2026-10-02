@@ -28,23 +28,29 @@ import 'package:warehouse/modules/catalog/domain/usecases/update_product_price_u
 abstract final class CatalogModule {
   static void registerDependencies(GetIt di) {
     di
+      // Data sources
       ..registerLazySingleton<ProductRemoteDataSource>(() => ProductRemoteDataSource(di<ApiClient>()))
       ..registerLazySingleton<ProductLocalDataSource>(() => ProductLocalDataSource(di<LocalStore>()))
-      ..registerLazySingleton<ShareRepository>(() => ShareRepositoryImpl(di<ShareService>()))
-      ..registerLazySingleton<PreferencesRepository>(() => PreferencesRepositoryImpl(di<LocalStore>()))
+
+      // Repositories
       ..registerLazySingleton<ProductRepository>(
         () => ProductRepositoryImpl(remote: di<ProductRemoteDataSource>(), local: di<ProductLocalDataSource>()),
       )
+      ..registerLazySingleton<PreferencesRepository>(() => PreferencesRepositoryImpl(di<LocalStore>()))
+      ..registerLazySingleton<ShareRepository>(() => ShareRepositoryImpl(di<ShareService>()))
+
+      // Use cases
       ..registerLazySingleton<GetProductsUseCase>(
         () => GetProductsUseCase(di<ProductRepository>(), di<PreferencesRepository>()),
       )
       ..registerLazySingleton<GetProductUseCase>(() => GetProductUseCase(di<ProductRepository>()))
-      ..registerLazySingleton<UpdateProductPriceUseCase>(() => UpdateProductPriceUseCase(di<ProductRepository>()))
       ..registerLazySingleton<CreateProductUseCase>(() => CreateProductUseCase(di<ProductRepository>()))
+      ..registerLazySingleton<UpdateProductPriceUseCase>(() => UpdateProductPriceUseCase(di<ProductRepository>()))
       ..registerLazySingleton<DeleteProductUseCase>(() => DeleteProductUseCase(di<ProductRepository>()))
       ..registerLazySingleton<ShareProductUseCase>(() => ShareProductUseCase(di<ShareRepository>()))
+      
+      // Blocs
       ..registerLazySingleton<PreferencesBloc>(() => PreferencesBloc(di<PreferencesRepository>()))
-      // Singleton: Resumen, Productos y Ajustes comparten el mismo catálogo en memoria.
       ..registerLazySingleton<ProductsBloc>(
         () => ProductsBloc(getProducts: di<GetProductsUseCase>(), clock: di<AppClock>()),
       )
