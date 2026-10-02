@@ -40,7 +40,7 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
   }
 
   Future<void> _onRefreshed(ProductsRefreshed event, Emitter<ProductsState> emit) async {
-    emit(state.copyWith(isRefreshing: true, failure: () => null));
+    emit(state.copyWith(status: ProductsStatus.refreshing, failure: () => null));
     await _load(emit);
   }
 
@@ -54,14 +54,13 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
             all: snapshot.products,
             syncedAt: () => snapshot.syncedAt,
             isOffline: snapshot.isOffline,
-            isRefreshing: false,
           ),
         ),
       );
     } on Failure catch (failure) {
       _emitFailure(emit, failure);
     } on Object catch (e, st) {
-      // Sin esto, isRefreshing queda en true y quien espera el fin del refresco nunca sigue.
+      // Sin esto, el estado queda en refreshing y quien espera el fin del refresco nunca sigue.
       LoggerService.e('Carga de productos', name: 'CATALOG', error: e, stackTrace: st);
       _emitFailure(emit, const Failure(FailureType.unexpected));
     }
@@ -70,13 +69,7 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
   // Con datos ya en pantalla, un refresco fallido no los borra: solo se informa.
   void _emitFailure(Emitter<ProductsState> emit, Failure failure) {
     final hasData = state.all.isNotEmpty;
-    emit(
-      state.copyWith(
-        status: hasData ? ProductsStatus.success : ProductsStatus.failure,
-        failure: () => failure,
-        isRefreshing: false,
-      ),
-    );
+    emit(state.copyWith(status: hasData ? ProductsStatus.success : ProductsStatus.failure, failure: () => failure));
   }
 
   void _onQueryChanged(ProductsQueryChanged event, Emitter<ProductsState> emit) {

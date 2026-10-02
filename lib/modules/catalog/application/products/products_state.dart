@@ -1,6 +1,6 @@
 part of 'products_bloc.dart';
 
-enum ProductsStatus { loading, success, failure }
+enum ProductsStatus { loading, refreshing, success, failure }
 
 enum ProductsView { loading, error, empty, noResults, list }
 
@@ -16,7 +16,6 @@ class ProductsState extends Equatable {
     this.pageItems = const [],
     this.syncedAt,
     this.isOffline = false,
-    this.isRefreshing = false,
     this.failure,
     this.highlightId,
   });
@@ -35,11 +34,12 @@ class ProductsState extends Equatable {
   final List<Product> pageItems;
   final DateTime? syncedAt;
   final bool isOffline;
-  final bool isRefreshing;
   final Failure? failure;
   final String? highlightId;
 
   bool get isLoading => status == ProductsStatus.loading || isRefreshing;
+
+  bool get isRefreshing => status == ProductsStatus.refreshing;
 
   ProductsView get view {
     if (isLoading) return ProductsView.loading;
@@ -62,7 +62,6 @@ class ProductsState extends Equatable {
     List<Product>? pageItems,
     DateTime? Function()? syncedAt,
     bool? isOffline,
-    bool? isRefreshing,
     Failure? Function()? failure,
     String? Function()? highlightId,
   }) {
@@ -77,7 +76,6 @@ class ProductsState extends Equatable {
       pageItems: pageItems ?? this.pageItems,
       syncedAt: syncedAt != null ? syncedAt() : this.syncedAt,
       isOffline: isOffline ?? this.isOffline,
-      isRefreshing: isRefreshing ?? this.isRefreshing,
       failure: failure != null ? failure() : this.failure,
       highlightId: highlightId != null ? highlightId() : this.highlightId,
     );
@@ -95,7 +93,6 @@ class ProductsState extends Equatable {
     pageItems,
     syncedAt,
     isOffline,
-    isRefreshing,
     failure,
     highlightId,
   ];
