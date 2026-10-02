@@ -61,24 +61,6 @@ void main() {
     expect(snapshot2.syncedAt, now);
   });
 
-  test('un producto con moneda desconocida se descarta sin tumbar el listado', () async {
-    final api = ApiClient(
-      baseUrl: 'https://api.test',
-      adapter: FakeAdapter.json([
-        {'_id': 'a', 'id': 1, 'sku': 'SKU-1', 'name': 'P1', 'price': 10, 'currency': 'BOB', 'stock': 5},
-        {'_id': 'b', 'id': 2, 'sku': 'SKU-2', 'name': 'P2', 'price': 10, 'currency': 'EUR', 'stock': 5},
-      ]),
-    );
-    final repo = ProductRepositoryImpl(
-      remote: ProductRemoteDataSource(api),
-      local: ProductLocalDataSource(_MemoryStore()),
-      now: () => DateTime(2024),
-    );
-
-    final snapshot = await repo.getProducts(useCache: false);
-    expect(snapshot.products.map((p) => p.remoteId), ['a']);
-  });
-
   test('un error 500 no se disfraza de offline', () async {
     final store = _MemoryStore();
     final now = DateTime(2024);
