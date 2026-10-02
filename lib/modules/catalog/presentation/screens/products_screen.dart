@@ -86,10 +86,15 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
   void _goToPage(int page) {
     context.read<ProductsBloc>().add(ProductsPageChanged(page));
-    if (_scrollController.hasClients) _scrollController.animateTo(0, duration: _scrollDuration, curve: Curves.easeOut);
+    // Tras el frame de la página nueva: si es más corta, animar desde la posición vieja salta al recortarse.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(0, duration: _scrollDuration, curve: Curves.easeOutCubic);
+      }
+    });
   }
 
-  static const _scrollDuration = Duration(milliseconds: 300);
+  static const _scrollDuration = Duration(milliseconds: 450);
 
   @override
   Widget build(BuildContext context) {
