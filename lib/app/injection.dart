@@ -10,15 +10,20 @@ import 'package:warehouse/modules/catalog/catalog_module.dart';
 
 Future<void> injection() async {
   sl
+    // Core services
     ..registerLazySingleton<LocalStore>(HiveLocalStore.new)
     ..registerLazySingleton<AppClock>(AppClock.new)
     ..registerLazySingleton<ShareService>(ShareService.new)
+
+    // Network
     ..registerLazySingleton<ApiKeyInterceptor>(() => ApiKeyInterceptor(EnvConfig.apiKey))
     ..registerLazySingleton<RedactingLogInterceptor>(RedactingLogInterceptor.new)
     ..registerLazySingleton<ApiClient>(
       () =>
           ApiClient(baseUrl: EnvConfig.baseUrl, interceptors: [sl<ApiKeyInterceptor>(), sl<RedactingLogInterceptor>()]),
     );
+
+    // Modules
 
   CatalogModule.registerDependencies(sl);
 }
