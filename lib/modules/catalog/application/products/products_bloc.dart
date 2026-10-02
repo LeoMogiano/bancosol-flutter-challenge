@@ -13,10 +13,7 @@ part 'products_event.dart';
 part 'products_state.dart';
 
 class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
-  ProductsBloc({required GetProductsUseCase getProducts, AppClock clock = const AppClock()})
-    : _getProducts = getProducts,
-      _clock = clock,
-      super(const ProductsState()) {
+  ProductsBloc({required this._getProducts, this._clock = const AppClock()}) : super(const ProductsState()) {
     on<ProductsRequested>(_onRequested);
     on<ProductsRefreshed>(_onRefreshed);
     on<ProductsQueryChanged>(_onQueryChanged);

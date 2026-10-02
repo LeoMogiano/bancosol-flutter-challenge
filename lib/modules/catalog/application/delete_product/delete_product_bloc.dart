@@ -9,10 +9,7 @@ part 'delete_product_event.dart';
 part 'delete_product_state.dart';
 
 class DeleteProductBloc extends Bloc<DeleteProductEvent, DeleteProductState> {
-  DeleteProductBloc({required Product product, required DeleteProductUseCase deleteProduct})
-    : _product = product,
-      _deleteProduct = deleteProduct,
-      super(const DeleteProductState()) {
+  DeleteProductBloc({required this._product, required this._deleteProduct}) : super(const DeleteProductState()) {
     on<DeleteProductConfirmed>(_onConfirmed, transformer: droppable());
   }
 
