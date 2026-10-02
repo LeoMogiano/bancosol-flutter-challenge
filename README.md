@@ -82,7 +82,7 @@ Viven en `domain/validators`, se muestran en vivo y bloquean el envío antes de 
 | Campo | Reglas |
 |---|---|
 | Precio | Obligatorio; número con hasta 2 decimales (rechaza `12.`, `NaN`, `1e5`); `> 0`; `≤ 999,999.99`; distinto al actual. Un cambio ≥ 50 % avisa sin bloquear |
-| Moneda | `enum Currency` (BOB, USD): nunca vacía; si la API envía una vacía o desconocida, ese producto se descarta (warning en Sentry) y el resto del listado se muestra |
+| Moneda | `enum Currency` (BOB, USD): nunca vacía; si la API envía una vacía o desconocida, `ApiClient.getList` descarta ese producto, lo reporta en Sentry y muestra el resto |
 | Nombre | ≥ 3 caracteres, no solo números, no repetido |
 | SKU | ≥ 4 caracteres, mayúsculas, números y guiones (`SKU-1003`), no repetido sin distinguir mayúsculas |
 | Stock | Entero entre 0 y 99,999 |

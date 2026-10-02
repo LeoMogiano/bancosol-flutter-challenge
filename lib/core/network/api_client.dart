@@ -10,6 +10,7 @@ import 'package:warehouse/core/network/network_config.dart';
 import 'package:warehouse/core/utils/logger_service.dart';
 
 typedef Decoder<T> = T Function(Object? data);
+typedef ItemDecoder<T> = T Function(Map<String, Object?> json);
 
 class ApiClient {
   ApiClient({required String baseUrl, List<Interceptor> interceptors = const [], HttpClientAdapter? adapter})
@@ -40,6 +41,14 @@ class ApiClient {
   Future<T> get<T>(String path, {required Decoder<T> decode, Map<String, Object?>? query}) =>
       _send('GET', path, () => _dio.get<Object?>(path, queryParameters: query), decode);
 
+  // Un ítem mal formado se descarta y se reporta como parse: un registro corrupto no vacía la lista.
+  Future<List<T>> getList<T>(String path, {required ItemDecoder<T> decodeItem}) => _send(
+    'GET',
+    path,
+    () => _dio.get<Object?>(path),
+    (data) => [for (final item in data! as List) ?_tryDecodeItem('GET $path', item, decodeItem)],
+  );
+
   Future<T> post<T>(String path, {required Object? body, required Decoder<T> decode}) =>
       _send('POST', path, () => _dio.post<Object?>(path, data: body), decode);
 
@@ -62,6 +71,19 @@ class ApiClient {
     } on Object catch (e, st) {
       final detail = '$method $path: $e @ ${_firstAppFrame(st)}';
       throw _report(Failure(FailureType.parse, detail: InternalDetail(detail)), e, st);
+    }
+  }
+
+  T? _tryDecodeItem<T>(String request, Object? item, ItemDecoder<T> decodeItem) {
+    try {
+      return decodeItem(Map<String, Object?>.from(item! as Map));
+    } on Object catch (e, st) {
+      _report(
+        Failure(FailureType.parse, detail: InternalDetail('$request (ítem descartado): $e @ ${_firstAppFrame(st)}')),
+        e,
+        st,
+      );
+      return null;
     }
   }
 
