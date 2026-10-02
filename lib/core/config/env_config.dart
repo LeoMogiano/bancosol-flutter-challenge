@@ -21,9 +21,7 @@ abstract final class EnvConfig {
   static void validate() => baseUrl;
 
   static String get baseUrl {
-    if (_baseUrl.isEmpty) {
-      throw StateError('BASE_URL vacío. Ejecuta con --dart-define-from-file=.env.<flavor>.');
-    }
+    if (_baseUrl.isEmpty) throw StateError('BASE_URL vacío. Ejecuta con --dart-define-from-file=.env.<flavor>.');
     return _baseUrl;
   }
 }

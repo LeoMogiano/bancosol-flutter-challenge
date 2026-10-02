@@ -7,9 +7,7 @@ class StockInputFormatter extends TextInputFormatter {
 
     final digitsOnly = newValue.text.replaceAll(RegExp('[^0-9]'), '');
 
-    if (digitsOnly.length > 5) {
-      return oldValue;
-    }
+    if (digitsOnly.length > 5) return oldValue;
 
     String result;
     if (digitsOnly.length <= 3) {
