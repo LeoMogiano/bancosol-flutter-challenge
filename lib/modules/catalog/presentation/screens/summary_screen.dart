@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/core/i18n/failure_i18n.dart';
-import 'package:warehouse/core/i18n/strings.g.dart';
+import 'package:warehouse/core/i18n/generated/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/preferences/preferences_bloc.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';

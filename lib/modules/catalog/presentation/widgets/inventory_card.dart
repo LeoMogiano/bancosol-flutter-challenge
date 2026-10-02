@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
-import 'package:warehouse/core/i18n/strings.g.dart';
+import 'package:warehouse/core/i18n/generated/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/domain/entities/currency.dart';
 import 'package:warehouse/shared/formatters/price_formatter.dart';

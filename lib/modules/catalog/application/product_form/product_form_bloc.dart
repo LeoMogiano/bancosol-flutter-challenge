@@ -15,10 +15,7 @@ part 'product_form_state.dart';
 enum ProductField { sku, name, price, stock }
 
 class ProductFormBloc extends Bloc<ProductFormEvent, ProductFormState> {
-  ProductFormBloc({required List<Product> existing, required CreateProductUseCase createProduct})
-    : _existing = existing,
-      _createProduct = createProduct,
-      super(const ProductFormState()) {
+  ProductFormBloc({required this._existing, required this._createProduct}) : super(const ProductFormState()) {
     on<ProductFormFieldChanged>(_onFieldChanged);
     on<ProductFormCurrencyChanged>(_onCurrencyChanged);
     on<ProductFormFieldBlurred>(_onFieldBlurred);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:warehouse/core/i18n/strings.g.dart';
+import 'package:warehouse/core/i18n/generated/strings.g.dart';
 import 'package:warehouse/modules/catalog/application/preferences/preferences_bloc.dart';
 import 'package:warehouse/modules/catalog/domain/entities/app_preferences.dart';
 import 'package:warehouse/modules/catalog/domain/repositories/preferences_repository.dart';

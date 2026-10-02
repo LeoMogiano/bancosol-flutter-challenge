@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:warehouse/core/i18n/strings.g.dart';
+import 'package:warehouse/core/i18n/generated/strings.g.dart';
 import 'package:warehouse/modules/catalog/domain/entities/app_preferences.dart';
 import 'package:warehouse/modules/catalog/domain/repositories/preferences_repository.dart';
 

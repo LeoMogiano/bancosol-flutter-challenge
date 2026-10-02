@@ -6,7 +6,7 @@ formatter:
 analyzer:
   exclude:
     - build/**
-    - lib/core/i18n/strings*.g.dart
+    - lib/core/i18n/generated/**
     - android/**
     - ios/**
 
@@ -16,8 +16,7 @@ linter:
     public_member_api_docs: false
     sort_pub_dependencies: false
     avoid_setters_without_getters: false
-    # Ambas reglas empujan sintaxis nueva de Dart, menos legible para quien revisa.
+    # Empuja sintaxis nueva de Dart, menos legible para quien revisa.
     unnecessary_type_name_in_constructor: false
-    prefer_initializing_formals: false
     # Choca con callbacks ValueChanged<bool> (switches) pasados como tear-off.
     avoid_positional_boolean_parameters: false

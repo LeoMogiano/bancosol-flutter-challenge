@@ -13,11 +13,9 @@ class FilterDraftBloc extends Bloc<FilterDraftEvent, FilterDraftState> {
   FilterDraftBloc({
     required ProductSort sort,
     required ProductFilters filters,
-    required List<Product> all,
-    required String query,
-  }) : _all = all,
-       _query = query,
-       super(
+    required this._all,
+    required this._query,
+  }) : super(
          FilterDraftState(
            sort: sort,
            minText: filters.minPrice != null ? filters.minPrice.toString() : '',
