@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:warehouse/core/constants/app_currency.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/services/product_query.dart';
 
@@ -20,7 +21,7 @@ void main() {
       final result = ProductQuery.apply(products, sort: ProductSort.priceAsc);
 
       final prices = result.map(ProductQuery.priceInBob).toList();
-      expect(prices, [50, 200, 696]); // USD 100 * 6.96 = 696
+      expect(prices, [50, 200, 100 * AppCurrency.usdToBob]);
     });
 
     test('filtrar con stock oculta los agotados', () {
