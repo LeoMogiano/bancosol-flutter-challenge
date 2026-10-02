@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:warehouse/core/i18n/strings.g.dart';
+import 'package:warehouse/core/i18n/generated/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/shared/widgets/cards/app_card.dart';
 import 'package:warehouse/shared/widgets/feedback/app_toast.dart';

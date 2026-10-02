@@ -4,7 +4,7 @@ import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/di/service_locator.dart';
 import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/core/i18n/failure_i18n.dart';
-import 'package:warehouse/core/i18n/strings.g.dart';
+import 'package:warehouse/core/i18n/generated/strings.g.dart';
 import 'package:warehouse/core/services/haptic_service.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/price_edit/price_edit_bloc.dart';

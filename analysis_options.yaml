@@ -6,7 +6,7 @@ formatter:
 analyzer:
   exclude:
     - build/**
-    - lib/core/i18n/strings*.g.dart
+    - lib/core/i18n/generated/**
     - android/**
     - ios/**
 
