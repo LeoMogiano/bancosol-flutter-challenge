@@ -8,6 +8,7 @@ import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/app_theme.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
 import 'package:warehouse/modules/catalog/application/search_focus/search_focus_cubit.dart';
+import 'package:warehouse/modules/catalog/domain/entities/currency.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/entities/products_snapshot.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/get_products_use_case.dart';
@@ -77,7 +78,15 @@ void main() {
     final getProducts = _MockGetProducts();
     final products = List.generate(
       12,
-      (i) => Product(remoteId: 'r$i', id: i, sku: 'SKU-$i', name: 'Producto $i', price: 10, currency: 'BOB', stock: 3),
+      (i) => Product(
+        remoteId: 'r$i',
+        id: i,
+        sku: 'SKU-$i',
+        name: 'Producto $i',
+        price: 10,
+        currency: Currency.bob,
+        stock: 3,
+      ),
     );
     when(getProducts.call).thenAnswer((_) async => ProductsSnapshot(products: products, syncedAt: DateTime(2026)));
     final bloc = ProductsBloc(getProducts: getProducts)..add(const ProductsRequested());

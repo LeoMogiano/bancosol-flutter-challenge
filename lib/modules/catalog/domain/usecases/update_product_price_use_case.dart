@@ -9,7 +9,7 @@ class UpdateProductPriceUseCase {
   final ProductRepository _repository;
 
   Future<Product> call(Product product, double newPrice) async {
-    if (validatePrice(newPrice, currency: product.currency, current: product.price) != null) {
+    if (validatePrice(newPrice, current: product.price) != null) {
       throw const Failure(FailureType.validation);
     }
     await _repository.updatePrice(product, newPrice);

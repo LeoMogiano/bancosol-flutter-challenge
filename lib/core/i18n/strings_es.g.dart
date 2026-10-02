@@ -442,9 +442,6 @@ class Translations$validation$es {
 	/// es: 'El precio máximo es 999,999.99'
 	String get priceTooHigh => 'El precio máximo es 999,999.99';
 
-	/// es: 'La moneda no puede estar vacía'
-	String get currencyEmpty => 'La moneda no puede estar vacía';
-
 	/// es: 'Es el mismo precio actual'
 	String get priceUnchanged => 'Es el mismo precio actual';
 
@@ -759,7 +756,6 @@ extension on Translations {
 			'validation.priceIncomplete' => 'Completa los centavos',
 			'validation.priceNotPositive' => 'El precio debe ser mayor a 0',
 			'validation.priceTooHigh' => 'El precio máximo es 999,999.99',
-			'validation.currencyEmpty' => 'La moneda no puede estar vacía',
 			'validation.priceUnchanged' => 'Es el mismo precio actual',
 			'validation.skuEmpty' => 'El SKU es obligatorio',
 			'validation.skuTooShort' => 'Mínimo 4 caracteres',

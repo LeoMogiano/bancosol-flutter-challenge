@@ -26,7 +26,6 @@ extension PriceErrorI18n on PriceError {
     PriceError.incompleteDecimals => t.validation.priceIncomplete,
     PriceError.notPositive => t.validation.priceNotPositive,
     PriceError.tooHigh => t.validation.priceTooHigh,
-    PriceError.currencyEmpty => t.validation.currencyEmpty,
     PriceError.unchanged => t.validation.priceUnchanged,
   };
 }

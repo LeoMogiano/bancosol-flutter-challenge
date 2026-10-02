@@ -20,7 +20,7 @@ final class ProductFormFieldChanged extends ProductFormEvent {
 final class ProductFormCurrencyChanged extends ProductFormEvent {
   const ProductFormCurrencyChanged(this.currency);
 
-  final String currency;
+  final Currency currency;
 
   @override
   List<Object?> get props => [currency];

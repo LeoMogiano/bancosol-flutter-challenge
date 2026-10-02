@@ -4,6 +4,7 @@ import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/filters/filter_draft_bloc.dart';
+import 'package:warehouse/modules/catalog/domain/entities/currency.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/filter_sheet/filter_section.dart';
 import 'package:warehouse/shared/widgets/inputs/price_field.dart';
 
@@ -64,7 +65,7 @@ class _BoundField extends StatelessWidget {
     );
 
     return PriceField(
-      currency: 'BOB',
+      currency: Currency.bob.code,
       label: isMin ? t.filters.min : t.filters.max,
       initialValue: data.text,
       onChanged: (text) => bloc.add(isMin ? FilterDraftMinChanged(text) : FilterDraftMaxChanged(text)),

@@ -20,8 +20,7 @@ class PriceEditBloc extends Bloc<PriceEditEvent, PriceEditState> {
 
   final UpdateProductPriceUseCase _updatePrice;
 
-  PriceError? get error =>
-      validatePriceInput(state.draft, currency: state.product.currency, current: state.product.price);
+  PriceError? get error => validatePriceInput(state.draft, current: state.product.price);
 
   int? get changePercent {
     final parsed = parsePrice(state.draft);

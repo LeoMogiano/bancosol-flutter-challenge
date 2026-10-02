@@ -253,7 +253,6 @@ class _Translations$validation$pt extends Translations$validation$es {
 	@override String get priceIncomplete => 'Complete os centavos';
 	@override String get priceNotPositive => 'O preço deve ser maior que 0';
 	@override String get priceTooHigh => 'O preço máximo é 999,999.99';
-	@override String get currencyEmpty => 'A moeda não pode estar vazia';
 	@override String get priceUnchanged => 'É o mesmo preço atual';
 	@override String get skuEmpty => 'O SKU é obrigatório';
 	@override String get skuTooShort => 'Mínimo de 4 caracteres';
@@ -463,7 +462,6 @@ extension on TranslationsPt {
 			'validation.priceIncomplete' => 'Complete os centavos',
 			'validation.priceNotPositive' => 'O preço deve ser maior que 0',
 			'validation.priceTooHigh' => 'O preço máximo é 999,999.99',
-			'validation.currencyEmpty' => 'A moeda não pode estar vazia',
 			'validation.priceUnchanged' => 'É o mesmo preço atual',
 			'validation.skuEmpty' => 'O SKU é obrigatório',
 			'validation.skuTooShort' => 'Mínimo de 4 caracteres',
