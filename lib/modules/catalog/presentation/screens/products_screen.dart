@@ -31,8 +31,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
   @override
   void initState() {
     super.initState();
-    if (context.read<SearchFocusCubit>().state) WidgetsBinding.instance.addPostFrameCallback((_) => _focusSearch());
+    if (context.read<SearchFocusCubit>().state) _scheduleFocusSearch();
   }
+
+  void _scheduleFocusSearch() => WidgetsBinding.instance.addPostFrameCallback((_) => _focusSearch());
 
   void _focusSearch() {
     if (!mounted) return;
@@ -114,7 +116,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
             }
           },
         ),
-        BlocListener<SearchFocusCubit, bool>(listenWhen: (_, pending) => pending, listener: (_, _) => _focusSearch()),
+        BlocListener<SearchFocusCubit, bool>(listenWhen: (_, pending) => pending, listener: (_, _) => _scheduleFocusSearch()),
       ],
       child: CustomScaffold(
         scrollable: true,
