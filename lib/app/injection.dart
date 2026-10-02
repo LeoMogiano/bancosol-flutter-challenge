@@ -14,7 +14,6 @@ Future<void> injection() async {
     ..registerLazySingleton<LocalStore>(HiveLocalStore.new)
     ..registerLazySingleton<AppClock>(AppClock.new)
     ..registerLazySingleton<ShareService>(ShareService.new)
-
     // Network
     ..registerLazySingleton<ApiKeyInterceptor>(() => ApiKeyInterceptor(EnvConfig.apiKey))
     ..registerLazySingleton<RedactingLogInterceptor>(RedactingLogInterceptor.new)
@@ -23,7 +22,7 @@ Future<void> injection() async {
           ApiClient(baseUrl: EnvConfig.baseUrl, interceptors: [sl<ApiKeyInterceptor>(), sl<RedactingLogInterceptor>()]),
     );
 
-    // Modules
+  // Modules
 
   CatalogModule.registerDependencies(sl);
 }
