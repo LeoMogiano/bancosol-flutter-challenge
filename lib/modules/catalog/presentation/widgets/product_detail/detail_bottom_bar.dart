@@ -76,7 +76,7 @@ class _ShareButton extends StatelessWidget {
           text: t.share.text(
             name: product.name,
             price: PriceFormatter.format(product.price),
-            currency: product.currency,
+            currency: product.currency.code,
             sku: product.sku,
           ),
         ),

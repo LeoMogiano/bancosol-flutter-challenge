@@ -13,7 +13,7 @@ class PreferencesRepositoryImpl implements PreferencesRepository {
   // En memoria primero: si el disco falla, la preferencia igual vale para esta sesión.
   late AppPreferences _current = AppPreferences(
     themeMode: AppThemeMode.values.asNameMap()[_store.read<String>(SettingsKey.themeMode)] ?? AppThemeMode.light,
-    languageCode: _store.read<String>(SettingsKey.languageCode),
+    language: AppLanguage.values.asNameMap()[_store.read<String>(SettingsKey.languageCode)],
     cacheEnabled: _store.read<bool>(SettingsKey.cacheEnabled) ?? true,
   );
 
@@ -27,9 +27,9 @@ class PreferencesRepositoryImpl implements PreferencesRepository {
   }
 
   @override
-  Future<void> saveLanguage(String? languageCode) {
-    _current = _current.copyWith(languageCode: () => languageCode);
-    return _persist(SettingsKey.languageCode, languageCode);
+  Future<void> saveLanguage(AppLanguage? language) {
+    _current = _current.copyWith(language: () => language);
+    return _persist(SettingsKey.languageCode, language?.name);
   }
 
   @override

@@ -118,7 +118,6 @@
     "priceIncomplete": "Complete os centavos",
     "priceNotPositive": "O preço deve ser maior que 0",
     "priceTooHigh": "O preço máximo é 999,999.99",
-    "currencyEmpty": "A moeda não pode estar vazia",
     "priceUnchanged": "É o mesmo preço atual",
     "skuEmpty": "O SKU é obrigatório",
     "skuTooShort": "Mínimo de 4 caracteres",

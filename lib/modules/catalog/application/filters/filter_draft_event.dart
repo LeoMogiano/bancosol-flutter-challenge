@@ -37,7 +37,7 @@ final class FilterDraftMaxChanged extends FilterDraftEvent {
 final class FilterDraftCurrencyChanged extends FilterDraftEvent {
   const FilterDraftCurrencyChanged(this.currency);
 
-  final String? currency;
+  final Currency? currency;
 
   @override
   List<Object?> get props => [currency];

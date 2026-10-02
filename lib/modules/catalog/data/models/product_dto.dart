@@ -1,3 +1,4 @@
+import 'package:warehouse/modules/catalog/domain/entities/currency.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product_draft.dart';
 
@@ -21,7 +22,7 @@ class ProductDto {
       sku: field<String>('sku'),
       name: field<String>('name'),
       price: field<num>('price').toDouble(),
-      currency: field<String>('currency').toUpperCase(),
+      currency: Currency.fromCode(field<String>('currency')) ?? (throw const FormatException('ProductDto.currency')),
       stock: field<num>('stock').toInt(),
     );
   }
@@ -41,7 +42,7 @@ class ProductDto {
   final String sku;
   final String name;
   final double price;
-  final String currency;
+  final Currency currency;
   final int stock;
 
   // Body de PUT: CrudCrud reemplaza el documento entero y rechaza `_id` en el cuerpo.
@@ -50,7 +51,7 @@ class ProductDto {
     'sku': sku,
     'name': name,
     'price': price,
-    'currency': currency,
+    'currency': currency.code,
     'stock': stock,
   };
 
@@ -64,7 +65,7 @@ class ProductDto {
     'sku': d.sku,
     'name': d.name,
     'price': d.price,
-    'currency': d.currency,
+    'currency': d.currency.code,
     'stock': d.stock,
   };
 }

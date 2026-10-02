@@ -1,28 +1,28 @@
 part of 'preferences_bloc.dart';
 
 class PreferencesState extends Equatable {
-  const PreferencesState({required this.themeMode, required this.languageCode, required this.cacheEnabled});
+  const PreferencesState({required this.themeMode, required this.locale, required this.cacheEnabled});
 
   factory PreferencesState.from(AppPreferences preferences) => PreferencesState(
     themeMode: ThemeMode.values.byName(preferences.themeMode.name),
-    languageCode: preferences.languageCode,
+    locale: preferences.language == null ? null : AppLocale.values.byName(preferences.language!.name),
     cacheEnabled: preferences.cacheEnabled,
   );
 
   final ThemeMode themeMode;
 
   // null = idioma del dispositivo.
-  final String? languageCode;
+  final AppLocale? locale;
   final bool cacheEnabled;
 
-  PreferencesState copyWith({ThemeMode? themeMode, String? Function()? languageCode, bool? cacheEnabled}) {
+  PreferencesState copyWith({ThemeMode? themeMode, AppLocale? Function()? locale, bool? cacheEnabled}) {
     return PreferencesState(
       themeMode: themeMode ?? this.themeMode,
-      languageCode: languageCode != null ? languageCode() : this.languageCode,
+      locale: locale != null ? locale() : this.locale,
       cacheEnabled: cacheEnabled ?? this.cacheEnabled,
     );
   }
 
   @override
-  List<Object?> get props => [themeMode, languageCode, cacheEnabled];
+  List<Object?> get props => [themeMode, locale, cacheEnabled];
 }

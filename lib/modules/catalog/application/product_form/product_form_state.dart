@@ -6,7 +6,7 @@ class ProductFormState extends Equatable {
     this.name = '',
     this.price = '',
     this.stock = '',
-    this.currency = 'BOB',
+    this.currency = Currency.bob,
     this.touched = const {},
     this.submitted = false,
     this.submitting = false,
@@ -18,7 +18,7 @@ class ProductFormState extends Equatable {
   final String name;
   final String price;
   final String stock;
-  final String currency;
+  final Currency currency;
   final Set<ProductField> touched;
   final bool submitted;
   final bool submitting;
@@ -30,7 +30,7 @@ class ProductFormState extends Equatable {
     String? name,
     String? price,
     String? stock,
-    String? currency,
+    Currency? currency,
     Set<ProductField>? touched,
     bool? submitted,
     bool? submitting,

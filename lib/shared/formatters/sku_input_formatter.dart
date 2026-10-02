@@ -13,9 +13,7 @@ class SkuInputFormatter extends TextInputFormatter {
 
     input = input.replaceAll(RegExp('-+'), '-');
 
-    if (input.length > 20) {
-      return oldValue;
-    }
+    if (input.length > 20) return oldValue;
 
     return TextEditingValue(
       text: input,

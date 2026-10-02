@@ -27,7 +27,7 @@ Future<void> bootstrap(Widget Function() builder) async {
   // Bloc.observer = AppBlocObserver();
   await HiveLocalStore.init();
   await injection();
-  await applyAppLocale(sl<PreferencesBloc>().state.languageCode);
+  await applyAppLocale(sl<PreferencesBloc>().state.locale);
   sl<ProductsBloc>().add(const ProductsRequested());
 
   LoggerService.s('App ready', name: 'BOOT');

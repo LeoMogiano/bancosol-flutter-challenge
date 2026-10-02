@@ -12,14 +12,14 @@ class FilterDraftState extends Equatable {
   final ProductSort sort;
   final String minText;
   final String maxText;
-  final String? currency;
+  final Currency? currency;
   final bool inStockOnly;
 
   FilterDraftState copyWith({
     ProductSort? sort,
     String? minText,
     String? maxText,
-    String? Function()? currency,
+    Currency? Function()? currency,
     bool? inStockOnly,
   }) {
     return FilterDraftState(

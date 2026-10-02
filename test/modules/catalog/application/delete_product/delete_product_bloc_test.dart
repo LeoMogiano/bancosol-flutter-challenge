@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/modules/catalog/application/delete_product/delete_product_bloc.dart';
+import 'package:warehouse/modules/catalog/domain/entities/currency.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/delete_product_use_case.dart';
 
@@ -17,7 +18,7 @@ void main() {
       sku: 'SKU-001',
       name: 'Product',
       price: 100,
-      currency: 'BOB',
+      currency: Currency.bob,
       stock: 5,
     );
 

@@ -6,6 +6,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/core/utils/app_clock.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
+import 'package:warehouse/modules/catalog/domain/entities/currency.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/entities/products_snapshot.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/get_products_use_case.dart';
@@ -23,8 +24,15 @@ class _ManualClock extends AppClock {
   }
 }
 
-Product _product(int id, {String name = 'Producto', double price = 10}) =>
-    Product(remoteId: 'r$id', id: id, sku: 'SKU-$id', name: '$name $id', price: price, currency: 'BOB', stock: 5);
+Product _product(int id, {String name = 'Producto', double price = 10}) => Product(
+  remoteId: 'r$id',
+  id: id,
+  sku: 'SKU-$id',
+  name: '$name $id',
+  price: price,
+  currency: Currency.bob,
+  stock: 5,
+);
 
 void main() {
   late _MockGetProducts getProducts;
@@ -104,4 +112,10 @@ void main() {
     },
     verify: (bloc) => expect(bloc.state.highlightId, isNull),
   );
+
+  test('una búsqueda sin coincidencias muestra "sin resultados", no "catálogo vacío"', () {
+    final state = ProductsState(status: ProductsStatus.success, all: [_product(1)]);
+
+    expect(state.view, ProductsView.noResults);
+  });
 }

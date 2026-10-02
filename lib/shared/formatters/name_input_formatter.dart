@@ -9,9 +9,7 @@ class NameInputFormatter extends TextInputFormatter {
 
     input = input.replaceAll(RegExp(' {2,}'), ' ');
 
-    if (input.length > 60) {
-      return oldValue;
-    }
+    if (input.length > 60) return oldValue;
 
     return TextEditingValue(
       text: input,

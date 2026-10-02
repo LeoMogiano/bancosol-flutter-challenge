@@ -43,6 +43,20 @@ void main() {
     expect(failure.detail!.value, contains('api_client_test.dart'));
   });
 
+  test('getList descarta el ítem que no se puede decodificar y devuelve el resto', () async {
+    final client = _client(
+      FakeAdapter.json([
+        {'id': 1},
+        {'id': 'x'},
+        {'id': 3},
+      ]),
+    );
+
+    final ids = await client.getList('/products', decodeItem: (json) => json['id']! as int);
+
+    expect(ids, [1, 3]);
+  });
+
   test('PUT de CrudCrud responde sin cuerpo y no se trata como error', () async {
     final client = _client(FakeAdapter.json(null));
 

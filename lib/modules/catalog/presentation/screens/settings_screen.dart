@@ -96,15 +96,15 @@ class _LanguageSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final languageCode = context.select<PreferencesBloc, String?>((bloc) => bloc.state.languageCode);
-    return AppSegmented<String?>(
-      selected: languageCode,
-      onChanged: (code) => context.read<PreferencesBloc>().add(PreferencesLanguageChanged(code)),
+    final locale = context.select<PreferencesBloc, AppLocale?>((bloc) => bloc.state.locale);
+    return AppSegmented<AppLocale?>(
+      selected: locale,
+      onChanged: (locale) => context.read<PreferencesBloc>().add(PreferencesLanguageChanged(locale)),
       segments: [
         AppSegment(value: null, label: t.settings.deviceLanguage),
-        const AppSegment(value: 'es', label: 'ES', leading: _Flag(AppAssets.flagBolivia)),
-        const AppSegment(value: 'en', label: 'EN', leading: _Flag(AppAssets.flagUnitedStates)),
-        const AppSegment(value: 'pt', label: 'PT', leading: _Flag(AppAssets.flagBrazil)),
+        const AppSegment(value: AppLocale.es, label: 'ES', leading: _Flag(AppAssets.flagBolivia)),
+        const AppSegment(value: AppLocale.en, label: 'EN', leading: _Flag(AppAssets.flagUnitedStates)),
+        const AppSegment(value: AppLocale.pt, label: 'PT', leading: _Flag(AppAssets.flagBrazil)),
       ],
     );
   }
