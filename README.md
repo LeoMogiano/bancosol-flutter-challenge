@@ -209,6 +209,21 @@ flutter test --coverage --dart-define-from-file=.env.dev
 
 CI (`.github/workflows/ci.yaml`) ejecuta formato, análisis, tamaño de pantallas y tests con cobertura.
 
+## Telemetría y logging
+
+Sentry recibe issues solo para bugs reales y logs `warn` / `error` con contexto; sin PII ni secretos.
+
+<table>
+  <tr>
+    <td align="center" valign="middle"><img src="docs/screenshots/sentry-issues.webp" width="380" alt="Issues"><br><sub>Issues: solo bugs reales (400, 5xx)</sub></td>
+    <td align="center" valign="middle"><img src="docs/screenshots/sentry-logs.webp" width="380" alt="Logs"><br><sub>Logs: warn / error con método, ruta y causa</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/sentry-stacktrace.webp" width="380" alt="Stack trace"><br><sub>Stack trace con captura de pantalla</sub></td>
+    <td align="center"><img src="docs/screenshots/sentry-context.webp" width="380" alt="Contexto"><br><sub>Contexto del dispositivo, sin PII</sub></td>
+  </tr>
+</table>
+
 ## Limitaciones
 
 - CrudCrud gratuito expira y limita peticiones: un 429 se informa y reintenta; si expiró, crear otro endpoint y cambiar `BASE_URL`.
