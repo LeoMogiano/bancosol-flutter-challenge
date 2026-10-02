@@ -31,14 +31,12 @@ abstract final class CatalogModule {
       // Data sources
       ..registerLazySingleton<ProductRemoteDataSource>(() => ProductRemoteDataSource(di<ApiClient>()))
       ..registerLazySingleton<ProductLocalDataSource>(() => ProductLocalDataSource(di<LocalStore>()))
-
       // Repositories
       ..registerLazySingleton<ProductRepository>(
         () => ProductRepositoryImpl(remote: di<ProductRemoteDataSource>(), local: di<ProductLocalDataSource>()),
       )
       ..registerLazySingleton<PreferencesRepository>(() => PreferencesRepositoryImpl(di<LocalStore>()))
       ..registerLazySingleton<ShareRepository>(() => ShareRepositoryImpl(di<ShareService>()))
-
       // Use cases
       ..registerLazySingleton<GetProductsUseCase>(
         () => GetProductsUseCase(di<ProductRepository>(), di<PreferencesRepository>()),
@@ -48,7 +46,6 @@ abstract final class CatalogModule {
       ..registerLazySingleton<UpdateProductPriceUseCase>(() => UpdateProductPriceUseCase(di<ProductRepository>()))
       ..registerLazySingleton<DeleteProductUseCase>(() => DeleteProductUseCase(di<ProductRepository>()))
       ..registerLazySingleton<ShareProductUseCase>(() => ShareProductUseCase(di<ShareRepository>()))
-      
       // Blocs
       ..registerLazySingleton<PreferencesBloc>(() => PreferencesBloc(di<PreferencesRepository>()))
       ..registerLazySingleton<ProductsBloc>(
