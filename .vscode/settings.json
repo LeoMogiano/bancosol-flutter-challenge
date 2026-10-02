@@ -1,5 +1,8 @@
 {
     "dart.lineLength": 120,
+    "dart.flutterTestAdditionalArgs": [
+        "--dart-define-from-file=.env.dev"
+    ],
     "[dart]": {
         "editor.rulers": [
             120
