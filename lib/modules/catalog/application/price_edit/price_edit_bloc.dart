@@ -11,9 +11,8 @@ part 'price_edit_event.dart';
 part 'price_edit_state.dart';
 
 class PriceEditBloc extends Bloc<PriceEditEvent, PriceEditState> {
-  PriceEditBloc({required Product product, required UpdateProductPriceUseCase updatePrice})
-    : _updatePrice = updatePrice,
-      super(PriceEditState(product: product, draft: PriceFormatter.format(product.price))) {
+  PriceEditBloc({required Product product, required this._updatePrice})
+    : super(PriceEditState(product: product, draft: PriceFormatter.format(product.price))) {
     on<PriceEditDraftChanged>(_onDraftChanged);
     on<PriceEditSubmitted>(_onSubmitted, transformer: droppable());
   }

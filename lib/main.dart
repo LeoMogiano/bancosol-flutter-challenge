@@ -9,7 +9,7 @@ import 'package:warehouse/app/router/app_router.dart';
 import 'package:warehouse/app/sentry_config.dart';
 import 'package:warehouse/app/state_provider.dart';
 import 'package:warehouse/core/i18n/app_locale_sync.dart';
-import 'package:warehouse/core/i18n/strings.g.dart';
+import 'package:warehouse/core/i18n/generated/strings.g.dart';
 import 'package:warehouse/core/theme/app_theme.dart';
 import 'package:warehouse/modules/catalog/application/preferences/preferences_bloc.dart';
 

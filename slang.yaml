@@ -1,8 +1,8 @@
 base_locale: es
 fallback_strategy: base_locale
-input_directory: lib/core/i18n
+input_directory: lib/core/i18n/translations
 input_file_pattern: .i18n.json
-output_directory: lib/core/i18n
+output_directory: lib/core/i18n/generated
 output_file_name: strings.g.dart
 key_case: camel
 string_interpolation: braces

@@ -6,7 +6,7 @@ import 'package:warehouse/app/injection.dart';
 import 'package:warehouse/core/config/env_config.dart';
 import 'package:warehouse/core/di/service_locator.dart';
 import 'package:warehouse/core/i18n/app_locale_sync.dart';
-import 'package:warehouse/core/i18n/strings.g.dart';
+import 'package:warehouse/core/i18n/generated/strings.g.dart';
 import 'package:warehouse/core/storage/local_store.dart';
 // import 'package:warehouse/core/utils/app_bloc_observer.dart';
 import 'package:warehouse/core/utils/logger_service.dart';
