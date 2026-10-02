@@ -19,6 +19,7 @@ class AppPaginator extends StatelessWidget {
 
   static const double _buttonSize = 36;
   static const double _buttonRadius = 20;
+  static const double _gap = 6;
 
   void _go(int target) {
     if (target == page) return;
@@ -44,6 +45,7 @@ class AppPaginator extends StatelessWidget {
         fit: BoxFit.scaleDown,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          spacing: _gap,
           children: [
             _NavigationButton(
               icon: Icons.chevron_left_rounded,
@@ -54,49 +56,43 @@ class AppPaginator extends StatelessWidget {
             ...pages.map((pageNum) {
               if (pageNum == -1) {
                 return ExcludeSemantics(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6),
-                    child: Text(
-                      '…',
-                      style: TextStyle(fontSize: 14.5.sp, color: colors.ink2),
-                    ),
+                  child: Text(
+                    '…',
+                    style: TextStyle(fontSize: 14.5.sp, color: colors.ink2),
                   ),
                 );
               }
 
               final isCurrentPage = pageNum == page;
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 3),
-                child: Semantics(
-                  button: true,
-                  selected: isCurrentPage,
-                  excludeSemantics: true,
-                  label: pageLabel(pageNum),
-                  onTap: () => _go(pageNum),
-                  child: SizedBox(
-                    width: _buttonSize,
-                    height: _buttonSize,
-                    child: Material(
-                      color: isCurrentPage ? colors.accent : Colors.transparent,
+              return Semantics(
+                button: true,
+                selected: isCurrentPage,
+                excludeSemantics: true,
+                label: pageLabel(pageNum),
+                onTap: () => _go(pageNum),
+                child: SizedBox(
+                  width: _buttonSize,
+                  height: _buttonSize,
+                  child: Material(
+                    color: isCurrentPage ? colors.accent : Colors.transparent,
+                    borderRadius: BorderRadius.circular(_buttonRadius),
+                    child: InkWell(
+                      onTap: () => _go(pageNum),
                       borderRadius: BorderRadius.circular(_buttonRadius),
-                      child: InkWell(
-                        onTap: () => _go(pageNum),
-                        borderRadius: BorderRadius.circular(_buttonRadius),
-                        child: Container(
-                          decoration: isCurrentPage
-                              ? null
-                              : BoxDecoration(
-                                  border: Border.all(color: colors.line),
-                                  borderRadius: BorderRadius.circular(_buttonRadius),
-                                ),
-                          child: Center(
-                            child: Text(
-                              pageNum.toString(),
-                              style: TextStyle(
-                                fontSize: 14.5.sp,
-                                fontWeight: FontWeight.w600,
-                                color: isCurrentPage ? colors.onAccent : colors.ink,
+                      child: Container(
+                        decoration: isCurrentPage
+                            ? null
+                            : BoxDecoration(
+                                border: Border.all(color: colors.line),
+                                borderRadius: BorderRadius.circular(_buttonRadius),
                               ),
+                        child: Center(
+                          child: Text(
+                            pageNum.toString(),
+                            style: TextStyle(
+                              fontSize: 14.5.sp,
+                              fontWeight: FontWeight.w600,
+                              color: isCurrentPage ? colors.onAccent : colors.ink,
                             ),
                           ),
                         ),
