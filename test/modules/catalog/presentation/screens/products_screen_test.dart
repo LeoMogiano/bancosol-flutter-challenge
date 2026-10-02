@@ -16,7 +16,12 @@ import 'package:warehouse/modules/catalog/presentation/screens/products_screen.d
 
 class _MockGetProducts extends Mock implements GetProductsUseCase;
 
-Future<void> _pumpScreen(WidgetTester tester, {required ProductsBloc bloc, required SearchFocusCubit focus}) async {
+Future<void> _pumpScreen(
+  WidgetTester tester, {
+  required ProductsBloc bloc,
+  required SearchFocusCubit focus,
+  Widget child = const ProductsScreen(),
+}) async {
   tester.view
     ..physicalSize = const Size(411 * 2.625, 891 * 2.625)
     ..devicePixelRatio = 2.625;
@@ -31,7 +36,7 @@ Future<void> _pumpScreen(WidgetTester tester, {required ProductsBloc bloc, requi
               BlocProvider.value(value: bloc),
               BlocProvider.value(value: focus),
             ],
-            child: const ProductsScreen(),
+            child: child,
           ),
         ),
       ),
@@ -71,6 +76,34 @@ void main() {
 
     expect(tester.widget<EditableText>(find.byType(EditableText)).focusNode.hasFocus, isTrue);
     expect(focus.state, isFalse);
+  });
+
+  testWidgets('con Productos ya montado en otra pestaña, pedir búsqueda al cambiar de pestaña enfoca el campo', (
+    tester,
+  ) async {
+    final bloc = ProductsBloc(getProducts: _MockGetProducts());
+    final focus = SearchFocusCubit();
+    final tab = ValueNotifier(0);
+    addTearDown(bloc.close);
+    addTearDown(focus.close);
+    addTearDown(tab.dispose);
+
+    await _pumpScreen(
+      tester,
+      bloc: bloc,
+      focus: focus,
+      child: ValueListenableBuilder<int>(
+        valueListenable: tab,
+        builder: (_, index, _) => IndexedStack(index: index, children: const [SizedBox(), ProductsScreen()]),
+      ),
+    );
+
+    tab.value = 1;
+    focus.request();
+    await tester.pump();
+    await tester.pump();
+
+    expect(tester.widget<EditableText>(find.byType(EditableText)).focusNode.hasFocus, isTrue);
   });
 
   testWidgets('con el listado cargado, todo lo tocable tiene una etiqueta para el lector de pantalla', (tester) async {
