@@ -9,9 +9,7 @@ part 'product_detail_event.dart';
 part 'product_detail_state.dart';
 
 class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
-  ProductDetailBloc({required ShareProductUseCase shareProduct})
-    : _shareProduct = shareProduct,
-      super(const ProductDetailState()) {
+  ProductDetailBloc({required this._shareProduct}) : super(const ProductDetailState()) {
     on<ProductDetailShareRequested>(_onShareRequested, transformer: droppable());
   }
 

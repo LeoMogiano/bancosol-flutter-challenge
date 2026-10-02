@@ -9,13 +9,8 @@ import 'package:warehouse/modules/catalog/domain/entities/products_snapshot.dart
 import 'package:warehouse/modules/catalog/domain/repositories/product_repository.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
-  ProductRepositoryImpl({
-    required ProductRemoteDataSource remote,
-    required ProductLocalDataSource local,
-    DateTime Function()? now,
-  }) : _remote = remote,
-       _local = local,
-       _now = now ?? DateTime.now;
+  ProductRepositoryImpl({required this._remote, required this._local, DateTime Function()? now})
+    : _now = now ?? DateTime.now;
 
   final ProductRemoteDataSource _remote;
   final ProductLocalDataSource _local;
