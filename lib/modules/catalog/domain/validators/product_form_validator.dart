@@ -7,12 +7,8 @@ enum StockError { empty, tooHigh }
 SkuError? validateSku(String sku, {required Iterable<String> existingSkus}) {
   if (sku.trim().isEmpty) return SkuError.empty;
   if (sku.length < 4) return SkuError.tooShort;
-  if (!RegExp(r'^[A-Z0-9]+(-[A-Z0-9]+)*$').hasMatch(sku)) {
-    return SkuError.invalidFormat;
-  }
-  if (existingSkus.any((e) => e.toLowerCase() == sku.toLowerCase())) {
-    return SkuError.duplicate;
-  }
+  if (!RegExp(r'^[A-Z0-9]+(-[A-Z0-9]+)*$').hasMatch(sku)) return SkuError.invalidFormat;
+  if (existingSkus.any((e) => e.toLowerCase() == sku.toLowerCase())) return SkuError.duplicate;
   return null;
 }
 
@@ -21,9 +17,7 @@ NameError? validateName(String name, {required Iterable<String> existingNames}) 
   if (trimmed.isEmpty) return NameError.empty;
   if (trimmed.length < 3) return NameError.tooShort;
   if (RegExp(r'^[0-9]+$').hasMatch(trimmed)) return NameError.onlyDigits;
-  if (existingNames.any((e) => e.toLowerCase().trim() == trimmed.toLowerCase())) {
-    return NameError.duplicate;
-  }
+  if (existingNames.any((e) => e.toLowerCase().trim() == trimmed.toLowerCase())) return NameError.duplicate;
   return null;
 }
 

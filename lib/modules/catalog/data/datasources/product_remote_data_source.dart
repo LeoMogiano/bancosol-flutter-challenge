@@ -7,10 +7,7 @@ class ProductRemoteDataSource {
 
   final ApiClient _api;
 
-  Future<List<ProductDto>> getAll() => _api.get<List<ProductDto>>(
-    '/products',
-    decode: (data) => (data! as List).map((e) => ProductDto.fromJson(Map<String, Object?>.from(e! as Map))).toList(),
-  );
+  Future<List<ProductDto>> getAll() => _api.getList('/products', decodeItem: ProductDto.fromJson);
 
   Future<ProductDto> getById(String id) => _api.get<ProductDto>(
     '/products/$id',

@@ -1,19 +1,21 @@
 part of 'products_bloc.dart';
 
-enum ProductsStatus { initial, loading, success, failure }
+enum ProductsStatus { loading, refreshing, success, failure }
+
+enum ProductsView { loading, error, empty, noResults, list }
 
 class ProductsState extends Equatable {
   const ProductsState({
-    this.status = ProductsStatus.initial,
+    this.status = ProductsStatus.loading,
     this.all = const [],
     this.visible = const [],
     this.query = '',
     this.sort = ProductSort.nameAsc,
     this.filters = ProductFilters.none,
     this.page = 1,
+    this.pageItems = const [],
     this.syncedAt,
     this.isOffline = false,
-    this.isRefreshing = false,
     this.failure,
     this.highlightId,
   });
@@ -27,17 +29,27 @@ class ProductsState extends Equatable {
   final ProductSort sort;
   final ProductFilters filters;
   final int page;
+
+  // Se guarda (no getter) para que la instancia no cambie entre emisiones y `select` no reconstruya la lista.
+  final List<Product> pageItems;
   final DateTime? syncedAt;
   final bool isOffline;
-  final bool isRefreshing;
   final Failure? failure;
   final String? highlightId;
 
-  bool get isLoading => isRefreshing || status == ProductsStatus.loading || status == ProductsStatus.initial;
+  bool get isLoading => status == ProductsStatus.loading || isRefreshing;
+
+  bool get isRefreshing => status == ProductsStatus.refreshing;
+
+  ProductsView get view {
+    if (isLoading) return ProductsView.loading;
+    if (status == ProductsStatus.failure) return ProductsView.error;
+    if (all.isEmpty) return ProductsView.empty;
+    if (visible.isEmpty) return ProductsView.noResults;
+    return ProductsView.list;
+  }
 
   int get pageCount => ProductQuery.pageCount(visible.length);
-
-  List<Product> get pageItems => ProductQuery.page(visible, page);
 
   ProductsState copyWith({
     ProductsStatus? status,
@@ -47,9 +59,9 @@ class ProductsState extends Equatable {
     ProductSort? sort,
     ProductFilters? filters,
     int? page,
+    List<Product>? pageItems,
     DateTime? Function()? syncedAt,
     bool? isOffline,
-    bool? isRefreshing,
     Failure? Function()? failure,
     String? Function()? highlightId,
   }) {
@@ -61,9 +73,9 @@ class ProductsState extends Equatable {
       sort: sort ?? this.sort,
       filters: filters ?? this.filters,
       page: page ?? this.page,
+      pageItems: pageItems ?? this.pageItems,
       syncedAt: syncedAt != null ? syncedAt() : this.syncedAt,
       isOffline: isOffline ?? this.isOffline,
-      isRefreshing: isRefreshing ?? this.isRefreshing,
       failure: failure != null ? failure() : this.failure,
       highlightId: highlightId != null ? highlightId() : this.highlightId,
     );
@@ -78,9 +90,9 @@ class ProductsState extends Equatable {
     sort,
     filters,
     page,
+    pageItems,
     syncedAt,
     isOffline,
-    isRefreshing,
     failure,
     highlightId,
   ];

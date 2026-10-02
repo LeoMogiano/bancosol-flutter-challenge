@@ -13,6 +13,7 @@ import 'package:warehouse/modules/catalog/application/preferences/preferences_bl
 import 'package:warehouse/modules/catalog/application/price_edit/price_edit_bloc.dart';
 import 'package:warehouse/modules/catalog/application/product_detail/product_detail_bloc.dart';
 import 'package:warehouse/modules/catalog/application/product_form/product_form_bloc.dart';
+import 'package:warehouse/modules/catalog/domain/entities/currency.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/repositories/product_repository.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/create_product_use_case.dart';
@@ -22,7 +23,15 @@ import 'package:warehouse/modules/catalog/domain/usecases/get_products_use_case.
 import 'package:warehouse/modules/catalog/domain/usecases/share_product_use_case.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/update_product_price_use_case.dart';
 
-const _product = Product(remoteId: 'r1', id: 1, sku: 'SKU-1', name: 'Mesa', price: 10, currency: 'BOB', stock: 1);
+const _product = Product(
+  remoteId: 'r1',
+  id: 1,
+  sku: 'SKU-1',
+  name: 'Mesa',
+  price: 10,
+  currency: Currency.bob,
+  stock: 1,
+);
 
 // get_it registra fábricas perezosas: un cableado roto solo explota al resolver.
 void main() {

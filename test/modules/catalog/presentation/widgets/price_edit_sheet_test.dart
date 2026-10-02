@@ -7,6 +7,7 @@ import 'package:warehouse/core/error/failure.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/app_theme.dart';
 import 'package:warehouse/modules/catalog/application/price_edit/price_edit_bloc.dart';
+import 'package:warehouse/modules/catalog/domain/entities/currency.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/update_product_price_use_case.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/price_edit_sheet.dart';
@@ -14,7 +15,15 @@ import 'package:warehouse/shared/widgets/buttons/app_button.dart';
 
 class _MockUpdatePrice extends Mock implements UpdateProductPriceUseCase;
 
-const _product = Product(remoteId: 'r1', id: 1, sku: 'SKU-1', name: 'Cuaderno', price: 100, currency: 'BOB', stock: 4);
+const _product = Product(
+  remoteId: 'r1',
+  id: 1,
+  sku: 'SKU-1',
+  name: 'Cuaderno',
+  price: 100,
+  currency: Currency.bob,
+  stock: 4,
+);
 
 Future<void> _pump(WidgetTester tester, UpdateProductPriceUseCase updatePrice) async {
   tester.view

@@ -4,12 +4,13 @@ import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/app_theme.dart';
 import 'package:warehouse/modules/catalog/application/products/products_bloc.dart';
+import 'package:warehouse/modules/catalog/domain/entities/currency.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/filter_sheet.dart';
 import 'package:warehouse/modules/catalog/presentation/widgets/product_avatar.dart';
 
 Product _product(int id, {required int stock, String name = 'Item'}) =>
-    Product(remoteId: '$id', id: id, sku: 'SKU-$id', name: name, price: 10, currency: 'BOB', stock: stock);
+    Product(remoteId: '$id', id: id, sku: 'SKU-$id', name: name, price: 10, currency: Currency.bob, stock: stock);
 
 Future<void> _pump(WidgetTester tester, Widget home) async {
   tester.view

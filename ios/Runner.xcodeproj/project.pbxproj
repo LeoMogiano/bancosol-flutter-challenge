@@ -149,7 +149,6 @@
 				9C07D16A5CBB7245C21D1CAE /* Pods-RunnerTests.release-prod.xcconfig */,
 				D05AC0862AEDC4C2B63F7AA3 /* Pods-RunnerTests.profile-prod.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -218,7 +217,6 @@
 				9456BF0A85F2E11CF2AEB7EB /* PlatformChannels.swift */,
 				E82AB750578FCF75C3B142EB /* ShareChannel.swift */,
 			);
-			name = Channels;
 			path = Channels;
 			sourceTree = "<group>";
 		};

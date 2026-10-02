@@ -1,4 +1,4 @@
-enum PriceError { empty, incompleteDecimals, notPositive, tooHigh, currencyEmpty, unchanged }
+enum PriceError { empty, incompleteDecimals, notPositive, tooHigh, unchanged }
 
 const double maxPrice = 999999.99;
 
@@ -10,20 +10,19 @@ double? parsePrice(String raw) {
   return _plainNumber.hasMatch(normalized) ? double.parse(normalized) : null;
 }
 
-PriceError? validatePrice(double? value, {required String currency, double? current}) {
+PriceError? validatePrice(double? value, {double? current}) {
   if (value == null) return PriceError.empty;
   if (value <= 0) return PriceError.notPositive;
   if (value > maxPrice) return PriceError.tooHigh;
-  if (currency.trim().isEmpty) return PriceError.currencyEmpty;
   if (current != null && value == current) return PriceError.unchanged;
   return null;
 }
 
-PriceError? validatePriceInput(String raw, {required String currency, double? current}) {
+PriceError? validatePriceInput(String raw, {double? current}) {
   final trimmed = raw.trim();
   if (trimmed.isEmpty) return PriceError.empty;
   if (trimmed.endsWith('.')) return PriceError.incompleteDecimals;
-  return validatePrice(parsePrice(raw), currency: currency, current: current);
+  return validatePrice(parsePrice(raw), current: current);
 }
 
 // Solo avisa (no bloquea): un cambio grande suele ser un error de tipeo, pero puede ser real.

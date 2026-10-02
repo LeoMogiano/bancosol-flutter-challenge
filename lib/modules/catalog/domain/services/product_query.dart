@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:warehouse/core/constants/app_currency.dart';
+import 'package:warehouse/modules/catalog/domain/entities/currency.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 
 enum ProductSort { priceDesc, priceAsc, nameAsc, sku }
@@ -11,7 +11,7 @@ class ProductFilters extends Equatable {
 
   final double? minPrice;
   final double? maxPrice;
-  final String? currency;
+  final Currency? currency;
   final bool inStockOnly;
 
   int get activeCount {
@@ -30,7 +30,7 @@ abstract final class ProductQuery {
   static const int pageSize = 10;
 
   static double priceInBob(Product p) {
-    return p.currency == 'USD' ? p.price * AppCurrency.usdToBob : p.price;
+    return p.price * p.currency.toBob;
   }
 
   static bool matches(Product p, String query) {

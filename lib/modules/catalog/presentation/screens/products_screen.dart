@@ -31,8 +31,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
   @override
   void initState() {
     super.initState();
-    if (context.read<SearchFocusCubit>().state) WidgetsBinding.instance.addPostFrameCallback((_) => _focusSearch());
+    if (context.read<SearchFocusCubit>().state) _scheduleFocusSearch();
   }
+
+  void _scheduleFocusSearch() => WidgetsBinding.instance.addPostFrameCallback((_) => _focusSearch());
 
   void _focusSearch() {
     if (!mounted) return;
@@ -86,10 +88,15 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
   void _goToPage(int page) {
     context.read<ProductsBloc>().add(ProductsPageChanged(page));
-    if (_scrollController.hasClients) _scrollController.animateTo(0, duration: _scrollDuration, curve: Curves.easeOut);
+    // Tras el frame de la página nueva: si es más corta, animar desde la posición vieja salta al recortarse.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(0, duration: _scrollDuration, curve: Curves.easeOutCubic);
+      }
+    });
   }
 
-  static const _scrollDuration = Duration(milliseconds: 300);
+  static const _scrollDuration = Duration(milliseconds: 450);
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +116,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
             }
           },
         ),
-        BlocListener<SearchFocusCubit, bool>(listenWhen: (_, pending) => pending, listener: (_, _) => _focusSearch()),
+        BlocListener<SearchFocusCubit, bool>(
+          listenWhen: (_, pending) => pending,
+          listener: (_, _) => _scheduleFocusSearch(),
+        ),
       ],
       child: CustomScaffold(
         scrollable: true,

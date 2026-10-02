@@ -70,7 +70,7 @@ El ambiente no vive en el `.env`: sale del flavor, así no pueden desalinearse.
 | 4 | Ordenar por nombre y SKU | Nombre A–Z y SKU A–Z, sin distinguir mayúsculas; empates se resuelven por id para que el orden no salte entre recargas |
 | 5 | Compartir con el sheet nativo | `MethodChannel` propio (`app/share`): `ACTION_SEND` en Kotlin, `UIActivityViewController` en Swift |
 | 5 | Información estructurada | Una línea por campo (`Nombre: …` / `Precio: 1,500.50 BOB` / `SKU: …`) en el idioma activo; el nombre va como asunto para correo |
-| — | `precio > 0` y moneda no vacía | Validación en vivo en dominio, antes de tocar la red (ver [Validaciones](#validaciones)) |
+| — | `precio > 0` y moneda no vacía | Precio validado en vivo en dominio antes de tocar la red; moneda tipada como `enum Currency` (ver [Validaciones](#validaciones)) |
 | — | Errores claros | `Failure` tipado traducido a un mensaje por caso (offline, 404, 429, servidor…) |
 | — | Componentes genéricos | `CustomScaffold`, `CustomInput`, `CustomBottomSheet`, `AppButton`, `AppStateView` en `lib/shared/widgets` |
 | — | Manejo de estado | `flutter_bloc` |
@@ -82,7 +82,7 @@ Viven en `domain/validators`, se muestran en vivo y bloquean el envío antes de 
 | Campo | Reglas |
 |---|---|
 | Precio | Obligatorio; número con hasta 2 decimales (rechaza `12.`, `NaN`, `1e5`); `> 0`; `≤ 999,999.99`; distinto al actual. Un cambio ≥ 50 % avisa sin bloquear |
-| Moneda | No vacía |
+| Moneda | `enum Currency` (BOB, USD): nunca vacía; si la API envía una vacía o desconocida, `ApiClient.getList` descarta ese producto, lo reporta en Sentry y muestra el resto |
 | Nombre | ≥ 3 caracteres, no solo números, no repetido |
 | SKU | ≥ 4 caracteres, mayúsculas, números y guiones (`SKU-1003`), no repetido sin distinguir mayúsculas |
 | Stock | Entero entre 0 y 99,999 |

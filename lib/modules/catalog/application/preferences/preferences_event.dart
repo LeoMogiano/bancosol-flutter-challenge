@@ -18,12 +18,12 @@ final class PreferencesThemeModeChanged extends PreferencesEvent {
 
 // null = idioma del dispositivo.
 final class PreferencesLanguageChanged extends PreferencesEvent {
-  const PreferencesLanguageChanged(this.languageCode);
+  const PreferencesLanguageChanged(this.locale);
 
-  final String? languageCode;
+  final AppLocale? locale;
 
   @override
-  List<Object?> get props => [languageCode];
+  List<Object?> get props => [locale];
 }
 
 final class PreferencesCacheToggled extends PreferencesEvent {

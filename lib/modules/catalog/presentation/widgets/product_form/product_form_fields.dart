@@ -4,6 +4,7 @@ import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
 import 'package:warehouse/modules/catalog/application/product_form/product_form_bloc.dart';
+import 'package:warehouse/modules/catalog/domain/entities/currency.dart';
 import 'package:warehouse/modules/catalog/domain/validators/price_validator.dart';
 import 'package:warehouse/modules/catalog/domain/validators/product_form_validator.dart';
 import 'package:warehouse/modules/catalog/presentation/i18n/validation_i18n.dart';
@@ -65,13 +66,13 @@ class FormPriceField extends StatelessWidget {
     final t = context.t;
     final bloc = context.read<ProductFormBloc>();
 
-    final data = context.select<ProductFormBloc, (String, String, PriceError?)>(
+    final data = context.select<ProductFormBloc, (String, Currency, PriceError?)>(
       (bloc) => (bloc.state.price, bloc.state.currency, bloc.priceError),
     );
 
     return PriceField(
       label: t.form.price,
-      currency: data.$2,
+      currency: data.$2.code,
       initialValue: data.$1,
       onChanged: (value) => bloc.add(ProductFormFieldChanged(ProductField.price, value)),
       onBlur: () => bloc.add(const ProductFormFieldBlurred(ProductField.price)),
@@ -110,7 +111,7 @@ class FormCurrencyField extends StatelessWidget {
     final t = context.t;
     final bloc = context.read<ProductFormBloc>();
 
-    final currency = context.select<ProductFormBloc, String>((bloc) => bloc.state.currency);
+    final currency = context.select<ProductFormBloc, Currency>((bloc) => bloc.state.currency);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,11 +121,8 @@ class FormCurrencyField extends StatelessWidget {
           t.form.currency,
           style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600, color: context.colors.ink2),
         ),
-        AppSegmented<String>(
-          segments: const [
-            AppSegment(value: 'BOB', label: 'BOB'),
-            AppSegment(value: 'USD', label: 'USD'),
-          ],
+        AppSegmented<Currency>(
+          segments: [for (final currency in Currency.values) AppSegment(value: currency, label: currency.code)],
           selected: currency,
           onChanged: (value) => bloc.add(ProductFormCurrencyChanged(value)),
         ),

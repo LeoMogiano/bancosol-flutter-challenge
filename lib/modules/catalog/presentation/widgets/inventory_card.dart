@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:warehouse/core/i18n/strings.g.dart';
 import 'package:warehouse/core/theme/theme_context.dart';
+import 'package:warehouse/modules/catalog/domain/entities/currency.dart';
 import 'package:warehouse/shared/formatters/price_formatter.dart';
 import 'package:warehouse/shared/formatters/time_formatter.dart';
 
@@ -71,7 +72,7 @@ class InventoryCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'BOB',
+                  Currency.bob.code,
                   style: TextStyle(
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w600,

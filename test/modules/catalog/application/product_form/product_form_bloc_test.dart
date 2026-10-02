@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:warehouse/modules/catalog/application/product_form/product_form_bloc.dart';
+import 'package:warehouse/modules/catalog/domain/entities/currency.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product_draft.dart';
 import 'package:warehouse/modules/catalog/domain/usecases/create_product_use_case.dart';
@@ -19,7 +20,7 @@ void main() {
   group('ProductFormBloc', () {
     late MockCreateProduct mockCreateProduct;
     const existing = [
-      Product(remoteId: 'id1', id: 1, sku: 'SKU-001', name: 'Existing', price: 100, currency: 'BOB', stock: 5),
+      Product(remoteId: 'id1', id: 1, sku: 'SKU-001', name: 'Existing', price: 100, currency: Currency.bob, stock: 5),
     ];
 
     setUp(() {
@@ -60,7 +61,7 @@ void main() {
             sku: 'SKU-002',
             name: 'New Product',
             price: 150,
-            currency: 'BOB',
+            currency: Currency.bob,
             stock: 10,
           ),
         );

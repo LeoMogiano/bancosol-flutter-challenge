@@ -5,7 +5,7 @@ abstract interface class PreferencesRepository {
 
   Future<void> saveThemeMode(AppThemeMode themeMode);
 
-  Future<void> saveLanguage(String? languageCode);
+  Future<void> saveLanguage(AppLanguage? language);
 
   Future<void> saveCacheEnabled({required bool enabled});
 }
