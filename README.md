@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/logo.webp" width="128" alt="Warehouse">
+  <img src="docs/app-logo.webp" width="128" alt="Warehouse">
 </p>
 
 <h1 align="center">Warehouse</h1>
