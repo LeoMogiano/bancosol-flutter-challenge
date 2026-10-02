@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:warehouse/core/constants/app_currency.dart';
 import 'package:warehouse/modules/catalog/domain/entities/product.dart';
 
 enum ProductSort { priceDesc, priceAsc, nameAsc, sku }
@@ -27,10 +28,9 @@ class ProductFilters extends Equatable {
 
 abstract final class ProductQuery {
   static const int pageSize = 10;
-  static const double usdToBob = 6.96;
 
   static double priceInBob(Product p) {
-    return p.currency == 'USD' ? p.price * usdToBob : p.price;
+    return p.currency == 'USD' ? p.price * AppCurrency.usdToBob : p.price;
   }
 
   static bool matches(Product p, String query) {
