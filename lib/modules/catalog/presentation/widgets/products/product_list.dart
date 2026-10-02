@@ -20,17 +20,9 @@ class ProductList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Se seleccionan `visible` y `page` (mismas instancias entre emisiones), no `pageItems`, que es una lista
-    // nueva en cada acceso y reconstruiría la lista entera con cualquier cambio de estado.
-    final data = context.select<ProductsBloc, ({List<Product> visible, int page, String? highlightId, bool offline})>(
-      (bloc) => (
-        visible: bloc.state.visible,
-        page: bloc.state.page,
-        highlightId: bloc.state.highlightId,
-        offline: bloc.state.isOffline,
-      ),
+    final data = context.select<ProductsBloc, ({List<Product> items, String? highlightId, bool offline})>(
+      (bloc) => (items: bloc.state.pageItems, highlightId: bloc.state.highlightId, offline: bloc.state.isOffline),
     );
-    final items = ProductQuery.page(data.visible, data.page);
 
     return Padding(
       // Holgura para que la barra de navegación flotante (y el aviso offline) no tapen el último elemento.
@@ -38,7 +30,7 @@ class ProductList extends StatelessWidget {
       child: Column(
         spacing: 8,
         children: [
-          for (final product in items)
+          for (final product in data.items)
             ProductTile(
               key: ValueKey(product.remoteId),
               product: product,
