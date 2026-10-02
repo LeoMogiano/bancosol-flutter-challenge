@@ -19,7 +19,7 @@ class AppPaginator extends StatelessWidget {
 
   static const double _buttonSize = 36;
   static const double _buttonRadius = 20;
-  static const double _gap = 6;
+  static const double _gap = 8;
 
   void _go(int target) {
     if (target == page) return;
@@ -32,9 +32,7 @@ class AppPaginator extends StatelessWidget {
     final colors = context.colors;
     final localizations = MaterialLocalizations.of(context);
 
-    if (pageCount <= 1) {
-      return const SizedBox.shrink();
-    }
+    if (pageCount <= 1) return const SizedBox.shrink();
 
     final pages = _calculatePages();
 
